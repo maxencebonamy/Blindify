@@ -5,11 +5,14 @@
 	"type": "module",
 	"main": "src/index.ts",
 	"scripts": {
-		"dev": "tsx src/index.ts",
+		"dev": "tsx --watch src/index.ts",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix"
 	},
 	"dependencies": {
+		"@fastify/swagger": "^9.5.1",
+		"@scalar/fastify-api-reference": "^1.31.2",
+		"fastify": "^5.3.3",
 		"lib-logger": "workspace:^"
 	},
 	"devDependencies": {
