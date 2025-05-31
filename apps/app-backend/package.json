@@ -1,0 +1,18 @@
+{
+	"name": "app-backend",
+	"version": "1.0.0",
+	"description": "",
+	"type": "module",
+	"main": "src/index.ts",
+	"scripts": {
+		"dev": "tsx src/index.ts",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix"
+	},
+	"dependencies": {
+		"lib-logger": "workspace:^"
+	},
+	"devDependencies": {
+		"tsx": "^4.19.2"
+	}
+}
