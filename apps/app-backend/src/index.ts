@@ -1,9 +1,20 @@
 import Fastify from "fastify"
+import cookie from "@fastify/cookie"
+import cors from "@fastify/cors"
 import swagger from "@fastify/swagger"
 import scalar from "@scalar/fastify-api-reference"
 import { logger } from "lib-logger"
+import auth from "#/auth"
+import { env } from "#/env"
 
 const app = Fastify()
+
+app.register(cors, {
+	origin: env.ALLOWED_ORIGINS,
+	credentials: true
+})
+
+app.register(cookie)
 
 app.register(swagger, {
 	openapi: {
@@ -28,6 +39,7 @@ await app.register(scalar, {
 
 app.get("/health", {
 	schema: {
+		operationId: "checkHealth",
 		description: "Health check endpoint",
 		response: {
 			200: {
@@ -43,11 +55,14 @@ app.get("/health", {
 	return { status: "ok" }
 })
 
+app.register(auth, { prefix: "/auth" })
+
+
 const start = async (): Promise<void> => {
 	try {
-		await app.listen({ port: 3000, host: "0.0.0.0" })
+		await app.listen({ port: env.APP_PORT, host: "0.0.0.0" })
 		app.swagger()
-		logger.info("Server listening on http://localhost:3000")
+		logger.info(`Server listening on ${env.APP_URL}`)
 	} catch (err) {
 		logger.fatal("Error when starting server:", err instanceof Error && err.message)
 	}
