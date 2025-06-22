@@ -17,8 +17,19 @@ Create a file `env.ts` and paste the following code:
 import { createEnv } from "lib-env"
 import { z } from "zod"
 
-export const env = createEnv(process.env, z.object({
+export const env = createEnv("node", process.env, z.object({
 	EXAMPLE: z.string(),
+}))
+```
+
+Another example with a Vite project:
+
+```ts
+import { createEnv } from "lib-env"
+import { z } from "zod"
+
+export const env = createEnv("vite", import.meta.env, z.object({
+	VITE_EXAMPLE: z.string(),
 }))
 ```
 

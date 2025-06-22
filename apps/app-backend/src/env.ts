@@ -1,7 +1,7 @@
 import { createEnv } from "lib-env"
 import { z } from "zod"
 
-export const env = createEnv(process.env, z.object({
+export const env = createEnv("node", process.env, z.object({
 	// App
 	APP_HOST: z.string(),
 	APP_PORT: z.coerce.number(),
