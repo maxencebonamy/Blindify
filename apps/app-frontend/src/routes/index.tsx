@@ -1,5 +1,5 @@
-import { checkHealthOptions } from "@/generated/@tanstack/react-query.gen"
-import { useQuery } from "@tanstack/react-query"
+import { authLoginOptions, checkHealthOptions } from "@/generated/@tanstack/react-query.gen"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/")({
@@ -8,6 +8,12 @@ export const Route = createFileRoute("/")({
 
 function App() {
 	const { data, isLoading, isError } = useQuery(checkHealthOptions())
+
+	const {} = useMutation(authLoginOptions({
+		query: {
+			
+		}
+	}))
 
 	return (
 		<div className="">
