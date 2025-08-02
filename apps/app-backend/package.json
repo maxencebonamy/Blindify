@@ -6,6 +6,7 @@
 	"main": "src/index.ts",
 	"scripts": {
 		"dev": "tsx --watch src/index.ts",
+		"build": "tsup",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix"
 	},
@@ -20,6 +21,7 @@
 		"zod": "^3.24.2"
 	},
 	"devDependencies": {
+		"tsup": "^8.3.6",
 		"tsx": "^4.19.2"
 	}
 }
