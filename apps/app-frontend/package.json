@@ -20,8 +20,7 @@
 		"lib-env": "workspace:^",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
-		"tailwindcss": "^4.0.6",
-		"zod": "^3.24.2"
+		"tailwindcss": "^4.0.6"
 	},
 	"devDependencies": {
 		"@hey-api/openapi-ts": "^0.69.1",
@@ -31,7 +30,6 @@
 		"@types/react-dom": "^19.0.3",
 		"@vitejs/plugin-react": "^4.3.4",
 		"jsdom": "^26.0.0",
-		"typescript": "^5.7.2",
 		"vite": "^6.1.0",
 		"vitest": "^3.0.5",
 		"web-vitals": "^4.2.4"

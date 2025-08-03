@@ -2,7 +2,9 @@ import dotenv from "dotenv"
 import dotenvExpand from "dotenv-expand"
 import type { z } from "zod"
 
-export const createEnv = <T>(type: "node" | "vite", env: NodeJS.ProcessEnv, schema: z.ZodSchema<T>): T => {
+export const createEnv = <T extends z.ZodTypeAny>(
+	type: "node" | "vite", env: unknown, schema: T
+): z.infer<T> => {
 	if (type === "node") {
 		// parse .env file using dotenv
 		// dotenv-expand is used to support environment variable expansion (e.g. `APP_URL=${APP_HOST}:${APP_PORT}`)

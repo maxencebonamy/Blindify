@@ -17,8 +17,7 @@
 		"@scalar/fastify-api-reference": "^1.31.2",
 		"fastify": "^5.3.3",
 		"lib-env": "workspace:^",
-		"lib-logger": "workspace:^",
-		"zod": "^3.24.2"
+		"lib-logger": "workspace:^"
 	},
 	"devDependencies": {
 		"tsup": "^8.3.6",
