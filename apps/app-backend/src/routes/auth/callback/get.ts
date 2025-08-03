@@ -2,6 +2,7 @@ import { env } from "#/config/env"
 import type { Handler, Schema } from "#/types/fastify"
 import type { HTTPMethods } from "fastify"
 import { logger } from "lib-logger"
+import { z } from "zod"
 
 export const method: HTTPMethods = "GET"
 
@@ -10,7 +11,27 @@ export const url = "/auth/callback"
 export const handler: Handler = async (request, reply) => {
 	logger.debug(`${method} ${url}`)
 
-	const { code, redirect_uri } = request.query as { code: string, redirect_uri: string }
+	const querySchema = z.union([
+		z.object({
+			code: z.string(),
+			error: z.undefined(),
+			redirect_uri: z.string()
+		}),
+		z.object({
+			code: z.undefined(),
+			error: z.string(),
+			redirect_uri: z.string()
+		})
+	])
+
+	const query = querySchema.safeParse(request.query)
+	if (!query.success) {
+		return reply.code(400).send({ error: `Bad request: ${query.error}` })
+	}
+
+	if (query.data.error) {
+		return reply.code(500).send({ error: `Authotization not granted: ${query.data.error}` })
+	}
 
 	const res = await fetch("https://accounts.spotify.com/api/token", {
 		method: "POST",
