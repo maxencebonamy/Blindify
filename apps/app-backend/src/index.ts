@@ -4,8 +4,8 @@ import cors from "@fastify/cors"
 import swagger from "@fastify/swagger"
 import scalar from "@scalar/fastify-api-reference"
 import { logger } from "lib-logger"
-import auth from "#/auth"
-import { env } from "#/env"
+import { env } from "#/config/env"
+import { routes } from "#/routes/routes"
 
 const app = Fastify()
 
@@ -26,37 +26,18 @@ app.register(swagger, {
 		},
 		servers: [
 			{
-				url: "http://localhost:3000",
-				description: "Development server"
+				url: env.APP_URL,
+				description: "Blindify Backend"
 			}
 		]
 	}
 })
 
-await app.register(scalar, {
+void app.register(scalar, {
 	routePrefix: "/docs"
 })
 
-app.get("/health", {
-	schema: {
-		operationId: "checkHealth",
-		description: "Health check endpoint",
-		response: {
-			200: {
-				description: "Success",
-				type: "object",
-				properties: {
-					status: { type: "string" }
-				}
-			}
-		}
-	}
-}, () => {
-	return { status: "ok" }
-})
-
-app.register(auth, { prefix: "/auth" })
-
+void app.register(routes)
 
 const start = async (): Promise<void> => {
 	try {
