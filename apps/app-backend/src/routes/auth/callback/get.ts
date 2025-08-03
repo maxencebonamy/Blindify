@@ -15,12 +15,12 @@ export const handler: Handler = async (request, reply) => {
 		z.object({
 			code: z.string(),
 			error: z.undefined(),
-			redirect_uri: z.string()
+			state: z.string()
 		}),
 		z.object({
 			code: z.undefined(),
 			error: z.string(),
-			redirect_uri: z.string()
+			state: z.string()
 		})
 	])
 
@@ -29,9 +29,13 @@ export const handler: Handler = async (request, reply) => {
 		return reply.code(400).send({ error: `Bad request: ${query.error}` })
 	}
 
-	if (query.data.error) {
-		return reply.code(500).send({ error: `Authotization not granted: ${query.data.error}` })
+	const queryData = query.data
+	if (queryData.error !== undefined) {
+		return reply.code(500).send({ error: `Authotization not granted: ${queryData.error}` })
 	}
+
+	const { code } = queryData
+	// TODO: handle state validation
 
 	const res = await fetch("https://accounts.spotify.com/api/token", {
 		method: "POST",
@@ -52,15 +56,29 @@ export const handler: Handler = async (request, reply) => {
 
 	const tokenData = await res.json()
 
-	reply
-		.setCookie("access_token", tokenData.access_token, {
+	const responseSchema = z.object({
+		access_token: z.string(),
+		token_type: z.string(),
+		scope: z.string(),
+		expires_in: z.number(),
+		refresh_token: z.string().optional()
+	})
+
+	const parsedTokenData = responseSchema.safeParse(tokenData)
+	if (!parsedTokenData.success) {
+		return reply.code(500).send({ error: `Invalid token response: ${parsedTokenData.error}` })
+	}
+
+	const { access_token } = parsedTokenData.data
+
+	return reply
+		.setCookie("access_token", access_token, {
 			httpOnly: true,
 			secure: false,
 			path: "/",
 			maxAge: tokenData.expires_in
 		})
-		.redirect(redirect_uri)
-	return tokenData
+		.redirect(env.FRONTEND_URL)
 }
 
 export const schema: Schema = {
@@ -69,11 +87,11 @@ export const schema: Schema = {
 	tags: [ "auth" ],
 	querystring: {
 		type: "object",
-		required: [ "code", "redirect_uri" ],
+		required: [ "state" ],
 		properties: {
 			code: { type: "string" },
-			state: { type: "string" },
-			redirect_uri: { type: "string", format: "uri" }
+			error: { type: "string" },
+			state: { type: "string" }
 		}
 	},
 	response: {

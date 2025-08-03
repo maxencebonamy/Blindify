@@ -1,5 +1,6 @@
-import { authLoginOptions, checkHealthOptions } from "@/generated/@tanstack/react-query.gen"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { Profile } from "@/components/profile"
+import { checkHealthOptions } from "@/generated/@tanstack/react-query.gen"
+import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/")({
@@ -9,16 +10,10 @@ export const Route = createFileRoute("/")({
 function App() {
 	const { data, isLoading, isError } = useQuery(checkHealthOptions())
 
-	const {} = useMutation(authLoginOptions({
-		query: {
-			
-		}
-	}))
-
 	return (
 		<div className="">
 			<p className="text-2xl font-bold mb-4">Welcome to the App!</p>
-			<a href="http://localhost:8000/auth/login">Connect with Spotify</a>
+			<Profile />
 			{isLoading && <p>Loading...</p>}
 			{isError && <p>Error loading health status</p>}
 			{data && (

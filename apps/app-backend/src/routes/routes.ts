@@ -2,6 +2,9 @@ import type { FastifyInstance } from "fastify"
 
 const endpoints = [
 	await import("#/routes/auth/login/get"),
+	await import("#/routes/auth/callback/get"),
+	await import("#/routes/auth/logout/post"),
+	await import("#/routes/auth/me/get"),
 	await import("#/routes/health/get")
 ]
 
