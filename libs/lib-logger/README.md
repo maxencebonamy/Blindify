@@ -2,6 +2,7 @@
 
 Write logs to the console and files.
 
+
 ## Get started
 
 Install the lib:
