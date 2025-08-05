@@ -14,7 +14,7 @@ export const createEnv = <T extends z.ZodTypeAny>(
 	const result = schema.safeParse(env)
 
 	if (!result.success) {
-		const message = "Failed to parse env:\n" + result.error.errors.map(e => `- ${e.path}: ${e.message}`).join("\n")
+		const message = "Failed to parse env:\n" + result.error.issues.map(e => `- ${e.path}: ${e.message}`).join("\n")
 		if (type === "node") {
 			// eslint-disable-next-line no-console
 			console.log(message)
