@@ -1,3 +1,4 @@
+import { Playlists } from "@/components/playlists"
 import { Profile } from "@/components/profile"
 import { checkHealthOptions } from "@/generated/@tanstack/react-query.gen"
 import { useQuery } from "@tanstack/react-query"
@@ -14,6 +15,7 @@ function App() {
 		<div className="">
 			<p className="text-2xl font-bold mb-4">Welcome to the App!</p>
 			<Profile />
+			<Playlists />
 			{isLoading && <p>Loading...</p>}
 			{isError && <p>Error loading health status</p>}
 			{data && (

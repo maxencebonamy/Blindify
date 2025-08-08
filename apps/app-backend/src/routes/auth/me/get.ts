@@ -1,3 +1,4 @@
+import { getCurrentUsersProfile } from "#/generated"
 import type { Handler, Schema } from "#/types/fastify"
 import type { HTTPMethods } from "fastify"
 import { logger } from "lib-logger"
@@ -16,20 +17,13 @@ export const handler: Handler = async (request, reply) => {
 		return
 	}
 
-	const profile = await fetch("https://api.spotify.com/v1/me", {
-		headers: {
-			Authorization: `Bearer ${accessToken}`
-		}
-	})
-
-	if (!profile.ok) {
-		reply.code(profile.status).send({ error: "Failed to fetch user profile" })
+	const user = await getCurrentUsersProfile({ headers: { authorization: `Bearer ${accessToken}` } })
+	if (user.error) {
+		reply.code(401).send({ error: user.error.error })
 		return
 	}
 
-	const userData = await profile.json()
-
-	return reply.send(userData)
+	return reply.send(user.data)
 }
 
 export const schema: Schema = {
