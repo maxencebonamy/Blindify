@@ -1,4 +1,5 @@
 import type { FastifyInstance } from "fastify"
+import type { ZodTypeProvider } from "fastify-type-provider-zod"
 
 const endpoints = [
 	await import("#/routes/auth/login/get"),
@@ -11,5 +12,5 @@ const endpoints = [
 ]
 
 export const routes = async (app: FastifyInstance): Promise<void> => {
-	await Promise.all(endpoints.map(e => app.route(e)))
+	await Promise.all(endpoints.map(e => app.withTypeProvider<ZodTypeProvider>().route(e)))
 }

@@ -44,7 +44,7 @@ export const handler: Handler = async (request, reply) => {
 	}
 
 	const fullPlaylist = await getPlaylist({
-		path: { playlist_id: "1s2AmL9Q0zWVTr1oAhlOlJ" },
+		path: { playlist_id: "7LXwbZz1HKqOnjiuxc7ZkX" },
 		query: { market: "IT" },
 		headers: { authorization: `Bearer ${accessToken}` }
 	})
@@ -54,7 +54,7 @@ export const handler: Handler = async (request, reply) => {
 	}
 
 	const content = await Promise.all(
-		(fullPlaylist.data.tracks?.items?.slice(60, 80) ?? []).map(async track => {
+		(fullPlaylist.data.tracks?.items?.slice(0, 20) ?? []).map(async track => {
 			const trackObject = track.track as unknown as TrackObject
 			const title = trackObject.name ?? ""
 			const artist = trackObject.artists?.[0]?.name ?? ""

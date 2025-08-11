@@ -6,6 +6,7 @@ import scalar from "@scalar/fastify-api-reference"
 import { logger } from "lib-logger"
 import { env } from "#/config/env"
 import { routes } from "#/routes/routes"
+import { validatorCompiler, serializerCompiler } from "fastify-type-provider-zod"
 
 const app = Fastify()
 
@@ -36,6 +37,9 @@ app.register(swagger, {
 void app.register(scalar, {
 	routePrefix: "/docs"
 })
+
+app.setValidatorCompiler(validatorCompiler)
+app.setSerializerCompiler(serializerCompiler)
 
 void app.register(routes)
 

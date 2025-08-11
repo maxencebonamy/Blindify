@@ -1,17 +1,18 @@
 import type {
 	RouteHandlerMethod, RawServerDefault, RawRequestDefaultExpression, RawReplyDefaultExpression, RouteGenericInterface,
-	ContextConfigDefault, FastifySchema, FastifyTypeProviderDefault, FastifyBaseLogger
+	ContextConfigDefault, FastifySchema, FastifyBaseLogger
 } from "fastify"
+import type { ZodTypeProvider } from "fastify-type-provider-zod"
 
 export type Schema = FastifySchema
 
-export type Handler = RouteHandlerMethod<
+export type Handler<Schema extends FastifySchema = FastifySchema> = RouteHandlerMethod<
 	RawServerDefault,
 	RawRequestDefaultExpression<RawServerDefault>,
 	RawReplyDefaultExpression<RawServerDefault>,
 	RouteGenericInterface,
 	ContextConfigDefault,
-	FastifySchema,
-	FastifyTypeProviderDefault,
+	Schema,
+	ZodTypeProvider,
 	FastifyBaseLogger
 >

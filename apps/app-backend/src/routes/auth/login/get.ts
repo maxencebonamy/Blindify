@@ -4,12 +4,25 @@ import { generateRandomState } from "#/utils/random"
 import { buildUrl } from "#/utils/url"
 import type { HTTPMethods } from "fastify"
 import { logger } from "lib-logger"
+import z from "zod"
 
 export const method: HTTPMethods = "GET"
 
 export const url = "/auth/login"
 
-export const handler: Handler = async (_, reply) => {
+export const schema = {
+	operationId: "authLogin",
+	description: "Login with Spotify",
+	tags: [ "auth" ],
+	response: {
+		302: z.any(),
+		500: z.object({
+			error: z.string()
+		})
+	}
+} satisfies Schema
+
+export const handler: Handler<typeof schema> = async (_, reply) => {
 	logger.debug(`${method} ${url}`)
 
 	const spotifyUrl = buildUrl("https://accounts.spotify.com/authorize", {
@@ -21,16 +34,4 @@ export const handler: Handler = async (_, reply) => {
 	})
 
 	return reply.redirect(spotifyUrl)
-}
-
-export const schema: Schema = {
-	operationId: "authLogin",
-	description: "Redirect to Spotify authorization",
-	tags: [ "auth" ],
-	response: {
-		302: {
-			description: "Redirect to Spotify",
-			type: "null"
-		}
-	}
 }

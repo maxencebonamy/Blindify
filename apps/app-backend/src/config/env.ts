@@ -6,6 +6,7 @@ export const env = createEnv("node", process.env, z.object({
 	APP_HOST: z.string(),
 	APP_PORT: z.coerce.number(),
 	APP_URL: z.string(),
+	APP_ENV: z.enum([ "development", "production" ]),
 	ALLOWED_ORIGINS: z.string(),
 
 	// Frontend
