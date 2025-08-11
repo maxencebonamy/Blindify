@@ -5,6 +5,8 @@ const endpoints = [
 	await import("#/routes/auth/callback/get"),
 	await import("#/routes/auth/logout/post"),
 	await import("#/routes/auth/me/get"),
+	await import("#/routes/playlists/me/get"),
+	await import("#/routes/playlists/test/get"),
 	await import("#/routes/health/get")
 ]
 

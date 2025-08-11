@@ -8,12 +8,14 @@
 		"dev": "tsx --watch src/index.ts",
 		"build": "tsup",
 		"lint": "eslint .",
-		"lint:fix": "eslint . --fix"
+		"lint:fix": "eslint . --fix",
+		"gen": "openapi-ts --silent"
 	},
 	"dependencies": {
 		"@fastify/cookie": "^11.0.2",
 		"@fastify/cors": "^11.0.1",
 		"@fastify/swagger": "^9.5.1",
+		"@hey-api/client-fetch": "^0.11.0",
 		"@scalar/fastify-api-reference": "^1.31.2",
 		"fastify": "^5.3.3",
 		"lib-cache": "workspace:^",
@@ -21,6 +23,7 @@
 		"lib-logger": "workspace:^"
 	},
 	"devDependencies": {
+		"@hey-api/openapi-ts": "^0.69.1",
 		"tsup": "^8.3.6",
 		"tsx": "^4.19.2"
 	}
