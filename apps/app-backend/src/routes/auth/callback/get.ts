@@ -1,17 +1,12 @@
 import { env } from "#/config/env"
 import type { Handler, Schema } from "#/types/fastify"
-import type { HTTPMethods } from "fastify"
-import { logger } from "lib-logger"
 import { z } from "zod"
 
-export const method: HTTPMethods = "GET"
-
-export const url = "/auth/callback"
-
-export const handler: Handler = async (request, reply) => {
-	logger.debug(`${method} ${url}`)
-
-	const querySchema = z.union([
+export const schema = {
+	operationId: "authCallback",
+	description: "Spotify auth callback",
+	tags: [ "auth" ],
+	querystring: z.union([
 		z.object({
 			code: z.string(),
 			error: z.undefined(),
@@ -22,22 +17,41 @@ export const handler: Handler = async (request, reply) => {
 			error: z.string(),
 			state: z.string()
 		})
-	])
+	]),
+	response: {
+		302: z.any(),
+		400: z.object({
+			error: z.string()
+		}),
+		403: z.object({
+			error: z.string()
+		}),
+		500: z.object({
+			error: z.string()
+		}),
+		502: z.object({
+			error: z.string()
+		})
+	}
+} satisfies Schema
 
-	const query = querySchema.safeParse(request.query)
-	if (!query.success) {
-		return reply.code(400).send({ error: `Bad request: ${query.error}` })
+const idTokenSchema = z.object({
+	access_token: z.string(),
+	token_type: z.string(),
+	scope: z.string(),
+	expires_in: z.number(),
+	refresh_token: z.string().optional()
+})
+
+export const handler: Handler<typeof schema> = async (request, reply) => {
+	if (request.query.error !== undefined) {
+		return reply.code(403).send({ error: `Authotization not granted: ${request.query.error}` })
 	}
 
-	const queryData = query.data
-	if (queryData.error !== undefined) {
-		return reply.code(500).send({ error: `Authotization not granted: ${queryData.error}` })
-	}
-
-	const { code } = queryData
+	const { code } = request.query
 	// TODO: handle state validation
 
-	const res = await fetch("https://accounts.spotify.com/api/token", {
+	const idTokenResponse = await fetch("https://accounts.spotify.com/api/token", {
 		method: "POST",
 		headers: {
 			"Authorization": "Basic " + Buffer.from(`${env.SPOTIFY_CLIENT_ID}:${env.SPOTIFY_CLIENT_SECRET}`).toString("base64"),
@@ -49,62 +63,24 @@ export const handler: Handler = async (request, reply) => {
 			redirect_uri: `${env.APP_URL}/auth/callback`
 		})
 	})
-
-	if (!res.ok) {
-		return reply.code(500).send({ error: "Token exchange failed" })
+	if (!idTokenResponse.ok) {
+		return reply.code(502).send({ error: "Token exchange failed" })
 	}
 
-	const tokenData = await res.json()
-
-	const responseSchema = z.object({
-		access_token: z.string(),
-		token_type: z.string(),
-		scope: z.string(),
-		expires_in: z.number(),
-		refresh_token: z.string().optional()
-	})
-
-	const parsedTokenData = responseSchema.safeParse(tokenData)
-	if (!parsedTokenData.success) {
-		return reply.code(500).send({ error: `Invalid token response: ${parsedTokenData.error}` })
+	const idToken = await idTokenResponse.json()
+	const parsedIdToken = idTokenSchema.safeParse(idToken)
+	if (!parsedIdToken.success) {
+		return reply.code(500).send({ error: `Invalid ID token: ${parsedIdToken.error}` })
 	}
 
-	const { access_token } = parsedTokenData.data
-
+	const { access_token } = parsedIdToken.data
 	return reply
 		.setCookie("access_token", access_token, {
 			httpOnly: true,
-			secure: false,
+			secure: env.APP_ENV === "production",
+			sameSite: "lax",
 			path: "/",
-			maxAge: tokenData.expires_in
+			maxAge: parsedIdToken.data.expires_in
 		})
 		.redirect(env.FRONTEND_URL)
-}
-
-export const schema: Schema = {
-	operationId: "authCallback",
-	description: "Spotify auth callback",
-	tags: [ "auth" ],
-	querystring: {
-		type: "object",
-		required: [ "state" ],
-		properties: {
-			code: { type: "string" },
-			error: { type: "string" },
-			state: { type: "string" }
-		}
-	},
-	response: {
-		200: {
-			description: "Tokens",
-			type: "object",
-			properties: {
-				access_token: { type: "string" },
-				token_type: { type: "string" },
-				scope: { type: "string" },
-				expires_in: { type: "number" },
-				refresh_token: { type: "string" }
-			}
-		}
-	}
 }
