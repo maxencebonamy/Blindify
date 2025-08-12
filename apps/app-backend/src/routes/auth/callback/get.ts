@@ -1,12 +1,6 @@
 import { env } from "#/config/env"
 import type { Handler, Schema } from "#/types/fastify"
-import type { HTTPMethods } from "fastify"
-import { logger } from "lib-logger"
 import { z } from "zod"
-
-export const method: HTTPMethods = "GET"
-
-export const url = "/auth/callback"
 
 export const schema = {
 	operationId: "authCallback",
@@ -50,8 +44,6 @@ const idTokenSchema = z.object({
 })
 
 export const handler: Handler<typeof schema> = async (request, reply) => {
-	logger.debug(`${method} ${url}`)
-
 	if (request.query.error !== undefined) {
 		return reply.code(403).send({ error: `Authotization not granted: ${request.query.error}` })
 	}

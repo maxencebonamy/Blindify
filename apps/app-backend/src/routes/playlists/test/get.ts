@@ -1,12 +1,7 @@
 import type { TrackObject } from "#/generated"
 import { getCurrentUsersProfile, getPlaylist } from "#/generated"
 import type { Handler, Schema } from "#/types/fastify"
-import type { HTTPMethods } from "fastify"
-import { logger } from "lib-logger"
-
-export const method: HTTPMethods = "GET"
-
-export const url = "/playlists/test"
+import z from "zod"
 
 const getSampleUrl = async (title: string, artist: string): Promise<string | null> => {
 	const searchUrl = `https://api.deezer.com/search/track?q=${encodeURIComponent(title)}%20${encodeURIComponent(artist)}`
@@ -27,20 +22,36 @@ const getSampleUrl = async (title: string, artist: string): Promise<string | nul
 	return track.preview
 }
 
+export const schema: Schema = {
+	operationId: "playlistsTest",
+	description: "Test",
+	tags: [ "playlists" ],
+	response: {
+		200: z.array(
+			z.object({
+				id: z.string(),
+				name: z.string(),
+				sample: z.string().nullable()
+			})
+		),
+		401: z.object({
+			error: z.string()
+		}),
+		500: z.object({
+			error: z.string()
+		})
+	}
+}
+
 export const handler: Handler = async (request, reply) => {
-	logger.debug(`${method} ${url}`)
-
 	const accessToken = request.cookies["access_token"]
-
 	if (!accessToken) {
-		reply.code(401).send({ error: "Access token missing" })
-		return
+		return reply.code(401).send({ error: "Access token missing" })
 	}
 
 	const user = await getCurrentUsersProfile({ headers: { authorization: `Bearer ${accessToken}` } })
 	if (user.error) {
-		reply.code(401).send({ error: user.error.error })
-		return
+		return reply.code(401).send({ error: user.error.error })
 	}
 
 	const fullPlaylist = await getPlaylist({
@@ -49,8 +60,7 @@ export const handler: Handler = async (request, reply) => {
 		headers: { authorization: `Bearer ${accessToken}` }
 	})
 	if (fullPlaylist.error) {
-		reply.code(500).send({ error: fullPlaylist.error.error })
-		return
+		return reply.code(500).send({ error: fullPlaylist.error.error })
 	}
 
 	const content = await Promise.all(
@@ -68,38 +78,4 @@ export const handler: Handler = async (request, reply) => {
 	)
 
 	return reply.send(content)
-}
-
-export const schema: Schema = {
-	operationId: "playlistsTest",
-	description: "Get current user's playlists",
-	tags: [ "playlists" ],
-	response: {
-		200: {
-			description: "List of user playlists",
-			type: "array",
-			items: {
-				type: "object",
-				properties: {
-					id: { type: "string" },
-					name: { type: "string" },
-					sample: { type: "string", nullable: true }
-				}
-			}
-		},
-		401: {
-			description: "Unauthorized - Access token missing or invalid",
-			type: "object",
-			properties: {
-				error: { type: "string" }
-			}
-		},
-		500: {
-			description: "Internal Server Error",
-			type: "object",
-			properties: {
-				error: { type: "string" }
-			}
-		}
-	}
 }

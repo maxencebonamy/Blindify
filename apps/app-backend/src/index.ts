@@ -6,7 +6,7 @@ import scalar from "@scalar/fastify-api-reference"
 import { logger } from "lib-logger"
 import { env } from "#/config/env"
 import { routes } from "#/routes/routes"
-import { validatorCompiler, serializerCompiler } from "fastify-type-provider-zod"
+import { validatorCompiler, serializerCompiler, jsonSchemaTransform } from "fastify-type-provider-zod"
 
 const app = Fastify()
 
@@ -31,7 +31,8 @@ app.register(swagger, {
 				description: "Blindify Backend"
 			}
 		]
-	}
+	},
+	transform: jsonSchemaTransform
 })
 
 void app.register(scalar, {

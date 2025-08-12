@@ -1,13 +1,7 @@
 import { getCurrentUsersProfile } from "#/generated"
 import { zPrivateUserObject } from "#/generated/zod.gen"
 import type { Handler, Schema } from "#/types/fastify"
-import type { HTTPMethods } from "fastify"
-import { logger } from "lib-logger"
 import z from "zod"
-
-export const method: HTTPMethods = "GET"
-
-export const url = "/auth/me"
 
 export const schema = {
 	operationId: "authMe",
@@ -25,8 +19,6 @@ export const schema = {
 } satisfies Schema
 
 export const handler: Handler<typeof schema> = async (request, reply) => {
-	logger.debug(`${method} ${url}`)
-
 	const accessToken = request.cookies["access_token"]
 	if (!accessToken) {
 		return reply.code(401).send({ error: "Access token missing" })
