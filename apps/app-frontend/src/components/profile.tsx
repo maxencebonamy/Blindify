@@ -1,6 +1,6 @@
-import { LoginButton } from "@/components/login-button"
-import { LogoutButton } from "@/components/logout-button"
-import { authMeOptions } from "@/generated/@tanstack/react-query.gen"
+import { LoginButton } from "#/components/login-button"
+import { LogoutButton } from "#/components/logout-button"
+import { authMeOptions } from "#/generated/@tanstack/react-query.gen"
 import { useQuery } from "@tanstack/react-query"
 
 export const Profile = () => {

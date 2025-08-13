@@ -22,7 +22,7 @@ export const handler: Handler<typeof schema> = async (_, reply) => {
 		response_type: "code",
 		redirect_uri: `${env.APP_URL}/auth/callback`,
 		state: generateRandomState(),
-		scope: "user-read-private user-read-email"
+		scope: "user-read-private user-read-email playlist-read-private"
 	})
 
 	return reply.redirect(spotifyUrl)

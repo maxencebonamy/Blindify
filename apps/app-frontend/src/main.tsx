@@ -8,8 +8,8 @@ import { routeTree } from "./routeTree.gen"
 import "./styles.css"
 import reportWebVitals from "./reportWebVitals.ts"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { client } from "@/generated/client.gen"
-import { env } from "@/env"
+import { client } from "#/generated/client.gen"
+import { env } from "#/env"
 
 client.setConfig({
 	baseUrl: env.VITE_BACKEND_URL,

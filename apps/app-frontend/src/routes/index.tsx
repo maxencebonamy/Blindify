@@ -1,8 +1,8 @@
-import { Playlists } from "@/components/playlists"
-import { Profile } from "@/components/profile"
-import { checkHealthOptions } from "@/generated/@tanstack/react-query.gen"
+import { Playlists } from "#/components/playlists"
+import { Profile } from "#/components/profile"
+import { checkHealthOptions } from "#/generated/@tanstack/react-query.gen"
 import { useQuery } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, Link } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/")({
 	component: App
@@ -24,6 +24,9 @@ function App() {
 					<pre>{JSON.stringify(data, null, 2)}</pre>
 				</div>
 			)}
+			<Link to="/playlists">
+				Go to playlists
+			</Link>
 		</div>
 	)
 }
