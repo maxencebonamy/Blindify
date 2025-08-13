@@ -81,6 +81,24 @@ export const zPage = <T>(zItem: z.ZodType<T>) => z.object({
 
 export type Page<T> = z.infer<ReturnType<typeof zPage<T>>>
 
+export const paginateFromAllItems = <T>(allItems: T[], page: number, limit: number): Page<T> => {
+	const totalPages = Math.max(1, Math.ceil(allItems.length / limit))
+	if (page > totalPages) page = totalPages
+
+	const startIndex = (page - 1) * limit
+	const endIndex = Math.min(startIndex + limit, allItems.length)
+
+	return {
+		page,
+		previousPage: page > 1 ? page - 1 : null,
+		nextPage: page < totalPages ? page + 1 : null,
+		pageSize: limit,
+		totalItems: allItems.length,
+		totalPages,
+		items: allItems.slice(startIndex, endIndex)
+	}
+}
+
 export const paginateFromSpotify = <T>(spotifyPage: PagingObject, items: T[]): Page<T> => {
 	const page = Math.floor(spotifyPage.offset / spotifyPage.limit) + 1
 	const totalPages = Math.max(1, Math.ceil(spotifyPage.total / spotifyPage.limit))

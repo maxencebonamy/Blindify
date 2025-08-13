@@ -1,6 +1,8 @@
-import { getAListOfCurrentUsersPlaylists } from "#/generated"
+import { getAllUserPlaylists } from "#/services/playlist"
 import type { Handler, Schema } from "#/types/fastify"
-import { paginateFromSpotify, zPage } from "#/types/page"
+import { paginateFromAllItems, zPage } from "#/types/page"
+import { zPlaylist } from "#/types/playlist.type"
+import { logger } from "lib-logger"
 import z from "zod"
 
 export const schema = {
@@ -13,13 +15,7 @@ export const schema = {
 		nameFilter: z.string().optional()
 	}),
 	response: {
-		200: zPage(z.object({
-			id: z.string(),
-			name: z.string(),
-			description: z.string().nullable(),
-			cover: z.string().nullable(),
-			totalTracks: z.number().int()
-		})),
+		200: zPage(zPlaylist),
 		401: z.object({
 			error: z.string()
 		}),
@@ -35,28 +31,16 @@ export const handler: Handler<typeof schema> = async (request, reply) => {
 		return reply.code(401).send({ error: "Access token missing" })
 	}
 
-	const spotifyPlaylists = await getAListOfCurrentUsersPlaylists({
-		query: {
-			limit: request.query.limit,
-			offset: (request.query.page - 1) * request.query.limit
-		},
-		headers: { authorization: `Bearer ${accessToken}` }
-	})
-	if (spotifyPlaylists.error) {
-		return reply.code(500).send({ error: spotifyPlaylists.error.error.message })
-	}
+	const allPlaylists = await getAllUserPlaylists(accessToken)
+	logger.debug(`all playlists: ${allPlaylists.length}`)
 
-	const spotifyPlaylistsItems = spotifyPlaylists.data.items ?? []
-	type Playlist = z.infer<typeof schema.response["200"]>["items"][number]
-	const playlists = spotifyPlaylistsItems.map(e => ({
-		id: e.id,
-		name: e.name,
-		description: e.description ?? null,
-		cover: e.images?.[0]?.url ?? null,
-		totalTracks: e.tracks?.total
-	})).filter(
-		(e): e is Playlist => e.id !== undefined && e.name !== undefined && e.totalTracks !== undefined && e.totalTracks > 0
+	const filteredPlaylists = allPlaylists.filter(
+		playlist => !request.query.nameFilter || playlist.name.toLocaleLowerCase().includes(request.query.nameFilter.toLocaleLowerCase())
 	)
+	logger.debug(`filteredPlaylists: ${filteredPlaylists.length}`)
 
-	return reply.send(paginateFromSpotify(spotifyPlaylists.data, playlists))
+	const paginatedPlaylists = paginateFromAllItems(filteredPlaylists, request.query.page, request.query.limit)
+	logger.debug(`paginatedPlaylists: ${paginatedPlaylists.totalItems}`)
+
+	return reply.send(paginatedPlaylists)
 }
