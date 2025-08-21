@@ -15,6 +15,7 @@ client.setConfig({
 	baseUrl: env.VITE_BACKEND_URL,
 	credentials: "include"
 })
+
 const queryClient = new QueryClient()
 
 // Create a new router instance
@@ -25,6 +26,13 @@ const router = createRouter({
 	scrollRestoration: true,
 	defaultStructuralSharing: true,
 	defaultPreloadStaleTime: 0
+})
+
+client.interceptors.response.use(async response => {
+	if (response.status === 401) {
+		router.navigate({ to: "/login" })
+	}
+	return response
 })
 
 // Register the router instance for type safety

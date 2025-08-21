@@ -7,15 +7,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "#/com
 import { Badge } from "#/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar"
 import { Search, ChevronLeft, ChevronRight } from "lucide-react"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, useRouter } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 import { indexUserPlaylistsOptions } from "#/generated/@tanstack/react-query.gen"
 
 export const Route = createFileRoute("/playlists/")({
-	component: PlaylistsPage
+	component: RouteComponent
 })
 
-function PlaylistsPage() {
+function RouteComponent() {
+	const router = useRouter()
+	const navigateToPlaylist = (playlistId: string) => router.navigate({ to: "/playlists/$playlistId", params: { playlistId } })
+
 	const [ nameFilter, setNameFilter ] = useState("")
 	const [ debouncedNameFilter, setDebouncedNameFilter ] = useState("")
 	const [ page, setPage ] = useState(1)
@@ -102,7 +105,11 @@ function PlaylistsPage() {
 										</TableRow>
 									)
 									: playlists?.items?.map(playlist => (
-										<TableRow key={playlist.id} className="hover:bg-muted/50">
+										<TableRow
+											key={playlist.spotifyId}
+											className="hover:bg-muted/50"
+											onClick={() => navigateToPlaylist(playlist.spotifyId)}
+										>
 											<TableCell>
 												<Avatar className="h-10 w-10 rounded-md">
 													<AvatarImage src={playlist.cover || undefined} alt={playlist.name} />
