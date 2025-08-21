@@ -1,11 +1,11 @@
 import z from "zod"
 
 export const zPlaylist = z.object({
-	spotifyId: z.string(),
+	id: z.string(),
 	name: z.string(),
 	description: z.string().nullable(),
-	cover: z.string().nullable(),
-	totalTracks: z.number().int()
+	coverUrl: z.string().nullable(),
+	totalTracks: z.number().int().min(0)
 })
 
 export type Playlist = z.infer<typeof zPlaylist>

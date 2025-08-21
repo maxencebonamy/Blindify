@@ -5,8 +5,13 @@ import swagger from "@fastify/swagger"
 import scalar from "@scalar/fastify-api-reference"
 import { logger } from "lib-logger"
 import { env } from "#/config/env"
-import { routes } from "#/routes/routes"
 import { validatorCompiler, serializerCompiler, jsonSchemaTransform } from "fastify-type-provider-zod"
+import { autoLoader } from "lib-auto-loader"
+import path from "path"
+import { fileURLToPath } from "url"
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const app = Fastify()
 
@@ -42,7 +47,9 @@ void app.register(scalar, {
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
 
-void app.register(routes)
+void app.register(autoLoader, {
+	routesDir: path.join(__dirname, "routes")
+})
 
 const start = async (): Promise<void> => {
 	try {

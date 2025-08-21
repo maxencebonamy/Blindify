@@ -1,6 +1,6 @@
-import type { Handler, Schema } from "#/types/fastify"
 import { zGame } from "#/types/game.type"
 import { generateUUID } from "#/utils/random"
+import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import { cache } from "lib-cache"
 import z from "zod"
 
@@ -20,9 +20,9 @@ export const schema = {
 			error: z.string()
 		})
 	}
-} satisfies Schema
+} satisfies AutoLoaderSchema
 
-export const handler: Handler<typeof schema> = async request => {
+export const handler: AutoLoaderHandler<typeof schema> = async request => {
 	const gameId = generateUUID()
 
 	const game = await cache.get(`game:${gameId}`, zGame)

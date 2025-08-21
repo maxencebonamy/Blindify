@@ -1,4 +1,4 @@
-import type { Handler, Schema } from "#/types/fastify"
+import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import z from "zod"
 
 export const schema = {
@@ -13,9 +13,9 @@ export const schema = {
 			error: z.string()
 		})
 	}
-} satisfies Schema
+} satisfies AutoLoaderSchema
 
-export const handler: Handler<typeof schema> = async (_, reply) => {
+export const handler: AutoLoaderHandler<typeof schema> = async (_, reply) => {
 	return reply.clearCookie("access_token", {
 		path: "/",
 		httpOnly: true,

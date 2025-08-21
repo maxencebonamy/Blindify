@@ -1,7 +1,7 @@
 import { getAllUserPlaylists } from "#/services/playlist"
-import type { Handler, Schema } from "#/types/fastify"
-import { paginateFromAllItems, zPage } from "#/types/page"
+import { paginateFromAllItems, zPage } from "#/types/page.type"
 import { zPlaylist } from "#/types/playlist.type"
+import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import z from "zod"
 
 export const schema = {
@@ -22,9 +22,9 @@ export const schema = {
 			error: z.string()
 		})
 	}
-} satisfies Schema
+} satisfies AutoLoaderSchema
 
-export const handler: Handler<typeof schema> = async (request, reply) => {
+export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
 	const accessToken = request.cookies["access_token"]
 	if (!accessToken) {
 		return reply.code(401).send({ error: "Access token missing" })

@@ -1,10 +1,10 @@
 import type { TrackObject } from "#/generated"
 import { getPlaylist } from "#/generated"
 import { getSample } from "#/services/sample"
-import type { Handler, Schema } from "#/types/fastify"
 import type { Game } from "#/types/game.type"
 import { zGame } from "#/types/game.type"
 import { generateUUID } from "#/utils/random"
+import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import { cache } from "lib-cache"
 import z from "zod"
 
@@ -25,9 +25,9 @@ export const schema = {
 			error: z.string()
 		})
 	}
-} satisfies Schema
+} satisfies AutoLoaderSchema
 
-export const handler: Handler<typeof schema> = async (request, reply) => {
+export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
 	const accessToken = request.cookies["access_token"]
 	if (!accessToken) {
 		return reply.code(401).send({ error: "Access token missing" })

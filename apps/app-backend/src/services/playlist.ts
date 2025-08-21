@@ -15,10 +15,21 @@ export const getAllUserPlaylists = async (accessToken: string): Promise<Playlist
 
 	const playlists: Playlist[] = []
 
+	const totalSpotifyPlaylists = await getAListOfCurrentUsersPlaylists({
+		query: { limit: 1 },
+		headers: { authorization: `Bearer ${accessToken}` }
+	}).then(result => {
+		if (result.error) {
+			throw new Error(`Failed to fetch total user playlists: ${result.error.error.message}`)
+		}
+		return result.data.total
+	})
+
 	const limit = 50
-	let offset = 0
-	let lastPage = false
-	while (!lastPage) {
+	const totalPages = Math.ceil(totalSpotifyPlaylists / limit)
+
+	const results = await Promise.all(Array.from({ length: totalPages }).map(async (_, i) => {
+		const offset = limit * i
 		const spotifyPlaylists = await getAListOfCurrentUsersPlaylists({
 			query: { limit, offset },
 			headers: { authorization: `Bearer ${accessToken}` }
@@ -38,11 +49,9 @@ export const getAllUserPlaylists = async (accessToken: string): Promise<Playlist
 		})).filter(
 			(playlist): playlist is Playlist => playlist.spotifyId !== undefined && playlist.name !== undefined && playlist.totalTracks > 0
 		)
-		playlists.push(...playlistsToAdd ?? [])
-
-		offset += limit
-		lastPage = spotifyPlaylists.next === null
-	}
+		return playlistsToAdd ?? []
+	}))
+	playlists.push(...results.flat().sort((a, b) => a.name.localeCompare(b.name)))
 
 	await cache.set(cacheKey, playlists)
 

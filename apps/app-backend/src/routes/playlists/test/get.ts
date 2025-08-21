@@ -1,6 +1,6 @@
 import type { TrackObject } from "#/generated"
 import { getCurrentUsersProfile, getPlaylist } from "#/generated"
-import type { Handler, Schema } from "#/types/fastify"
+import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import z from "zod"
 
 const getSampleUrl = async (title: string, artist: string): Promise<string | null> => {
@@ -22,7 +22,7 @@ const getSampleUrl = async (title: string, artist: string): Promise<string | nul
 	return track.preview
 }
 
-export const schema: Schema = {
+export const schema = {
 	operationId: "playlistsTest",
 	description: "Test",
 	tags: [ "playlists" ],
@@ -41,9 +41,9 @@ export const schema: Schema = {
 			error: z.string()
 		})
 	}
-}
+} satisfies AutoLoaderSchema
 
-export const handler: Handler = async (request, reply) => {
+export const handler: AutoLoaderHandler = async (request, reply) => {
 	const accessToken = request.cookies["access_token"]
 	if (!accessToken) {
 		return reply.code(401).send({ error: "Access token missing" })
