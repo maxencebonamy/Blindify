@@ -1,0 +1,43 @@
+import { logger } from "lib-logger"
+import path from "path"
+import { pathToFileURL } from "url"
+import fs from "fs"
+import type { AutoLoaderTask } from "#/types"
+
+type Job = {
+	cron: string
+	task: AutoLoaderTask
+}
+
+export const loadJobs = async (dir: string): Promise<Job[]> => {
+	const jobs: Job[] = []
+	const entries = fs.readdirSync(dir, { withFileTypes: true })
+
+	for (const entry of entries) {
+		const fullPath = path.join(dir, entry.name)
+
+		if (entry.isFile() && !entry.name.startsWith("_") && entry.name.endsWith(".ts")) {
+			const name = entry.name.replace(/\.ts$/, "")
+
+			const mod = await import(pathToFileURL(fullPath).href)
+			if (!mod.cron || !mod.task) {
+				throw new Error(`Missing cron or task export in ${fullPath}`)
+			}
+
+			jobs.push({
+				cron: mod.cron,
+				task: async (...params) => {
+					logger.debug(`Executing job ${name}`)
+					const start = performance.now()
+					const result = await mod.task(...params)
+					const end = performance.now()
+					const durationMs = end - start
+					logger.debug(`Finished job ${name} (${durationMs.toFixed(0)}ms)`)
+					return result
+				}
+			})
+		}
+	}
+
+	return jobs
+}
