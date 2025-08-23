@@ -24,12 +24,17 @@ export const loadJobs = async (dir: string): Promise<Job[]> => {
 				throw new Error(`Missing cron or task export in ${fullPath}`)
 			}
 
+			const debug = mod.debug !== undefined && typeof mod.debug === "boolean" && mod.debug
+
 			jobs.push({
 				cron: mod.cron,
 				task: async (...params) => {
+					if (!debug) return mod.task(...params)
+
 					logger.debug(`Executing job ${name}`)
 					const start = performance.now()
 					const result = await mod.task(...params)
+
 					const end = performance.now()
 					const durationMs = end - start
 					logger.debug(`Finished job ${name} (${durationMs.toFixed(0)}ms)`)

@@ -30,14 +30,19 @@ export const loadRoutes = async (dir: string, basePath = ""): Promise<Route[]> =
 				throw new Error(`Missing schema or handler export in ${fullPath}`)
 			}
 
+			const debug = mod.debug !== undefined && typeof mod.debug === "boolean" && mod.debug
+
 			routes.push({
 				method,
 				url,
 				schema: mod.schema,
 				handler: async (...params) => {
+					if (!debug) return mod.handler(...params)
+
 					logger.debug(`Entering ${method} ${url}`)
 					const start = performance.now()
 					const result = await mod.handler(...params)
+
 					const end = performance.now()
 					const durationMs = end - start
 					logger.debug(`Leaving ${method} ${url} (${durationMs.toFixed(0)}ms)`)

@@ -1,4 +1,5 @@
 import type { Game } from "#/types/game.type"
+import { logger } from "lib-logger"
 
 const subscribers = new Map<string, Set<NodeJS.WritableStream>>()
 
@@ -11,11 +12,11 @@ export const removeSubscriber = (gameId: string, stream: NodeJS.WritableStream):
 	subscribers.get(gameId)?.delete(stream)
 }
 
-export const broadcastGameUpdate = (gameId: string, game: Game): void => {
-	const subs = subscribers.get(gameId)
+export const broadcastGameUpdate = (game: Game): void => {
+	const subs = subscribers.get(game.id)
 	if (!subs) return
+	logger.debug(`broadcast update to ${subs.size} subscribers`)
 	for (const res of subs) {
-		res.write("event: update\n")
-		res.write(`data: ${JSON.stringify(game)}\n\n`)
+		res.write(`event: update\ndata: ${JSON.stringify(game)}\n\n`)
 	}
 }

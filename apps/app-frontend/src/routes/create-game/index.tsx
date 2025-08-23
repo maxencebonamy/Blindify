@@ -33,7 +33,7 @@ function RouteComponent() {
 	const { mutate: createGame, isPending: isCreateGamePending } = useMutation({
 		...storeGameMutation(),
 		onSuccess: game => {
-			router.navigate({ to: "/game/$gameId/preparation", params: { gameId: game.id } })
+			router.navigate({ to: "/game/$gameId", params: { gameId: game.id } })
 		}
 	})
 
@@ -130,7 +130,7 @@ function RouteComponent() {
 								<Button
 									key={count}
 									variant={settings.sampleCount === count ? "default" : "outline"}
-									onClick={() => setSettings(s => ({ ...s, samplesCount: count }))}
+									onClick={() => setSettings(s => ({ ...s, sampleCount: count }))}
 									className="flex-1"
 								>
 									{count}

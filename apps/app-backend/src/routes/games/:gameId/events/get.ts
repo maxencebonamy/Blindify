@@ -1,6 +1,5 @@
+import { env } from "#/config/env"
 import { addSubscriber, removeSubscriber } from "#/services/sse"
-import { zApiError } from "#/types/error.type"
-import { zGame } from "#/types/game.type"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import z from "zod"
 
@@ -10,11 +9,7 @@ export const schema = {
 	tags: [ "games" ],
 	params: z.object({
 		gameId: z.string()
-	}),
-	response: {
-		200: zGame,
-		500: zApiError
-	}
+	})
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
@@ -26,6 +21,9 @@ export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) 
 	reply.raw.setHeader("Content-Type", "text/event-stream")
 	reply.raw.setHeader("Cache-Control", "no-cache")
 	reply.raw.setHeader("Connection", "keep-alive")
+	reply.raw.setHeader("Access-Control-Allow-Origin", env.ALLOWED_ORIGINS)
+	reply.raw.setHeader("Access-Control-Allow-Credentials", "true")
+	reply.raw.flushHeaders?.()
 
 	addSubscriber(request.params.gameId, reply.raw)
 	request.raw.on("close", () => removeSubscriber(request.params.gameId, reply.raw))

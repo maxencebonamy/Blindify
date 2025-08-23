@@ -15,7 +15,7 @@ export const getClip = async (track: Track): Promise<string | null> => {
 		// Not found, continue
 	}
 
-	// TODO: Les princes de MZ et Nekfeu : pas le bon extrait
+	// TODO: Les princes de MZ et Nekfeu + Course Poursuite de Lefa : pas le bon extrait
 	// TODO: Too Many Nights pas trouvé à cause du "with" dans le titre
 
 	const searchUrl = `https://api.deezer.com/search/track?q=${encodeURIComponent(title)}%20${encodeURIComponent(artist)}`
