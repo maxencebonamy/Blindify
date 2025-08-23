@@ -133,6 +133,7 @@ export default [
 			"**/node_modules/**",
 			"**/dist/**",
 			"**/generated/**",
+			"**/ui/**",
 			"eslint.config.js"
 		]
 	},
@@ -164,7 +165,7 @@ export default [
 		rules: {
 			...commonRules,
 			"@typescript-eslint/explicit-function-return-type": "off",
-			"@stylistic/jsx/jsx-indent-props": "off"
+			"@stylistic/jsx-indent-props": ["warn", "tab"]
 		},
 	},
 ]

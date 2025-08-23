@@ -1,23 +1,20 @@
-import type { FastifyInstance } from "fastify"
-import type { ZodTypeProvider } from "fastify-type-provider-zod"
+import type { FastifyPluginAsync } from "fastify"
 import path from "path"
 import fs from "fs"
-import { fileURLToPath, pathToFileURL } from "url"
-import type { Handler, Schema } from "#/types/fastify"
+import { pathToFileURL } from "url"
+import type { AutoLoaderHandler, AutoLoaderSchema } from "#/types"
 import { logger } from "lib-logger"
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const routesDir = __dirname
+import type { ZodTypeProvider } from "fastify-type-provider-zod"
+import fp from "fastify-plugin"
 
 type Endpoint = {
 	method: string
 	url: string
-	schema: Schema
-	handler: Handler
+	schema: AutoLoaderSchema
+	handler: AutoLoaderHandler
 }
 
-export const endpoints: Endpoint[] = []
+const endpoints: Endpoint[] = []
 
 const loadRoutesFromDir = async (dir: string, basePath = ""): Promise<void> => {
 	const entries = fs.readdirSync(dir, { withFileTypes: true })
@@ -42,8 +39,11 @@ const loadRoutesFromDir = async (dir: string, basePath = ""): Promise<void> => {
 				schema: mod.schema,
 				handler: async (...params) => {
 					logger.debug(`Entering ${method} ${url}`)
+					const start = performance.now()
 					const result = await mod.handler(...params)
-					logger.debug(`Leaving ${method} ${url} with result:`, result)
+					const end = performance.now()
+					const durationMs = end - start
+					logger.debug(`Leaving ${method} ${url} (${durationMs.toFixed(0)}ms)`)
 					return result
 				}
 			})
@@ -51,7 +51,13 @@ const loadRoutesFromDir = async (dir: string, basePath = ""): Promise<void> => {
 	}
 }
 
-export const routes = async (app: FastifyInstance): Promise<void> => {
-	await loadRoutesFromDir(routesDir)
+type AutoLoaderOptions = {
+	routesDir: string
+}
+
+const autoLoaderAsync: FastifyPluginAsync<AutoLoaderOptions> = async (app, options) => {
+	await loadRoutesFromDir(options.routesDir)
 	await Promise.all(endpoints.map(e => app.withTypeProvider<ZodTypeProvider>().route(e)))
 }
+
+export const autoLoader = fp(autoLoaderAsync)

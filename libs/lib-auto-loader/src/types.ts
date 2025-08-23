@@ -4,9 +4,9 @@ import type {
 } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
 
-export type Schema = FastifySchema
+export type AutoLoaderSchema = FastifySchema
 
-export type Handler<Schema extends FastifySchema = FastifySchema> = RouteHandlerMethod<
+export type AutoLoaderHandler<Schema extends FastifySchema = FastifySchema> = RouteHandlerMethod<
 	RawServerDefault,
 	RawRequestDefaultExpression<RawServerDefault>,
 	RawReplyDefaultExpression<RawServerDefault>,

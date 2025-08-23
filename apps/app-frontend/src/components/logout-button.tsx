@@ -1,5 +1,5 @@
-import { authLogout } from "@/generated"
-import { authMeQueryKey } from "@/generated/@tanstack/react-query.gen"
+import { authLogout } from "#/generated"
+import { authMeQueryKey } from "#/generated/@tanstack/react-query.gen"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const LogoutButton = () => {

@@ -1,5 +1,5 @@
 import { env } from "#/config/env"
-import type { Handler, Schema } from "#/types/fastify"
+import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import { z } from "zod"
 
 export const schema = {
@@ -33,7 +33,7 @@ export const schema = {
 			error: z.string()
 		})
 	}
-} satisfies Schema
+} satisfies AutoLoaderSchema
 
 const idTokenSchema = z.object({
 	access_token: z.string(),
@@ -43,7 +43,7 @@ const idTokenSchema = z.object({
 	refresh_token: z.string().optional()
 })
 
-export const handler: Handler<typeof schema> = async (request, reply) => {
+export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
 	if (request.query.error !== undefined) {
 		return reply.code(403).send({ error: `Authotization not granted: ${request.query.error}` })
 	}

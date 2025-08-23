@@ -19,9 +19,11 @@
 		"@scalar/fastify-api-reference": "^1.31.2",
 		"fastify": "^5.3.3",
 		"fastify-type-provider-zod": "^5.0.3",
+		"lib-auto-loader": "workspace:^",
 		"lib-cache": "workspace:^",
 		"lib-env": "workspace:^",
-		"lib-logger": "workspace:^"
+		"lib-logger": "workspace:^",
+		"uuid": "^11.1.0"
 	},
 	"devDependencies": {
 		"@hey-api/openapi-ts": "^0.69.1",

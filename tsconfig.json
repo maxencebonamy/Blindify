@@ -11,6 +11,7 @@
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true,
 		"forceConsistentCasingInFileNames": true,
+		"noUncheckedIndexedAccess": true,
 		"baseUrl": ".",
 		"paths": {
 			"*": [ "node_modules/*" ]
