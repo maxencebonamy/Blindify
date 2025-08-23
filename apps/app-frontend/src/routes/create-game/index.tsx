@@ -1,15 +1,14 @@
-/* eslint-disable no-console */
-
 import { Button } from "#/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "#/components/ui/card"
 import { createFileRoute, useRouter } from "@tanstack/react-router"
 import { Music, Clock, Play, HashIcon } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import z from "zod"
-import type { GameSettings, Playlist } from "#/lib/mock"
-import { mockApi } from "#/lib/mock"
 import { zodValidator } from "@tanstack/zod-adapter"
 import { Badge } from "#/components/ui/badge"
+import { showUserPlaylistOptions, storeGameMutation } from "#/generated/@tanstack/react-query.gen"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import type { GameSettings } from "#/generated"
 
 export const Route = createFileRoute("/create-game/")({
 	component: RouteComponent,
@@ -22,48 +21,21 @@ function RouteComponent() {
 	const router = useRouter()
 	const { playlistId } = Route.useSearch()
 
-	const [ playlist, setPlaylist ] = useState<Playlist | null>(null)
-	const [ loading, setLoading ] = useState(true)
-	const [ creating, setCreating ] = useState(false)
 	const [ settings, setSettings ] = useState<GameSettings>({
-		samplesCount: 10,
+		sampleCount: 10,
 		sampleDurationMs: 5000
 	})
 
-	useEffect(() => {
-		if (playlistId) {
-			loadPlaylist()
-		}
-	}, [ playlistId ])
+	const { data: playlist, isPending, isError } = useQuery(showUserPlaylistOptions({
+		path: { playlistId }
+	}))
 
-	const loadPlaylist = async () => {
-		try {
-			setLoading(true)
-			// In a real app, we'd fetch the specific playlist
-			const response = await mockApi.getPlaylists(1, 20)
-			const foundPlaylist = response.items.find(p => p.id === playlistId)
-			setPlaylist(foundPlaylist || null)
-		} catch (error) {
-			console.error("[v0] Error loading playlist:", error)
-		} finally {
-			setLoading(false)
-		}
-	}
-
-	const handleStartGame = async () => {
-		if (!playlist) return
-
-		try {
-			setCreating(true)
-			console.log("[v0] Creating game with settings:", settings)
-			const game = await mockApi.createGame(playlist.id, settings)
+	const { mutate: createGame, isPending: isCreateGamePending } = useMutation({
+		...storeGameMutation(),
+		onSuccess: game => {
 			router.navigate({ to: "/game/$gameId/preparation", params: { gameId: game.id } })
-		} catch (error) {
-			console.error("[v0] Error creating game:", error)
-		} finally {
-			setCreating(false)
 		}
-	}
+	})
 
 	const sampleOptions = [ 10, 20, 30 ] as const
 	const durationOptions = [
@@ -73,20 +45,20 @@ function RouteComponent() {
 		{ value: 20000, label: "20s" }
 	] as const
 
-	if (loading) {
+	if (isPending || isError || !playlist) {
 		return (
 			<div className="min-h-screen bg-gradient-to-br from-background via-card to-muted flex items-center justify-center">
 				<div className="text-center space-y-4">
 					<div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto animate-pulse">
 						<Music className="w-8 h-8 text-primary-foreground" />
 					</div>
-					<p className="text-muted-foreground">Loading playlist...</p>
+					<p className="text-muted-foreground"> Loading playlist... </p>
 				</div>
 			</div>
 		)
 	}
 
-	if (!playlist) {
+	if (isError || !playlist) {
 		return (
 			<div className="min-h-screen bg-gradient-to-br from-background via-card to-muted flex items-center justify-center">
 				<Card className="max-w-md">
@@ -157,7 +129,7 @@ function RouteComponent() {
 							{sampleOptions.map(count => (
 								<Button
 									key={count}
-									variant={settings.samplesCount === count ? "default" : "outline"}
+									variant={settings.sampleCount === count ? "default" : "outline"}
 									onClick={() => setSettings(s => ({ ...s, samplesCount: count }))}
 									className="flex-1"
 								>
@@ -206,7 +178,7 @@ function RouteComponent() {
 						<div className="flex justify-between items-center">
 							<span>Samples:</span>
 							<Badge variant="secondary">
-								{settings.samplesCount}
+								{settings.sampleCount}
 								{" "}
 								songs
 							</Badge>
@@ -222,7 +194,7 @@ function RouteComponent() {
 							<span>Estimated total time:</span>
 							<Badge variant="secondary">
 								~
-								{Math.round((settings.samplesCount * (settings.sampleDurationMs + 10000)) / 60000)}
+								{Math.round((settings.sampleCount * (settings.sampleDurationMs + 10000)) / 60000)}
 								{" "}
 								minutes
 							</Badge>
@@ -231,9 +203,14 @@ function RouteComponent() {
 				</Card>
 
 				{/* Start Game Button */}
-				<Button onClick={handleStartGame} disabled={creating} size="lg" className="w-full gap-2 pulse-glow">
+				<Button
+					onClick={() => createGame({ body: { playlistId, settings } })}
+					disabled={isCreateGamePending}
+					size="lg"
+					className="w-full gap-2 pulse-glow"
+				>
 					<Play className="w-5 h-5" />
-					{creating ? "Creating Game..." : "Start Game"}
+					{isCreateGamePending ? "Creating Game..." : "Start Game"}
 				</Button>
 			</div>
 		</div>

@@ -1,5 +1,5 @@
-import { getAListOfCurrentUsersPlaylists } from "#/generated"
-import { zPlaylist, type Playlist } from "#/types/playlist.type"
+import { getAListOfCurrentUsersPlaylists, getPlaylist } from "#/generated"
+import { fromSpotifyPlaylist, zPlaylist, type Playlist } from "#/types/playlist.type"
 import { cache } from "lib-cache"
 import z from "zod"
 
@@ -40,15 +40,7 @@ export const getAllUserPlaylists = async (accessToken: string): Promise<Playlist
 			return result.data
 		})
 
-		const playlistsToAdd = spotifyPlaylists.items?.map(item => ({
-			spotifyId: item.id,
-			name: item.name,
-			description: item.description ?? null,
-			cover: item.images?.[0]?.url ?? null,
-			totalTracks: item.tracks?.total ?? 0
-		})).filter(
-			(playlist): playlist is Playlist => playlist.spotifyId !== undefined && playlist.name !== undefined && playlist.totalTracks > 0
-		)
+		const playlistsToAdd = spotifyPlaylists.items?.map(fromSpotifyPlaylist).filter(e => e !== null)
 		return playlistsToAdd ?? []
 	}))
 	playlists.push(...results.flat().sort((a, b) => a.name.localeCompare(b.name)))
@@ -56,4 +48,35 @@ export const getAllUserPlaylists = async (accessToken: string): Promise<Playlist
 	await cache.set(cacheKey, playlists)
 
 	return playlists
+}
+
+export const getPlaylistById = async (accessToken: string, playlistId: string): Promise<Playlist> => {
+	const cacheKey = `users:${accessToken}:playlists`
+
+	try {
+		const allPlaylists = await cache.get(cacheKey, z.array(zPlaylist))
+		const playlist = allPlaylists.find(e => e.id === playlistId)
+		if (playlist) {
+			return playlist
+		}
+	} catch {
+		// Not found, continue
+	}
+
+	const spotifyPlaylist = await getPlaylist({
+		path: { playlist_id: playlistId },
+		headers: { authorization: `Bearer ${accessToken}` }
+	}).then(result => {
+		if (result.error) {
+			throw new Error(`Failed to fetch playlist: ${result.error.error.message}`)
+		}
+		return result.data
+	})
+
+	const playlist = fromSpotifyPlaylist(spotifyPlaylist)
+	if (playlist === null) {
+		throw new Error("Failed to convert Spotify playlist")
+	}
+
+	return playlist
 }

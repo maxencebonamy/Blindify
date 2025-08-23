@@ -1,11 +1,10 @@
-/* eslint-disable no-console */
-
+import { AudioPlayer } from "#/components/audio-player"
 import { ProgressBar } from "#/components/progress-bar"
 import { Badge } from "#/components/ui/badge"
 import { Button } from "#/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "#/components/ui/card"
-import type { Game, Track } from "#/lib/mock"
-import { mockApi } from "#/lib/mock"
+import { nextSampleGameMutation, showGameOptions, showSampleGameOptions, showTrackGameOptions } from "#/generated/@tanstack/react-query.gen"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { createFileRoute, useRouter } from "@tanstack/react-router"
 import { Music, ArrowRight, Play } from "lucide-react"
 import { useState, useEffect } from "react"
@@ -18,17 +17,30 @@ function RouteComponent() {
 	const router = useRouter()
 	const { gameId } = Route.useParams()
 
-	const [ game, setGame ] = useState<Game | null>(null)
-	const [ track, setTrack ] = useState<Track | null>(null)
 	const [ progress, setProgress ] = useState(0)
 	const [ isPlaying, setIsPlaying ] = useState(false)
 	const [ revealed, setRevealed ] = useState(false)
 
-	useEffect(() => {
-		if (gameId) {
-			loadGameAndTrack()
+	const { data: game } = useQuery(showGameOptions({ path: { gameId } }))
+	const { data: sample } = useQuery(showSampleGameOptions({ path: { gameId } }))
+	const { data: track } = useQuery(showTrackGameOptions({ path: { gameId } }))
+
+	const [ hasNext, setHasNext ] = useState(false)
+	const { mutate: nextSample } = useMutation({
+		...nextSampleGameMutation(),
+		retry: 10,
+		retryDelay: 200,
+		onSuccess: () => {
+			if (!game) return
+			const isLastSample = game.currentSampleIndex >= game.samples.length - 1
+
+			if (isLastSample) {
+				router.navigate({ to: "/game/$gameId/end", params: { gameId } })
+			} else {
+				router.navigate({ to: "/game/$gameId/listening", params: { gameId } })
+			}
 		}
-	}, [ gameId ])
+	})
 
 	useEffect(() => {
 		if (track && game) {
@@ -36,21 +48,7 @@ function RouteComponent() {
 		}
 	}, [ track, game ])
 
-	const loadGameAndTrack = async () => {
-		try {
-			console.log("[v0] Loading game and track info for game:", gameId)
-			const [ gameData, trackData ] = await Promise.all([ mockApi.getGame(gameId), mockApi.revealTrack(gameId) ])
-
-			setGame(gameData)
-			setTrack(trackData)
-		} catch (error) {
-			console.error("[v0] Error loading game and track:", error)
-		}
-	}
-
 	const startRevealSequence = () => {
-		console.log("[v0] Starting reveal sequence")
-
 		// Start with blur effect, then reveal after 1 second
 		setTimeout(() => {
 			setRevealed(true)
@@ -59,7 +57,6 @@ function RouteComponent() {
 	}
 
 	const startExtendedPlayback = () => {
-		console.log("[v0] Starting extended playback")
 		setIsPlaying(true)
 		setProgress(0)
 
@@ -75,7 +72,7 @@ function RouteComponent() {
 				clearInterval(progressInterval)
 				setIsPlaying(false)
 				setProgress(100)
-				handleNextStep()
+				// handleNextStep()
 			} else {
 				setProgress(newProgress)
 			}
@@ -83,26 +80,17 @@ function RouteComponent() {
 	}
 
 	const handleNextStep = () => {
-		if (!game) return
+		if (!game || hasNext) return
 
-		const isLastSample = game.currentSampleIndex >= game.samples.length - 1
-
-		if (isLastSample) {
-			console.log("[v0] Last sample completed, going to end screen")
-			router.navigate({ to: "/game/$gameId/end", params: { gameId } })
-		} else {
-			console.log("[v0] Going to next sample")
-			// In a real app, we'd update the game state here
-			router.navigate({ to: "/game/$gameId/listening", params: { gameId } })
-		}
+		setHasNext(true)
+		nextSample({ path: { gameId } })
 	}
 
 	const handleSkip = () => {
-		console.log("[v0] User skipped extended playback")
 		handleNextStep()
 	}
 
-	if (!game || !track) {
+	if (!game || !track || !sample) {
 		return (
 			<div className="min-h-screen bg-gradient-to-br from-background via-card to-muted flex items-center justify-center">
 				<div className="text-center space-y-4">
@@ -142,6 +130,7 @@ function RouteComponent() {
 						</CardTitle>
 					</CardHeader>
 					<CardContent className="space-y-6">
+						<AudioPlayer url={sample.clipUrl} startTime={game.settings.sampleDurationMs} />
 						{/* Album Cover and Track Info */}
 						<div
 							className={`text-center space-y-4 transition-all duration-1000 ${

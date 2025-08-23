@@ -1,12 +1,11 @@
-/* eslint-disable no-console */
-
 import { Button } from "#/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "#/components/ui/card"
 import { Input } from "#/components/ui/input"
-import { type Playlist, mockApi } from "#/lib/mock"
+import { indexUserPlaylistsOptions } from "#/generated/@tanstack/react-query.gen"
+import { useQuery } from "@tanstack/react-query"
 import { createFileRoute, useRouter } from "@tanstack/react-router"
-import { Music, Search, Play, ChevronLeft, ChevronRight } from "lucide-react"
-import { useState, useEffect } from "react"
+import { Music, TriangleAlert, Search, Play, ChevronLeft, ChevronRight } from "lucide-react"
+import { useState } from "react"
 
 export const Route = createFileRoute("/")({
 	component: RouteComponent
@@ -14,32 +13,16 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
 	const router = useRouter()
-	const [ playlists, setPlaylists ] = useState<Playlist[]>([])
-	const [ loading, setLoading ] = useState(true)
+
 	const [ selectedPlaylist, setSelectedPlaylist ] = useState<string | null>(null)
-	const [ currentPage, setCurrentPage ] = useState(1)
-	const [ totalPages, setTotalPages ] = useState(1)
-	const [ searchQuery, setSearchQuery ] = useState("")
+	const [ page, setPage ] = useState(1)
+	const [ search, setSearch ] = useState("")
 
-	useEffect(() => {
-		loadPlaylists()
-	}, [ currentPage ])
-
-	const loadPlaylists = async () => {
-		try {
-			setLoading(true)
-			const response = await mockApi.getPlaylists(currentPage, 6)
-			setPlaylists(response.items)
-			setTotalPages(response.totalPages)
-		} catch (error) {
-			console.error("[v0] Error loading playlists:", error)
-		} finally {
-			setLoading(false)
-		}
-	}
+	const { data: playlists, isPending, isError } = useQuery(indexUserPlaylistsOptions({
+		query: { limit: 20, page, search }
+	}))
 
 	const handlePlayPlaylist = (playlistId: string) => {
-		console.log(`[v0] Playing playlist ${playlistId}`)
 		router.navigate({ to: "/create-game", search: { playlistId } })
 	}
 
@@ -49,12 +32,7 @@ function RouteComponent() {
 		}
 	}
 
-	const filteredPlaylists = playlists.filter(
-		playlist => playlist.name.toLowerCase().includes(searchQuery.toLowerCase())
-			|| playlist.description?.toLowerCase().includes(searchQuery.toLowerCase())
-	)
-
-	if (loading) {
+	if (isPending) {
 		return (
 			<div className="min-h-screen bg-gradient-to-br from-background via-card to-muted flex items-center justify-center">
 				<div className="text-center space-y-4">
@@ -62,6 +40,19 @@ function RouteComponent() {
 						<Music className="w-8 h-8 text-primary-foreground" />
 					</div>
 					<p className="text-muted-foreground">Loading your playlists...</p>
+				</div>
+			</div>
+		)
+	}
+
+	if (isError || !playlists) {
+		return (
+			<div className="min-h-screen bg-gradient-to-br from-background via-card to-muted flex items-center justify-center">
+				<div className="text-center space-y-4">
+					<div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto animate-pulse">
+						<TriangleAlert className="w-8 h-8 text-destructive-foreground" />
+					</div>
+					<p className="text-muted-foreground">An error occurred when loading your playlists.</p>
 				</div>
 			</div>
 		)
@@ -81,15 +72,15 @@ function RouteComponent() {
 					<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
 					<Input
 						placeholder="Search playlists..."
-						value={searchQuery}
-						onChange={e => setSearchQuery(e.target.value)}
+						value={search}
+						onChange={e => setSearch(e.target.value)}
 						className="pl-10"
 					/>
 				</div>
 
 				{/* Playlists Grid */}
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{filteredPlaylists.map(playlist => (
+					{playlists.items.map(playlist => (
 						<Card
 							key={playlist.id}
 							className={`cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg ${
@@ -133,12 +124,12 @@ function RouteComponent() {
 				</div>
 
 				{/* Pagination */}
-				{totalPages > 1 && (
+				{playlists.totalPages > 1 && (
 					<div className="flex items-center justify-center gap-4">
 						<Button
 							variant="outline"
-							onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-							disabled={currentPage === 1}
+							onClick={() => setPage(p => Math.max(1, p - 1))}
+							disabled={page === 1}
 						>
 							<ChevronLeft className="w-4 h-4" />
 							Previous
@@ -146,15 +137,15 @@ function RouteComponent() {
 						<span className="text-sm text-muted-foreground">
 							Page
 							{" "}
-							{currentPage}
+							{page}
 							{" "}
 							of
-							{totalPages}
+							{playlists.totalPages}
 						</span>
 						<Button
 							variant="outline"
-							onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-							disabled={currentPage === totalPages}
+							onClick={() => setPage(p => Math.min(playlists.totalPages, p + 1))}
+							disabled={page === playlists.totalPages}
 						>
 							Next
 							<ChevronRight className="w-4 h-4" />

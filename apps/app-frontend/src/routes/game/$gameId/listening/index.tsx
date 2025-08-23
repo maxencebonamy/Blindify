@@ -1,11 +1,10 @@
-/* eslint-disable no-console */
-
+import { AudioPlayer } from "#/components/audio-player"
 import { ProgressBar } from "#/components/progress-bar"
 import { Badge } from "#/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardContent } from "#/components/ui/card"
 import { WaveformAnimation } from "#/components/waveform-animation"
-import type { Game, Sample } from "#/lib/mock"
-import { mockApi } from "#/lib/mock"
+import { showGameOptions, showSampleGameOptions } from "#/generated/@tanstack/react-query.gen"
+import { useQuery } from "@tanstack/react-query"
 import { createFileRoute, useRouter } from "@tanstack/react-router"
 import { Music, Volume2 } from "lucide-react"
 import { useState, useEffect } from "react"
@@ -18,16 +17,14 @@ function RouteComponent() {
 	const router = useRouter()
 	const { gameId } = Route.useParams()
 
-	const [ game, setGame ] = useState<Game | null>(null)
-	const [ sample, setSample ] = useState<Sample | null>(null)
 	const [ progress, setProgress ] = useState(0)
 	const [ isPlaying, setIsPlaying ] = useState(false)
 
-	useEffect(() => {
-		if (gameId) {
-			loadGameAndSample()
-		}
-	}, [ gameId ])
+	const { data: game } = useQuery(showGameOptions({ path: { gameId } }))
+	const { data: sample } = useQuery(showSampleGameOptions({ path: { gameId } }))
+
+	// const isPending = gameQuery.isPending || sampleQuery.isPending
+	// const isError = gameQuery.isError || sampleQuery.isError
 
 	useEffect(() => {
 		if (sample && game) {
@@ -35,22 +32,9 @@ function RouteComponent() {
 		}
 	}, [ sample, game ])
 
-	const loadGameAndSample = async () => {
-		try {
-			console.log("[v0] Loading game and sample for game:", gameId)
-			const [ gameData, sampleData ] = await Promise.all([ mockApi.getGame(gameId), mockApi.getNextSample(gameId) ])
-
-			setGame(gameData)
-			setSample(sampleData)
-		} catch (error) {
-			console.error("[v0] Error loading game and sample:", error)
-		}
-	}
-
 	const startPlayback = () => {
 		if (!game) return
 
-		console.log("[v0] Starting sample playback")
 		setIsPlaying(true)
 		setProgress(0)
 
@@ -119,6 +103,8 @@ function RouteComponent() {
 						<div className="flex justify-center">
 							<WaveformAnimation isPlaying={isPlaying} className="h-20" />
 						</div>
+
+						<AudioPlayer url={sample.clipUrl} />
 
 						{/* Progress Bar */}
 						<ProgressBar progress={progress} duration={game.settings.sampleDurationMs} />

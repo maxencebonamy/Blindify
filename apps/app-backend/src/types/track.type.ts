@@ -1,12 +1,13 @@
 import z from "zod"
 
 export const zTrack = z.object({
-	spotifyId: z.string(),
+	id: z.string(),
 	title: z.string(),
-	artist: z.string(),
+	artists: z.array(z.string()).min(1),
 	album: z.string(),
-	cover: z.string().nullable(),
-	sample: z.string().nullable()
+	coverUrl: z.string().nullable()
 })
 
 export type Track = z.infer<typeof zTrack>
+
+z.globalRegistry.add(zTrack, { id: "Track" })

@@ -42,21 +42,18 @@ export const getAllTracksFromPlaylist = async (accessToken: string, spotifyPlayl
 			if (!spotifyTrack || spotifyTrack.type === "episode") return null
 
 			const title = spotifyTrack.name
-			const artist = spotifyTrack.artists?.map(e => e.name).join(", ")
-			if (!title || !artist || artist.length === 0) return null
-
-			// const sample = await getSample(title, artist)
+			const artists = spotifyTrack.artists?.map(e => e.name)
+			if (!title || !artists || artists.length === 0) return null
 
 			return {
-				spotifyId: spotifyTrack.id,
+				id: spotifyTrack.id,
 				title,
-				artist,
+				artists,
 				album: spotifyTrack.album?.name,
-				cover: spotifyTrack.album?.images[0]?.url ?? null,
-				sample: null as string | null
+				coverUrl: spotifyTrack.album?.images[0]?.url ?? null
 			}
 		}) ?? [])).filter(
-			(track): track is Track => track?.spotifyId !== undefined && track.album !== undefined
+			(track): track is Track => track?.id !== undefined && track.album !== undefined
 		)
 		tracks.push(...tracksToAdd ?? [])
 

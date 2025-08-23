@@ -1,65 +1,34 @@
-import type { TrackObject } from "#/generated"
-import { getPlaylist } from "#/generated"
-import { getSample } from "#/services/sample"
-import type { Game } from "#/types/game.type"
-import { zGame } from "#/types/game.type"
-import { generateUUID } from "#/utils/random"
+import { createGame, loadGame } from "#/services/game"
+import { getPlaylistById } from "#/services/playlist"
+import { zApiError } from "#/types/error.type"
+import { zGame, zGameSettings } from "#/types/game.type"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
-import { cache } from "lib-cache"
 import z from "zod"
 
 export const schema = {
-	operationId: "createGame",
+	operationId: "storeGame",
 	description: "Create a new game",
 	tags: [ "games" ],
-	body: zGame.pick({
-		playlistId: true,
-		nbRounds: true,
-		samplesDuration: true
+	body: z.object({
+		playlistId: z.string(),
+		settings: zGameSettings
 	}),
 	response: {
-		200: z.object({
-			id: z.string()
-		}),
-		500: z.object({
-			error: z.string()
-		})
+		200: zGame,
+		500: zApiError
 	}
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
 	const accessToken = request.cookies["access_token"]
 	if (!accessToken) {
-		return reply.code(401).send({ error: "Access token missing" })
+		return reply.code(401).send({ message: "Access token missing" })
 	}
 
-	const gameId = generateUUID()
+	const playlist = await getPlaylistById(accessToken, request.body.playlistId)
 
-	const playlist = await getPlaylist({
-		path: { playlist_id: request.body.playlistId },
-		query: { market: "IT" },
-		headers: { authorization: `Bearer ${accessToken}` }
-	})
-	if (playlist.error) {
-		return reply.code(500).send({ error: playlist.error.error.message })
-	}
+	const game = await createGame(playlist, request.body.settings)
+	void loadGame(accessToken, game)
 
-	const items = playlist.data.tracks?.items ?? []
-	if (items.length === 0) {
-		return reply.code(500).send({ error: "Playlist not found or empty" })
-	}
-
-	const tracks = items.map(item => item.track as unknown as TrackObject)
-	const samples = await Promise.all(tracks.map(track => getSample(track.name ?? "", track.artists ?? [])))
-
-	const itemsWithSample = items.filter(item => item.preview)
-
-	await cache.set(`game:${gameId}`, {
-		playlistId: request.body.playlistId,
-		nbRounds: request.body.nbRounds,
-		samplesDuration: request.body.samplesDuration,
-		trackIds: items.map(item => item.id ?? "")
-	} satisfies Game)
-
-	return reply.send({ id: gameId })
+	return reply.send(game)
 }

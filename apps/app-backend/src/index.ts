@@ -5,7 +5,7 @@ import swagger from "@fastify/swagger"
 import scalar from "@scalar/fastify-api-reference"
 import { logger } from "lib-logger"
 import { env } from "#/config/env"
-import { validatorCompiler, serializerCompiler, jsonSchemaTransform } from "fastify-type-provider-zod"
+import { validatorCompiler, serializerCompiler, jsonSchemaTransformObject, jsonSchemaTransform } from "fastify-type-provider-zod"
 import { autoLoader } from "lib-auto-loader"
 import path from "path"
 import { fileURLToPath } from "url"
@@ -17,10 +17,14 @@ const app = Fastify()
 
 app.register(cors, {
 	origin: env.ALLOWED_ORIGINS,
-	credentials: true
+	credentials: true,
+	methods: [ "GET", "POST", "PATCH" ]
 })
 
 app.register(cookie)
+
+app.setValidatorCompiler(validatorCompiler)
+app.setSerializerCompiler(serializerCompiler)
 
 app.register(swagger, {
 	openapi: {
@@ -37,15 +41,13 @@ app.register(swagger, {
 			}
 		]
 	},
-	transform: jsonSchemaTransform
+	transform: jsonSchemaTransform,
+	transformObject: jsonSchemaTransformObject
 })
 
 void app.register(scalar, {
 	routePrefix: "/docs"
 })
-
-app.setValidatorCompiler(validatorCompiler)
-app.setSerializerCompiler(serializerCompiler)
 
 void app.register(autoLoader, {
 	routesDir: path.join(__dirname, "routes")

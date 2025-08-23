@@ -1,7 +1,6 @@
-/* eslint-disable no-console */
-
 import { Card, CardContent } from "#/components/ui/card"
-import { type Game, mockApi } from "#/lib/mock"
+import { showGameOptions } from "#/generated/@tanstack/react-query.gen"
+import { useQuery } from "@tanstack/react-query"
 import { createFileRoute, useRouter } from "@tanstack/react-router"
 import { MinusIcon, MusicIcon } from "lucide-react"
 import { useState, useEffect } from "react"
@@ -14,34 +13,22 @@ function RouteComponent() {
 	const router = useRouter()
 	const { gameId } = Route.useParams()
 
-	const [ game, setGame ] = useState<Game | null>(null)
 	const [ countdown, setCountdown ] = useState<number | null>(null)
 
+	const { data: game, isPending } = useQuery({
+		...showGameOptions({
+			path: { gameId }
+		}),
+		retry: 60,
+		retryDelay: 2000
+	})
+
 	useEffect(() => {
-		if (gameId) {
-			pollGameStatus()
-		}
-	}, [ gameId ])
-
-	const pollGameStatus = async () => {
-		try {
-			console.log("[v0] Polling game status for game:", gameId)
-			const gameData = await mockApi.getGame(gameId)
-			setGame(gameData)
-
-			if (gameData.status === "ready") {
-				startCountdown()
-			} else if (gameData.status === "loading") {
-				// Continue polling
-				setTimeout(pollGameStatus, 1000)
-			}
-		} catch (error) {
-			console.error("[v0] Error polling game status:", error)
-		}
-	}
+		if (!game) return
+		startCountdown()
+	}, [ isPending ])
 
 	const startCountdown = () => {
-		console.log("[v0] Starting countdown")
 		setCountdown(3)
 
 		const countdownInterval = setInterval(() => {
