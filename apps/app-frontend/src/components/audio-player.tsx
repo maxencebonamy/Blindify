@@ -25,5 +25,5 @@ export const AudioPlayer = ({ url, startTime = 0 }: AudioPlayerProps) => {
 		}
 	}, [ url, startTime ])
 
-	return <audio ref={audioRef} src={url} hidden />
+	return <audio ref={audioRef} src={url} hidden loop />
 }

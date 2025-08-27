@@ -16,6 +16,7 @@ import { Route as PlaylistsIndexImport } from './routes/playlists/index'
 import { Route as LoginIndexImport } from './routes/login/index'
 import { Route as CreateGameIndexImport } from './routes/create-game/index'
 import { Route as GameGameIdIndexImport } from './routes/game/$gameId/index'
+import { Route as GameDevGameIdIndexImport } from './routes/game-dev/$gameId/index'
 import { Route as GameGameIdRevealIndexImport } from './routes/game/$gameId/reveal/index'
 import { Route as GameGameIdPreparationIndexImport } from './routes/game/$gameId/preparation/index'
 import { Route as GameGameIdListeningIndexImport } from './routes/game/$gameId/listening/index'
@@ -50,6 +51,12 @@ const CreateGameIndexRoute = CreateGameIndexImport.update({
 const GameGameIdIndexRoute = GameGameIdIndexImport.update({
   id: '/game/$gameId/',
   path: '/game/$gameId/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const GameDevGameIdIndexRoute = GameDevGameIdIndexImport.update({
+  id: '/game-dev/$gameId/',
+  path: '/game-dev/$gameId/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -111,6 +118,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlaylistsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/game-dev/$gameId/': {
+      id: '/game-dev/$gameId/'
+      path: '/game-dev/$gameId'
+      fullPath: '/game-dev/$gameId'
+      preLoaderRoute: typeof GameDevGameIdIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/game/$gameId/': {
       id: '/game/$gameId/'
       path: '/game/$gameId'
@@ -156,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/create-game': typeof CreateGameIndexRoute
   '/login': typeof LoginIndexRoute
   '/playlists': typeof PlaylistsIndexRoute
+  '/game-dev/$gameId': typeof GameDevGameIdIndexRoute
   '/game/$gameId': typeof GameGameIdIndexRoute
   '/game/$gameId/end': typeof GameGameIdEndIndexRoute
   '/game/$gameId/listening': typeof GameGameIdListeningIndexRoute
@@ -168,6 +183,7 @@ export interface FileRoutesByTo {
   '/create-game': typeof CreateGameIndexRoute
   '/login': typeof LoginIndexRoute
   '/playlists': typeof PlaylistsIndexRoute
+  '/game-dev/$gameId': typeof GameDevGameIdIndexRoute
   '/game/$gameId': typeof GameGameIdIndexRoute
   '/game/$gameId/end': typeof GameGameIdEndIndexRoute
   '/game/$gameId/listening': typeof GameGameIdListeningIndexRoute
@@ -181,6 +197,7 @@ export interface FileRoutesById {
   '/create-game/': typeof CreateGameIndexRoute
   '/login/': typeof LoginIndexRoute
   '/playlists/': typeof PlaylistsIndexRoute
+  '/game-dev/$gameId/': typeof GameDevGameIdIndexRoute
   '/game/$gameId/': typeof GameGameIdIndexRoute
   '/game/$gameId/end/': typeof GameGameIdEndIndexRoute
   '/game/$gameId/listening/': typeof GameGameIdListeningIndexRoute
@@ -195,6 +212,7 @@ export interface FileRouteTypes {
     | '/create-game'
     | '/login'
     | '/playlists'
+    | '/game-dev/$gameId'
     | '/game/$gameId'
     | '/game/$gameId/end'
     | '/game/$gameId/listening'
@@ -206,6 +224,7 @@ export interface FileRouteTypes {
     | '/create-game'
     | '/login'
     | '/playlists'
+    | '/game-dev/$gameId'
     | '/game/$gameId'
     | '/game/$gameId/end'
     | '/game/$gameId/listening'
@@ -217,6 +236,7 @@ export interface FileRouteTypes {
     | '/create-game/'
     | '/login/'
     | '/playlists/'
+    | '/game-dev/$gameId/'
     | '/game/$gameId/'
     | '/game/$gameId/end/'
     | '/game/$gameId/listening/'
@@ -230,6 +250,7 @@ export interface RootRouteChildren {
   CreateGameIndexRoute: typeof CreateGameIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   PlaylistsIndexRoute: typeof PlaylistsIndexRoute
+  GameDevGameIdIndexRoute: typeof GameDevGameIdIndexRoute
   GameGameIdIndexRoute: typeof GameGameIdIndexRoute
   GameGameIdEndIndexRoute: typeof GameGameIdEndIndexRoute
   GameGameIdListeningIndexRoute: typeof GameGameIdListeningIndexRoute
@@ -242,6 +263,7 @@ const rootRouteChildren: RootRouteChildren = {
   CreateGameIndexRoute: CreateGameIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   PlaylistsIndexRoute: PlaylistsIndexRoute,
+  GameDevGameIdIndexRoute: GameDevGameIdIndexRoute,
   GameGameIdIndexRoute: GameGameIdIndexRoute,
   GameGameIdEndIndexRoute: GameGameIdEndIndexRoute,
   GameGameIdListeningIndexRoute: GameGameIdListeningIndexRoute,
@@ -263,6 +285,7 @@ export const routeTree = rootRoute
         "/create-game/",
         "/login/",
         "/playlists/",
+        "/game-dev/$gameId/",
         "/game/$gameId/",
         "/game/$gameId/end/",
         "/game/$gameId/listening/",
@@ -281,6 +304,9 @@ export const routeTree = rootRoute
     },
     "/playlists/": {
       "filePath": "playlists/index.tsx"
+    },
+    "/game-dev/$gameId/": {
+      "filePath": "game-dev/$gameId/index.tsx"
     },
     "/game/$gameId/": {
       "filePath": "game/$gameId/index.tsx"
