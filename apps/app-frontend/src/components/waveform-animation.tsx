@@ -1,22 +1,49 @@
-import { useState } from "react"
+import { cn } from "#/utils/tailwind.util"
+import { useEffect, useState } from "react"
 
 type WaveformAnimationProps = {
-	isPlaying: boolean
+	barCount: number
 	className?: string
 }
 
-export function WaveformAnimation({ isPlaying, className = "" }: WaveformAnimationProps) {
-	const [ bars ] = useState(() => Array.from({ length: 20 }, (_, i) => i))
+export function WaveformAnimation({ barCount, className = "" }: WaveformAnimationProps) {
+	const [ bars, setBars ] = useState(() => Array.from({ length: barCount }, () => 100))
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			setBars(Array.from({ length: barCount }, () => Math.max(20, Math.random() * 100)))
+		}, 1000 / 5)
+
+		return () => clearInterval(timer)
+	}, [ barCount ])
+
+	const tailwind = cn(
+		// Layout
+		"flex items-center gap-2",
+		// Appearance
+		"",
+		// Interaction
+		"",
+		className
+	)
+
+	const barTailwind = cn(
+		// Layout
+		"w-2",
+		// Appearance
+		"rounded-full bg-primary border-2 border-foreground shadow-neo-sm",
+		// Interaction
+		"transition-all duration-200 ease-linear"
+	)
 
 	return (
-		<div className={`flex items-center justify-center gap-1 ${className}`}>
-			{bars.map(bar => (
+		<div className={tailwind}>
+			{bars.map((bar, index) => (
 				<div
-					key={bar}
-					className={`w-1 bg-primary rounded-full transition-all duration-300 ${isPlaying ? "waveform-bar" : "h-2"}`}
+					key={index}
+					className={barTailwind}
 					style={{
-						height: isPlaying ? `${Math.random() * 40 + 10}px` : "8px",
-						animationDelay: `${bar * 0.1}s`
+						height: `${bar}%`
 					}}
 				/>
 			))}

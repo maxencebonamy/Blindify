@@ -1,8 +1,10 @@
 import { AudioPlayer } from "#/components/audio-player"
 import { Button } from "#/components/button"
 import { Icon } from "#/components/icon"
+import { PlaylistIndicator } from "#/components/playlist-indicator"
 import { RoundIndicator, type RoundIndicatorProps } from "#/components/round-indicator"
 import { TimedProgressBar } from "#/components/timed-progress-bar"
+import { TrackInfo } from "#/components/track-info"
 import { Badge } from "#/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardContent } from "#/components/ui/card"
 import { WaveformAnimation } from "#/components/waveform-animation"
@@ -26,57 +28,65 @@ const mockGame = (id: string): Game => ({
 	},
 	settings: {
 		sampleCount: 10,
-		sampleDurationMs: 10000
+		sampleDurationMs: 5000
 	},
 	samples: [
 		{
-			id: "6f88c1d2-9770-497d-a309-27cc489aa75a",
+			id: "7dcb6978-cb34-4112-a63d-f4f91c90aea7",
 			order: 0
 		},
 		{
-			id: "5d0fdb64-91a5-420e-8bbd-97af3c4e658d",
+			id: "4c1af51b-8d5c-4d25-89cb-fa3c7f6e6ece",
 			order: 1
 		},
 		{
-			id: "f01dc929-f659-453f-b759-1c521303992e",
+			id: "4b6ff22a-e037-4d60-ae86-f281439e297d",
 			order: 2
 		},
 		{
-			id: "4f283eb0-272f-4f40-b1bc-957d20d9f4cc",
+			id: "76537c29-0f78-449f-890d-232cc924281c",
 			order: 3
 		},
 		{
-			id: "86b1ea9e-8726-4ad9-ad8f-4a5b5d947b06",
+			id: "ce71c5c7-4843-4ac5-bf35-62226d4a6a3f",
 			order: 4
 		},
 		{
-			id: "3b57f329-6350-41af-b820-31e16a359364",
+			id: "2ff32bc0-8047-4ef4-bad6-ccbc8941fd95",
 			order: 5
 		},
 		{
-			id: "1985c3fd-05eb-4570-a32f-9c23ff44d9b3",
+			id: "ae72fc88-e2e2-4039-b570-d5fe10979642",
 			order: 6
 		},
 		{
-			id: "1b95f30b-99cb-4b74-8ab5-01441998101f",
+			id: "b2d92bd3-d125-4748-b7ba-a4286f0cc36d",
 			order: 7
 		},
 		{
-			id: "bff5c484-570e-4ec8-9182-f50948fb739b",
+			id: "60eb3ee7-bad9-4dc5-87cf-fe16323e0f4d",
 			order: 8
 		},
 		{
-			id: "3546a3b1-97ce-4cf2-9ea1-73f6e22ebf56",
+			id: "828b05d0-17f7-4143-bb34-6f8f41d47ec7",
 			order: 9
 		}
 	],
 	currentSampleIndex: 0,
-	status: "listening",
+	status: "revealing",
 	startTime: null,
 	endTime: null,
-	nextActionAt: new Date("2025-08-26T18:58:37.002Z"),
-	currentSample: "https://cdnt-preview.dzcdn.net/api/1/1/a/2/3/0/a231120d6ca7f3c12403fd08a565d8e9.mp3?hdnea=exp=1756235605~acl=/api/1/1/a/2/3/0/a231120d6ca7f3c12403fd08a565d8e9.mp3*~data=user_id=0,application_id=42~hmac=e141a528ab6d42d63c62deb4ff5b1eb66a478c1baa07cc33be65ca1897bfc64d",
-	currentTrack: null
+	nextActionAt: new Date("2025-08-28T18:11:26.002Z"),
+	currentSample: "https://cdnt-preview.dzcdn.net/api/1/1/e/5/2/0/e5257cfc404a7540c48f2089382d0a1f.mp3?hdnea=exp=1756405566~acl=/api/1/1/e/5/2/0/e5257cfc404a7540c48f2089382d0a1f.mp3*~data=user_id=0,application_id=42~hmac=cd89d13d63464dfebf0d1a958dcf41b97fb7a3a29298054b10eb848c4e6d19ca",
+	currentTrack: {
+		id: "30tS3If78Ki201I38CoP68",
+		title: "Au paradis",
+		artists: [
+			"De Palmas"
+		],
+		album: "Sur Ma Route",
+		coverUrl: "https://i.scdn.co/image/ab67616d0000b2735070ecfecc35e17290552733"
+	}
 })
 
 function RouteComponent() {
@@ -118,6 +128,8 @@ function RouteComponent() {
 	return (
 		<div className="min-h-screen flex items-center justify-center p-4">
 			<div className="max-w-2xl w-full space-y-6">
+				<PlaylistIndicator playlist={game.playlist} />
+				{game.currentTrack && <TrackInfo track={game.currentTrack} />}
 				<TimedProgressBar className="w-full" variant="secondary" durationMs={10000} />
 				<div className="grid grid-cols-10 gap-2 w-fit">
 					{rounds.map(state => (

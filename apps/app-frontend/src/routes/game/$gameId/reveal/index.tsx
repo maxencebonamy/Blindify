@@ -130,7 +130,7 @@ function RouteComponent() {
 						</CardTitle>
 					</CardHeader>
 					<CardContent className="space-y-6">
-						<AudioPlayer url={sample.clipUrl} startTime={game.settings.sampleDurationMs} />
+						<AudioPlayer url={sample.clipUrl} startTimeMs={game.settings.sampleDurationMs} />
 						{/* Album Cover and Track Info */}
 						<div
 							className={`text-center space-y-4 transition-all duration-1000 ${

@@ -2,10 +2,10 @@ import { useEffect, useRef } from "react"
 
 type AudioPlayerProps = {
 	url: string
-	startTime?: number // en secondes
+	startTimeMs?: number
 }
 
-export const AudioPlayer = ({ url, startTime = 0 }: AudioPlayerProps) => {
+export const AudioPlayer = ({ url, startTimeMs = 0 }: AudioPlayerProps) => {
 	const audioRef = useRef<HTMLAudioElement | null>(null)
 
 	useEffect(() => {
@@ -14,7 +14,7 @@ export const AudioPlayer = ({ url, startTime = 0 }: AudioPlayerProps) => {
 		const audio = audioRef.current
 
 		const playAudio = async () => {
-			audio.currentTime = startTime / 1000
+			audio.currentTime = startTimeMs / 1000
 			await audio.play()
 		}
 
@@ -23,7 +23,7 @@ export const AudioPlayer = ({ url, startTime = 0 }: AudioPlayerProps) => {
 		return () => {
 			audio.pause()
 		}
-	}, [ url, startTime ])
+	}, [ url, startTimeMs ])
 
 	return <audio ref={audioRef} src={url} hidden loop />
 }

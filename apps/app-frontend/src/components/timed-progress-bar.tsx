@@ -23,7 +23,7 @@ export const TimedProgressBar = ({ durationMs, ...props }: TimedProgressBarProps
 			if (elapsed >= durationMs) {
 				clearInterval(timer)
 			}
-		}, 1000 / 120) // ~60fps
+		}, 1000 / 60) // ~60fps
 
 		return () => clearInterval(timer)
 	}, [ durationMs ])

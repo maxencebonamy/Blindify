@@ -8,7 +8,7 @@ export type ButtonProps = ComponentProps<"button"> & {
 
 export const Button = ({ variant = "primary", size = "default", className, children, ...props }: ButtonProps) => {
 	const tailwind = cn(
-		// Container
+		// Layout
 		"inline-flex items-center justify-center gap-2",
 		// Appearance
 		"whitespace-nowrap rounded-md text-sm border-2 border-foreground shadow-neo-sm ring-offset-background",

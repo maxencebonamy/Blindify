@@ -8,7 +8,7 @@ export type ProgressBarProps = {
 
 export const ProgressBar = ({ variant = "primary", percent, className }: ProgressBarProps) => {
 	const tailwind = cn(
-		// Container
+		// Layout
 		"h-10 overflow-hidden relative",
 		// Appearance
 		"rounded-full bg-background border-2 border-foreground shadow-neo-sm",
@@ -18,7 +18,7 @@ export const ProgressBar = ({ variant = "primary", percent, className }: Progres
 	)
 
 	const progressTailwind = cn(
-		// Container
+		// Layout
 		"size-full absolute",
 		// Appearance
 		"rounded-full outline-2 outline-foreground",
