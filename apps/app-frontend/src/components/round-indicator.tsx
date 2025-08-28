@@ -30,7 +30,7 @@ export const RoundIndicator = ({ state, className }: RoundIndicatorProps) => {
 		// Interaction
 		"transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2",
 		"disabled:pointer-events-none disabled:opacity-50 duration-500",
-		// States
+		// State
 		{
 			"bg-background": actualState === "notStarted",
 			"bg-primary": actualState === "inProgress",

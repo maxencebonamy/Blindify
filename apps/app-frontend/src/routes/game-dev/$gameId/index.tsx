@@ -2,6 +2,7 @@ import { AudioPlayer } from "#/components/audio-player"
 import { Button } from "#/components/button"
 import { Icon } from "#/components/icon"
 import { RoundIndicator, type RoundIndicatorProps } from "#/components/round-indicator"
+import { TimedProgressBar } from "#/components/timed-progress-bar"
 import { Badge } from "#/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardContent } from "#/components/ui/card"
 import { WaveformAnimation } from "#/components/waveform-animation"
@@ -117,6 +118,7 @@ function RouteComponent() {
 	return (
 		<div className="min-h-screen flex items-center justify-center p-4">
 			<div className="max-w-2xl w-full space-y-6">
+				<TimedProgressBar className="w-full" variant="secondary" durationMs={10000} />
 				<div className="grid grid-cols-10 gap-2 w-fit">
 					{rounds.map(state => (
 						<RoundIndicator state={state} />

@@ -1,24 +1,44 @@
-"use client"
+import { cn } from "#/utils/tailwind.util"
 
-type ProgressBarProps = {
-	progress: number
-	duration: number
+export type ProgressBarProps = {
+	variant?: "primary" | "secondary" | "destructive"
+	percent: number
 	className?: string
 }
 
-export function ProgressBar({ progress, duration, className = "" }: ProgressBarProps) {
+export const ProgressBar = ({ variant = "primary", percent, className }: ProgressBarProps) => {
+	const tailwind = cn(
+		// Container
+		"h-10 overflow-hidden relative",
+		// Appearance
+		"rounded-full bg-background border-2 border-foreground shadow-neo-sm",
+		// Interaction
+		"",
+		className
+	)
+
+	const progressTailwind = cn(
+		// Container
+		"size-full absolute",
+		// Appearance
+		"rounded-full outline-2 outline-foreground",
+		// Interaction
+		"",
+		// Variant
+		{
+			"bg-primary": variant === "primary",
+			"bg-secondary": variant === "secondary",
+			"bg-destructive": variant === "destructive"
+		},
+		// Percent
+		{
+			"outline-none": percent === 0
+		}
+	)
+
 	return (
-		<div className={`w-full bg-muted rounded-full h-2 overflow-hidden ${className}`}>
-			<div
-				className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-300 pulse-glow"
-				style={{ width: `${progress}%` }}
-			/>
-			<div className="text-xs text-muted-foreground mt-2 text-center">
-				{Math.round(((progress / 100) * duration) / 1000)}
-				s /
-				{duration / 1000}
-				s
-			</div>
+		<div className={tailwind}>
+			<div className={progressTailwind} style={{ left: `-${100 - percent}%` }} />
 		</div>
 	)
 }

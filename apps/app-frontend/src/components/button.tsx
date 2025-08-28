@@ -15,14 +15,14 @@ export const Button = ({ variant = "primary", size = "default", className, child
 		// Interaction
 		"cursor-pointer transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2",
 		"disabled:pointer-events-none disabled:opacity-50 hover:translate-0.5 hover:shadow-neo-none",
-		// Variants
+		// Variant
 		{
 			"text-foreground bg-primary": variant === "primary",
 			"text-foreground bg-secondary": variant === "secondary",
 			"text-foreground bg-background": variant === "outline",
 			"text-background bg-destructive": variant === "destructive"
 		},
-		// Sizes
+		// Size
 		{
 			"px-4 py-2 h-10": size === "default",
 			"px-2 py-2 h-10 w-10": size === "icon"
