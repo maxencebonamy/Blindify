@@ -6,11 +6,12 @@ import { useGameEvents } from "#/hooks/use-game-events"
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { HomeIcon, SettingsIcon } from "lucide-react"
-import { RoundIndicator } from "#/components/round-indicator"
+import { RoundIndicator, type RoundIndicatorProps } from "#/components/round-indicator"
 import { PlaylistIndicator } from "#/components/playlist-indicator"
 import { TrackInfo } from "#/components/track-info"
 import { TimedProgressBar } from "#/components/timed-progress-bar"
 import { WaveformAnimation } from "#/components/waveform-animation"
+import { useEffect, useState } from "react"
 
 export const Route = createFileRoute("/game/$gameId/")({
 	component: RouteComponent
@@ -21,13 +22,25 @@ function RouteComponent() {
 
 	const { data: game } = useQuery(showGameOptions({ path: { gameId } }))
 
+	const [ rounds, setRounds ] = useState<RoundIndicatorProps["state"][]>([])
+
+	useEffect(() => {
+		if (!game) return
+		setRounds(game.samples.map((_, index) => {
+			if (index < game.currentSampleIndex) return "done"
+			if (index > game.currentSampleIndex) return "notStarted"
+			if (game.status === "listening") return "inProgress"
+			return "done"
+		}))
+	}, [ game ])
+
 	useGameEvents(gameId)
 
 	if (!game) return <></>
 
 	return (
 		<div className="h-screen flex flex-col items-center justify-between p-20">
-			<div className="w-full grid grid-cols-3 items-center">
+			<div className="w-full grid grid-cols-3 gap-8 items-center">
 				<div className="flex gap-4">
 					<Link to="/">
 						<Button size="icon">
@@ -39,13 +52,13 @@ function RouteComponent() {
 					</Button>
 				</div>
 
-				<div className="flex gap-1 justify-self-center">
-					{game.samples.map((_, index) => (
-						<RoundIndicator key={index} state="notStarted" />
+				<div className="grid grid-cols-10 gap-2 justify-self-center">
+					{rounds.map((round, index) => (
+						<RoundIndicator key={index} state={round} />
 					))}
 				</div>
 
-				<PlaylistIndicator playlist={game.playlist} className="justify-self-end	" />
+				<PlaylistIndicator playlist={game.playlist} className="justify-self-end" />
 			</div>
 
 			{game.currentSample && <AudioPlayer url={game.currentSample} />}
