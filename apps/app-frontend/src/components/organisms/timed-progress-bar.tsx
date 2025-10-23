@@ -1,4 +1,4 @@
-import { type ProgressBarProps, ProgressBar } from "#/components/progress-bar"
+import { type ProgressBarProps, ProgressBar } from "#/components/molecules/progress-bar"
 import { useEffect, useState } from "react"
 
 type TimedProgressBarProps = Omit<ProgressBarProps, "percent"> & {

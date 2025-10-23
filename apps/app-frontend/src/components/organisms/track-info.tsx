@@ -1,4 +1,4 @@
-import { Icon } from "#/components/icon"
+import { Icon } from "#/components/atoms/icon"
 import type { Track } from "#/generated"
 import { cn } from "#/utils/tailwind.util"
 import { Disc3Icon, Mic2Icon } from "lucide-react"

@@ -17,7 +17,9 @@ export const schema = {
 		order: z.enum([ "asc", "desc" ]).optional()
 	}),
 	response: {
-		200: zPage(zPlaylist),
+		200: zPage(zPlaylist).extend({
+			lastFetchedAt: z.date()
+		}),
 		401: zApiError,
 		500: zApiError
 	}
@@ -29,13 +31,16 @@ export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) 
 		return reply.code(401).send({ message: "Access token missing" })
 	}
 
-	const allPlaylists = await getAllUserPlaylists(accessToken)
+	const playlistArray = await getAllUserPlaylists(accessToken)
 
-	const filteredPlaylists = allPlaylists.filter(
+	const filteredPlaylists = playlistArray.playlists.filter(
 		playlist => !request.query.search || playlist.name.toLocaleLowerCase().includes(request.query.search.toLocaleLowerCase())
 	)
 
 	const paginatedPlaylists = paginateFromAllItems(filteredPlaylists, request.query.page, request.query.limit)
 
-	return reply.send(paginatedPlaylists)
+	return reply.send({
+		...paginatedPlaylists,
+		lastFetchedAt: playlistArray.lastFetchedAt
+	})
 }

@@ -8,7 +8,12 @@ export type IconProps = ComponentProps<LucideIcon> & {
 
 export const Icon = ({ className, icon: Icon, ...props }: IconProps): ReactNode => {
 	const tailwind = cn(
+		// Layout
 		"size-4",
+		// Appearance
+		"",
+		// Interaction
+		"",
 		className
 	)
 

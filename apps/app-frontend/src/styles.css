@@ -128,6 +128,11 @@
 	--shadow-neo-md: 4px 4px 0px 0px var(--color-foreground);
 	--shadow-neo-lg: 6px 6px 0px 0px var(--color-foreground);
 	--shadow-neo-xl: 8px 8px 0px 0px var(--color-foreground);
+	--text-shadow-neo-none: 0px 0px 0px var(--color-foreground);
+	--text-shadow-neo-sm: 2px 2px 0px var(--color-foreground);
+	--text-shadow-neo-md: 4px 4px 0px var(--color-foreground);
+	--text-shadow-neo-lg: 6px 6px 0px var(--color-foreground);
+	--text-shadow-neo-xl: 8px 8px 0px var(--color-foreground);
 }
 
 @layer base {
@@ -137,5 +142,19 @@
 
 	body {
 		@apply bg-background text-foreground;
+	}
+}
+
+@layer utilities {
+	.u-text-border-2 {
+		text-shadow:
+			2px 0 0 var(--foreground),
+			-2px 0 0 var(--foreground),
+			0 2px 0 var(--foreground),
+			0 -2px 0 var(--foreground),
+			2px 2px 0 var(--foreground),
+			2px -2px 0 var(--foreground),
+			-2px 2px 0 var(--foreground),
+			-2px -2px 0 var(--foreground);
 	}
 }

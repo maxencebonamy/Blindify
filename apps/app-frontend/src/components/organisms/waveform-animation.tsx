@@ -6,7 +6,7 @@ type WaveformAnimationProps = {
 	className?: string
 }
 
-export function WaveformAnimation({ barCount, className = "" }: WaveformAnimationProps) {
+export function WaveformAnimation({ barCount, className }: WaveformAnimationProps) {
 	const [ bars, setBars ] = useState(() => Array.from({ length: barCount }, () => 100))
 
 	useEffect(() => {

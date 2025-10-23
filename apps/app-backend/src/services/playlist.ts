@@ -1,13 +1,14 @@
 import { getAListOfCurrentUsersPlaylists, getPlaylist } from "#/generated"
-import { fromSpotifyPlaylist, zPlaylist, type Playlist } from "#/types/playlist.type"
+import type { PlaylistArray } from "#/types/playlist.type"
+import { fromSpotifyPlaylist, zPlaylist, zPlaylistArray, type Playlist } from "#/types/playlist.type"
 import { cache } from "lib-cache"
 import z from "zod"
 
-export const getAllUserPlaylists = async (accessToken: string): Promise<Playlist[]> => {
+export const getAllUserPlaylists = async (accessToken: string): Promise<PlaylistArray> => {
 	const cacheKey = `users:${accessToken}:playlists`
 
 	try {
-		const playlists = await cache.get(cacheKey, z.array(zPlaylist))
+		const playlists = await cache.get(cacheKey, zPlaylistArray)
 		return playlists
 	} catch {
 		// Not found, continue
@@ -45,9 +46,18 @@ export const getAllUserPlaylists = async (accessToken: string): Promise<Playlist
 	}))
 	playlists.push(...results.flat().sort((a, b) => a.name.localeCompare(b.name)))
 
-	await cache.set(cacheKey, playlists)
+	const playlistArray: PlaylistArray = {
+		playlists,
+		lastFetchedAt: new Date()
+	}
+	await cache.set(cacheKey, playlistArray)
 
-	return playlists
+	return playlistArray
+}
+
+export const invalidateUserPlaylistsCache = async (accessToken: string): Promise<void> => {
+	const cacheKey = `users:${accessToken}:playlists`
+	await cache.del(cacheKey)
 }
 
 export const getPlaylistById = async (accessToken: string, playlistId: string): Promise<Playlist> => {

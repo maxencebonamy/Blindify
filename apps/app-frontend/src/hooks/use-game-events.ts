@@ -4,7 +4,11 @@ import { zGame } from "#/generated/zod.gen"
 import { showGameQueryKey } from "#/generated/@tanstack/react-query.gen"
 import { useQueryClient } from "@tanstack/react-query"
 
-export const useGameEvents = (gameId: string): void => {
+export type UseGameEventsProps = {
+	gameId: string
+}
+
+export const useGameEvents = ({ gameId }: UseGameEventsProps): void => {
 	const queryClient = useQueryClient()
 
 	useEffect(() => {

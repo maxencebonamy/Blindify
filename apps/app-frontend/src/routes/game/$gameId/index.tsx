@@ -1,23 +1,25 @@
-import { AudioPlayer } from "#/components/audio-player"
-import { Icon } from "#/components/icon"
-import { Button } from "#/components/button"
+import { AudioPlayer } from "#/components/organisms/audio-player"
+import { Icon } from "#/components/atoms/icon"
+import { Button } from "#/components/molecules/button"
 import { showGameOptions } from "#/generated/@tanstack/react-query.gen"
 import { useGameEvents } from "#/hooks/use-game-events"
 import { useQuery } from "@tanstack/react-query"
-import { createFileRoute, Link } from "@tanstack/react-router"
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
 import { HomeIcon, SettingsIcon } from "lucide-react"
-import { RoundIndicator, type RoundIndicatorProps } from "#/components/round-indicator"
-import { PlaylistIndicator } from "#/components/playlist-indicator"
-import { TrackInfo } from "#/components/track-info"
-import { TimedProgressBar } from "#/components/timed-progress-bar"
-import { WaveformAnimation } from "#/components/waveform-animation"
+import { RoundIndicator, type RoundIndicatorProps } from "#/components/organisms/round-indicator"
+import { PlaylistIndicator } from "#/components/organisms/playlist-indicator"
+import { TrackInfo } from "#/components/organisms/track-info"
+import { TimedProgressBar } from "#/components/organisms/timed-progress-bar"
+import { WaveformAnimation } from "#/components/organisms/waveform-animation"
 import { useEffect, useState } from "react"
+import { LoadingScreen } from "#/components/templates/loading-screen"
 
 export const Route = createFileRoute("/game/$gameId/")({
 	component: RouteComponent
 })
 
 function RouteComponent() {
+	const router = useRouter()
 	const { gameId } = Route.useParams()
 
 	const { data: game } = useQuery(showGameOptions({ path: { gameId } }))
@@ -26,6 +28,9 @@ function RouteComponent() {
 
 	useEffect(() => {
 		if (!game) return
+		if (game.status === "finished") {
+			router.navigate({ to: "/create-game", search: { playlistId: game.playlist.id } })
+		}
 		setRounds(game.samples.map((_, index) => {
 			if (index < game.currentSampleIndex) return "done"
 			if (index > game.currentSampleIndex) return "notStarted"
@@ -34,9 +39,13 @@ function RouteComponent() {
 		}))
 	}, [ game ])
 
-	useGameEvents(gameId)
+	useGameEvents({ gameId })
 
 	if (!game) return <></>
+
+	if (game.status === "loading") {
+		return <LoadingScreen />
+	}
 
 	return (
 		<div className="h-screen flex flex-col items-center justify-between p-20">

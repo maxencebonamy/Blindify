@@ -5,7 +5,7 @@ import z from "zod"
 
 export const zGameSettings = z.object({
 	sampleCount: z.union([ z.literal(10), z.literal(20), z.literal(30) ]),
-	sampleDurationMs: z.union([ z.literal(2000), z.literal(5000), z.literal(10000), z.literal(20000) ])
+	sampleDurationMs: z.union([ z.literal(10000), z.literal(20000) ])
 })
 
 export const zGameStatus = z.enum([ "loading", "ready", "listening", "revealing", "finished" ])

@@ -1,3 +1,4 @@
+import type { HTTPMethods } from "fastify"
 import Fastify from "fastify"
 import cookie from "@fastify/cookie"
 import cors from "@fastify/cors"
@@ -18,7 +19,7 @@ const app = Fastify()
 app.register(cors, {
 	origin: env.ALLOWED_ORIGINS,
 	credentials: true,
-	methods: [ "GET", "POST", "PATCH" ]
+	methods: [ "GET", "POST", "PUT", "PATCH", "DELETE" ] satisfies HTTPMethods[]
 })
 
 app.register(cookie)
@@ -53,7 +54,6 @@ void app.register(autoLoader, {
 	routesDir: path.join(__dirname, "routes"),
 	jobsDir: path.join(__dirname, "jobs")
 })
-
 
 const start = async (): Promise<void> => {
 	try {
