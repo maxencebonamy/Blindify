@@ -1,6 +1,6 @@
 import { Button } from "#/components/molecules/button"
-import { createFileRoute, useRouter } from "@tanstack/react-router"
-import { PlayIcon } from "lucide-react"
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
+import { ChevronLeftIcon, PlayIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import z from "zod"
 import { zodValidator } from "@tanstack/zod-adapter"
@@ -67,7 +67,17 @@ function RouteComponent() {
 
 	return (
 		<>
-			<TopBar backButton />
+			<TopBar
+				left={(
+					<Link to="/">
+						<Button variant="outline" className="justify-self-start">
+							<Icon icon={ChevronLeftIcon} />
+							Back
+						</Button>
+					</Link>
+				)}
+			/>
+
 			<Col className={tailwind}>
 				<Text level="heading-1">Create a game.</Text>
 
