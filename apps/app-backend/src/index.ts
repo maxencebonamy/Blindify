@@ -1,3 +1,4 @@
+import type { HTTPMethods } from "fastify"
 import Fastify from "fastify"
 import cookie from "@fastify/cookie"
 import cors from "@fastify/cors"
@@ -18,7 +19,7 @@ const app = Fastify()
 app.register(cors, {
 	origin: env.ALLOWED_ORIGINS,
 	credentials: true,
-	methods: [ "GET", "POST", "PATCH" ]
+	methods: [ "GET", "POST", "PUT", "PATCH", "DELETE" ] satisfies HTTPMethods[]
 })
 
 app.register(cookie)
@@ -50,13 +51,15 @@ void app.register(scalar, {
 })
 
 void app.register(autoLoader, {
-	routesDir: path.join(__dirname, "routes")
+	routesDir: path.join(__dirname, "routes"),
+	jobsDir: path.join(__dirname, "jobs")
 })
 
 const start = async (): Promise<void> => {
 	try {
 		await app.listen({ port: env.APP_PORT, host: "0.0.0.0" })
 		app.swagger()
+		app.cron.startAllJobs()
 		logger.info(`Server listening on ${env.APP_URL}`)
 	} catch (err) {
 		logger.fatal("Error when starting server:", err instanceof Error && err.message)

@@ -1,14 +1,29 @@
 import { getClip } from "#/services/clip"
 import { getAllTracksFromPlaylist } from "#/services/track"
-import { zGame, type Game, type GameSettings } from "#/types/game.type"
+import type { GameMinimal } from "#/types/game.type"
+import { minimizeGame, zGame, zGameMinimal, type Game, type GameSettings } from "#/types/game.type"
 import type { Playlist } from "#/types/playlist.type"
 import type { Sample, SampleMinimal } from "#/types/sample.type"
 import type { Track } from "#/types/track.type"
 import { zTrack } from "#/types/track.type"
 import { generateUUID, scrambleArray } from "#/utils/random"
 import { cache } from "lib-cache"
-import { logger } from "lib-logger"
 import z from "zod"
+
+export const getAllGames = async (): Promise<GameMinimal[]> => {
+	try {
+		const games = await cache.get("games", z.array(zGameMinimal))
+		return games
+	} catch {
+		return []
+	}
+}
+
+export const registerGame = async (game: GameMinimal): Promise<void> => {
+	const games = await getAllGames()
+	games.push(game)
+	await cache.set("games", games)
+}
 
 export const createGame = async (playlist: Playlist, settings: GameSettings): Promise<Game> => {
 	const id = generateUUID()
@@ -21,9 +36,14 @@ export const createGame = async (playlist: Playlist, settings: GameSettings): Pr
 		settings,
 		currentSampleIndex: 0,
 		playlist,
-		samples: []
+		nextActionAt: null,
+		samples: [],
+		currentSample: null,
+		currentTrack: null
 	}
 	await cache.set(`game:${id}`, game)
+
+	await registerGame(minimizeGame(game))
 
 	return game
 }
@@ -52,9 +72,8 @@ export const loadGame = async (accessToken: string, game: Game): Promise<Game> =
 	// TODO: update settings if no enough samples have been found
 
 	game.samples = samples
-	game.status = "ongoing"
+	game.status = "ready"
 	await cache.set(`game:${game.id}`, game)
-	logger.debug(`Game ${game.id} loaded`)
 
 	return game
 }

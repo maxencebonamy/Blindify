@@ -1,18 +1,18 @@
 import z from "zod"
 
-export const zSampleMinimal = z.object({
-	id: z.string(),
-	order: z.number().int().min(0)
-})
-
 export const zSample = z.object({
 	id: z.string(),
 	order: z.number().int().min(0),
 	clipUrl: z.string()
 })
 
-export type SampleMinimal = z.infer<typeof zSampleMinimal>
-export type Sample = z.infer<typeof zSample>
+export const zSampleMinimal = zSample.pick({
+	id: true,
+	order: true
+})
 
-z.globalRegistry.add(zSampleMinimal, { id: "SampleMinimal" })
+export type Sample = z.infer<typeof zSample>
+export type SampleMinimal = z.infer<typeof zSampleMinimal>
+
 z.globalRegistry.add(zSample, { id: "Sample" })
+z.globalRegistry.add(zSampleMinimal, { id: "SampleMinimal" })

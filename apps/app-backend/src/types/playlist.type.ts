@@ -9,9 +9,16 @@ export const zPlaylist = z.object({
 	trackCount: z.number().int().min(0)
 })
 
+export const zPlaylistArray = z.object({
+	playlists: z.array(zPlaylist),
+	lastFetchedAt: z.date()
+})
+
 export type Playlist = z.infer<typeof zPlaylist>
+export type PlaylistArray = z.infer<typeof zPlaylistArray>
 
 z.globalRegistry.add(zPlaylist, { id: "Playlist" })
+z.globalRegistry.add(zPlaylistArray, { id: "PlaylistArray" })
 
 export const fromSpotifyPlaylist = (spotifyPlaylist: SimplifiedPlaylistObject | PlaylistObject): Playlist | null => {
 	const id = spotifyPlaylist.id
