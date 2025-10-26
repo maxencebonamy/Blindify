@@ -25,7 +25,7 @@ export const TrackInfo = ({ track, className }: TrackInfoProps) => {
 				<img src={track.coverUrl} className="size-72 rounded-xl border-2 border-foreground shadow-neo-md" />
 			)}
 			<div className="flex flex-col items-center gap-1">
-				<p className="text-2xl font-bold">{track.title}</p>
+				<p className="text-2xl font-bold text-center">{track.title}</p>
 				<div className="flex gap-6">
 					<span className="flex items-center gap-1">
 						<Icon icon={Mic2Icon} />
