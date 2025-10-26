@@ -1,15 +1,15 @@
 {
 	"$schema": "https://cdn.jsdelivr.net/npm/tsup/schema.json",
 	"entry": [
-		"src/index.ts"
+		"src/**/*.ts"
 	],
 	"sourcemap": true,
-	"clean": true,
-	"minify": true,
+	"clean": false,
+	"minify": false,
 	"format": [
 		"esm"
 	],
 	"outDir": "dist",
-	"bundle": true,
+	"bundle": false,
 	"dts": true
 }
