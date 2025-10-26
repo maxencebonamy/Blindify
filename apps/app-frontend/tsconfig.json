@@ -1,6 +1,16 @@
 {
-	"extends": "../../tsconfig.json",
 	"compilerOptions": {
+		"target": "ES2020",
+		"module": "ESNext",
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedSideEffectImports": true,
+		"forceConsistentCasingInFileNames": true,
+		"noUncheckedIndexedAccess": true,
 		"jsx": "react-jsx",
 		"lib": [
 			"ES2022",
