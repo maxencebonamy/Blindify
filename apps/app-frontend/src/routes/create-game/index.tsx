@@ -133,7 +133,11 @@ function RouteComponent() {
 					</span>
 				</Text>
 
-				<Button onClick={() => createGame({ body: { playlistId, settings } })} loading={isCreateGamePending}>
+				<Button
+					onClick={() => createGame({ body: { playlistId, settings } })}
+					loading={isCreateGamePending}
+					disabled={!playlistQuery.isSuccess}
+				>
 					<Icon icon={PlayIcon} />
 					Start
 				</Button>
