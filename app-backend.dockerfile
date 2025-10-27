@@ -10,6 +10,7 @@ RUN npm install -g pnpm
 RUN pnpm install
 RUN pnpm --filter "./libs/*" install
 RUN pnpm --filter "./libs/*" build
+RUN pnpm --filter "./apps/app-backend" gen
 RUN pnpm --filter "./apps/app-backend" install
 RUN pnpm --filter "./apps/app-backend" build
 
