@@ -1,6 +1,12 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
+ARG VITE_APP_REDIRECT_URL
+ENV VITE_APP_REDIRECT_URL=$VITE_APP_REDIRECT_URL
+
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+
 COPY package.json ./
 COPY tsconfig.json ./
 COPY apps/app-frontend ./apps/app-frontend
