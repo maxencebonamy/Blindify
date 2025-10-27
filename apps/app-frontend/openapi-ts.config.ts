@@ -1,7 +1,7 @@
 import { defineConfig } from "@hey-api/openapi-ts"
 
 export default defineConfig({
-	input: "http://localhost:8000/docs/openapi.json",
+	input: "openapi-backend.yaml",
 	output: "src/generated",
 	experimentalParser: true,
 	plugins: [

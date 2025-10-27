@@ -11,6 +11,7 @@ RUN pnpm install
 RUN pnpm --filter "./libs/*" install
 RUN pnpm --filter "./libs/*" build
 RUN pnpm --filter "./apps/app-frontend" install
+RUN pnpm --filter "./apps/app-frontend" gen
 RUN pnpm --filter "./apps/app-frontend" build
 
 FROM nginx:alpine
