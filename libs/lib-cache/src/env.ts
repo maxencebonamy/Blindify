@@ -8,6 +8,8 @@ export const env = createEnv("node", process.env, z.object({
 
 	// Redis
 	REDIS_HOST: z.string(),
-	REDIS_PORT: z.coerce.number()
+	REDIS_PORT: z.coerce.number(),
+	REDIS_USERNAME: z.string().optional(),
+	REDIS_PASSWORD: z.string().optional()
 
 }))
