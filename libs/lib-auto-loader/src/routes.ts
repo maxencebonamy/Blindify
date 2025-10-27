@@ -19,7 +19,11 @@ export const loadRoutes = async (dir: string, basePath = ""): Promise<Route[]> =
 		const fullPath = path.join(dir, entry.name)
 
 		if (entry.isDirectory()) {
-			const newRoutes = await loadRoutes(fullPath, `${basePath}/${entry.name}`)
+			let trimmedName = entry.name
+			if (trimmedName.startsWith("_")) {
+				trimmedName = `:${trimmedName.slice(1)}`
+			}
+			const newRoutes = await loadRoutes(fullPath, `${basePath}/${trimmedName}`)
 			routes.push(...newRoutes)
 		} else if (entry.isFile() && !entry.name.startsWith("_") && (entry.name.endsWith(".ts") || entry.name.endsWith(".js"))) {
 			const method = entry.name.replace(/\.ts$/, "").replace(/\.js$/, "").toUpperCase()
