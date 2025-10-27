@@ -109,21 +109,3 @@ export const getCurrentTrackGame = async (gameId: string): Promise<Track> => {
 	const track = await cache.get(`track:${minimalSample.id}`, zTrack)
 	return track
 }
-
-export const nextSampleGame = async (gameId: string): Promise<Game> => {
-	const game = await getGameById(gameId)
-
-	if (game.status !== "ongoing") {
-		throw new Error("Game status is not ongoing")
-	}
-
-	if (game.currentSampleIndex < game.samples.length - 1) {
-		game.currentSampleIndex++
-	} else {
-		game.status = "finished"
-	}
-
-	await cache.set(`game:${gameId}`, game)
-
-	return game
-}

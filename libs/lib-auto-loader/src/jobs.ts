@@ -16,8 +16,8 @@ export const loadJobs = async (dir: string): Promise<Job[]> => {
 	for (const entry of entries) {
 		const fullPath = path.join(dir, entry.name)
 
-		if (entry.isFile() && !entry.name.startsWith("_") && entry.name.endsWith(".ts")) {
-			const name = entry.name.replace(/\.ts$/, "")
+		if (entry.isFile() && !entry.name.startsWith("_") && (entry.name.endsWith(".ts") || entry.name.endsWith(".js"))) {
+			const name = entry.name.replace(/\.ts$/, "").replace(/\.js$/, "")
 
 			const mod = await import(pathToFileURL(fullPath).href)
 			if (!mod.cron || !mod.task) {

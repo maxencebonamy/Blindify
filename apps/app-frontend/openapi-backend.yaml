@@ -1,0 +1,975 @@
+openapi: 3.0.0
+info:
+  title: Blindify
+  description: Blindify Backend API
+  version: 1.0.0
+components:
+  schemas:
+    TrackInput:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        artists:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        album:
+          type: string
+        coverUrl:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - title
+        - artists
+        - album
+        - coverUrl
+    PlaylistInput:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+        coverUrl:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+        trackCount:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+      required:
+        - id
+        - name
+        - description
+        - coverUrl
+        - trackCount
+    PlaylistArrayInput:
+      type: object
+      properties:
+        playlists:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlaylistInput"
+        lastFetchedAt: {}
+      required:
+        - playlists
+        - lastFetchedAt
+    SampleInput:
+      type: object
+      properties:
+        id:
+          type: string
+        order:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        clipUrl:
+          type: string
+      required:
+        - id
+        - order
+        - clipUrl
+    SampleMinimalInput:
+      type: object
+      properties:
+        id:
+          type: string
+        order:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+      required:
+        - id
+        - order
+    GameSettingsInput:
+      type: object
+      properties:
+        sampleCount:
+          anyOf:
+            - type: number
+              enum:
+                - 10
+            - type: number
+              enum:
+                - 20
+            - type: number
+              enum:
+                - 30
+        sampleDurationMs:
+          anyOf:
+            - type: number
+              enum:
+                - 10000
+            - type: number
+              enum:
+                - 20000
+      required:
+        - sampleCount
+        - sampleDurationMs
+    GameStatusInput:
+      type: string
+      enum:
+        - loading
+        - ready
+        - listening
+        - revealing
+        - finished
+    GameInput:
+      type: object
+      properties:
+        id:
+          type: string
+        playlist:
+          $ref: "#/components/schemas/PlaylistInput"
+        settings:
+          $ref: "#/components/schemas/GameSettingsInput"
+        samples:
+          type: array
+          items:
+            $ref: "#/components/schemas/SampleMinimalInput"
+        currentSampleIndex:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        status:
+          $ref: "#/components/schemas/GameStatusInput"
+        startTime:
+          anyOf:
+            - {}
+            - nullable: true
+              enum:
+                - null
+        endTime:
+          anyOf:
+            - {}
+            - nullable: true
+              enum:
+                - null
+        nextActionAt:
+          anyOf:
+            - {}
+            - nullable: true
+              enum:
+                - null
+        currentSample:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+        currentTrack:
+          anyOf:
+            - $ref: "#/components/schemas/TrackInput"
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - playlist
+        - settings
+        - samples
+        - currentSampleIndex
+        - status
+        - startTime
+        - endTime
+        - nextActionAt
+        - currentSample
+        - currentTrack
+    GameMinimalInput:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+    ApiErrorInput:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    Track:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        artists:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        album:
+          type: string
+        coverUrl:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - title
+        - artists
+        - album
+        - coverUrl
+      additionalProperties: false
+    Playlist:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+        coverUrl:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+        trackCount:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+      required:
+        - id
+        - name
+        - description
+        - coverUrl
+        - trackCount
+      additionalProperties: false
+    PlaylistArray:
+      type: object
+      properties:
+        playlists:
+          type: array
+          items:
+            $ref: "#/components/schemas/Playlist"
+        lastFetchedAt:
+          type: string
+          format: date-time
+      required:
+        - playlists
+        - lastFetchedAt
+      additionalProperties: false
+    Sample:
+      type: object
+      properties:
+        id:
+          type: string
+        order:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        clipUrl:
+          type: string
+      required:
+        - id
+        - order
+        - clipUrl
+      additionalProperties: false
+    SampleMinimal:
+      type: object
+      properties:
+        id:
+          type: string
+        order:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+      required:
+        - id
+        - order
+      additionalProperties: false
+    GameSettings:
+      type: object
+      properties:
+        sampleCount:
+          anyOf:
+            - type: number
+              enum:
+                - 10
+            - type: number
+              enum:
+                - 20
+            - type: number
+              enum:
+                - 30
+        sampleDurationMs:
+          anyOf:
+            - type: number
+              enum:
+                - 10000
+            - type: number
+              enum:
+                - 20000
+      required:
+        - sampleCount
+        - sampleDurationMs
+      additionalProperties: false
+    GameStatus:
+      type: string
+      enum:
+        - loading
+        - ready
+        - listening
+        - revealing
+        - finished
+    Game:
+      type: object
+      properties:
+        id:
+          type: string
+        playlist:
+          $ref: "#/components/schemas/Playlist"
+        settings:
+          $ref: "#/components/schemas/GameSettings"
+        samples:
+          type: array
+          items:
+            $ref: "#/components/schemas/SampleMinimal"
+        currentSampleIndex:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        status:
+          $ref: "#/components/schemas/GameStatus"
+        startTime:
+          anyOf:
+            - type: string
+              format: date-time
+            - nullable: true
+              enum:
+                - null
+        endTime:
+          anyOf:
+            - type: string
+              format: date-time
+            - nullable: true
+              enum:
+                - null
+        nextActionAt:
+          anyOf:
+            - type: string
+              format: date-time
+            - nullable: true
+              enum:
+                - null
+        currentSample:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+        currentTrack:
+          anyOf:
+            - $ref: "#/components/schemas/Track"
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - playlist
+        - settings
+        - samples
+        - currentSampleIndex
+        - status
+        - startTime
+        - endTime
+        - nextActionAt
+        - currentSample
+        - currentTrack
+      additionalProperties: false
+    GameMinimal:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+      additionalProperties: false
+    ApiError:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+      additionalProperties: false
+paths:
+  /auth/callback:
+    get:
+      operationId: authCallback
+      tags:
+        - auth
+      description: Spotify auth callback
+      parameters:
+        - schema: {}
+          in: query
+          name: code
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: error
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: state
+          required: true
+      responses:
+        "302":
+          description: Default Response
+          content:
+            application/json:
+              schema: {}
+        "400":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+                additionalProperties: false
+        "403":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+                additionalProperties: false
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+                additionalProperties: false
+        "502":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+                additionalProperties: false
+  /auth/login:
+    get:
+      operationId: authLogin
+      tags:
+        - auth
+      description: Login with Spotify
+      responses:
+        "302":
+          description: Default Response
+          content:
+            application/json:
+              schema: {}
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+                additionalProperties: false
+  /auth/logout:
+    post:
+      operationId: authLogout
+      tags:
+        - auth
+      description: Logout from Spotify
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+                additionalProperties: false
+  /auth/me:
+    get:
+      operationId: authMe
+      tags:
+        - auth
+      description: Get current user profile
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  country:
+                    type: string
+                  display_name:
+                    type: string
+                  email:
+                    type: string
+                  explicit_content:
+                    type: object
+                    properties:
+                      filter_enabled:
+                        type: boolean
+                      filter_locked:
+                        type: boolean
+                    additionalProperties: false
+                  external_urls:
+                    type: object
+                    properties:
+                      spotify:
+                        type: string
+                    additionalProperties: false
+                  followers:
+                    type: object
+                    properties:
+                      href:
+                        anyOf:
+                          - type: string
+                          - nullable: true
+                            enum:
+                              - null
+                      total:
+                        type: integer
+                        minimum: -9007199254740991
+                        maximum: 9007199254740991
+                    additionalProperties: false
+                  href:
+                    type: string
+                  id:
+                    type: string
+                  images:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        url:
+                          type: string
+                        height:
+                          anyOf:
+                            - type: integer
+                              minimum: -9007199254740991
+                              maximum: 9007199254740991
+                            - nullable: true
+                              enum:
+                                - null
+                        width:
+                          anyOf:
+                            - type: integer
+                              minimum: -9007199254740991
+                              maximum: 9007199254740991
+                            - nullable: true
+                              enum:
+                                - null
+                      required:
+                        - url
+                        - height
+                        - width
+                      additionalProperties: false
+                  product:
+                    type: string
+                  type:
+                    type: string
+                  uri:
+                    type: string
+                additionalProperties: false
+        "401":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+                additionalProperties: false
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+                additionalProperties: false
+  /games/{gameId}/events:
+    get:
+      operationId: subscribeGameEvents
+      tags:
+        - games
+      description: Subscribe to game events
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: gameId
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /games/{gameId}:
+    get:
+      operationId: showGame
+      tags:
+        - games
+      description: Get a game
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: gameId
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /games/{gameId}/sample:
+    get:
+      operationId: showSampleGame
+      tags:
+        - games
+      description: Get current sample of a game
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: gameId
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sample"
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /games/{gameId}/track:
+    get:
+      operationId: showTrackGame
+      tags:
+        - games
+      description: Get current track of a game
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: gameId
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Track"
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /games:
+    post:
+      operationId: storeGame
+      tags:
+        - games
+      description: Create a new game
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                playlistId:
+                  type: string
+                settings:
+                  $ref: "#/components/schemas/GameSettingsInput"
+              required:
+                - playlistId
+                - settings
+        required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /health:
+    get:
+      operationId: checkHealth
+      tags:
+        - health
+      description: Health check endpoint
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - ok
+                required:
+                  - status
+                additionalProperties: false
+  /playlists/{playlistId}:
+    get:
+      operationId: showUserPlaylist
+      tags:
+        - playlists
+      description: Get current user's playlist
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: playlistId
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Playlist"
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /playlists:
+    get:
+      operationId: indexUserPlaylists
+      tags:
+        - playlists
+      description: Get current user's playlists
+      parameters:
+        - schema:
+            default: 1
+            type: integer
+            minimum: 1
+            maximum: 9007199254740991
+          in: query
+          name: page
+          required: false
+        - schema:
+            default: 20
+            type: integer
+            minimum: 1
+            maximum: 50
+          in: query
+          name: limit
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: search
+          required: false
+        - schema:
+            type: string
+            enum:
+              - name
+              - trackCount
+          in: query
+          name: sort
+          required: false
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          in: query
+          name: order
+          required: false
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                    minimum: 1
+                    maximum: 9007199254740991
+                  previousPage:
+                    anyOf:
+                      - type: integer
+                        minimum: 1
+                        maximum: 9007199254740991
+                      - nullable: true
+                        enum:
+                          - null
+                  nextPage:
+                    anyOf:
+                      - type: integer
+                        minimum: 2
+                        maximum: 9007199254740991
+                      - nullable: true
+                        enum:
+                          - null
+                  totalPages:
+                    type: integer
+                    minimum: 1
+                    maximum: 9007199254740991
+                  totalItems:
+                    type: integer
+                    minimum: 0
+                    maximum: 9007199254740991
+                  pageSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 9007199254740991
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Playlist"
+                  lastFetchedAt:
+                    type: string
+                    format: date-time
+                required:
+                  - page
+                  - previousPage
+                  - nextPage
+                  - totalPages
+                  - totalItems
+                  - pageSize
+                  - items
+                  - lastFetchedAt
+                additionalProperties: false
+        "401":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /playlists/invalidate-cache:
+    put:
+      operationId: invalidateUserPlaylistsCache
+      tags:
+        - playlists
+      description: Invalidate cache of current user's playlists
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+servers:
+  - url: http://localhost:8000
+    description: Blindify Backend

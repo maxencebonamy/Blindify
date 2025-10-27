@@ -82,7 +82,7 @@ function RouteComponent() {
 
 			<TimedProgressBar
 				key={game.currentSampleIndex}
-				durationMs={game.status !== "loading" ? game.settings.sampleDurationMs : 0}
+				durationMs={game.settings.sampleDurationMs}
 				className="w-full"
 			/>
 		</div>

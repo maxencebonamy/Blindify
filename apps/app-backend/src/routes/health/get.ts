@@ -12,6 +12,6 @@ export const schema = {
 	}
 } satisfies AutoLoaderSchema
 
-export const handler: AutoLoaderHandler<typeof schema> = async () => {
-	return { status: "ok" }
+export const handler: AutoLoaderHandler<typeof schema> = async (_, reply) => {
+	return reply.send({ status: "ok" })
 }

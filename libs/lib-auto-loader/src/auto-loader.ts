@@ -13,8 +13,12 @@ type AutoLoaderOptions = {
 }
 
 const autoLoaderAsync: FastifyPluginAsync<AutoLoaderOptions> = async (app, options) => {
+	logger.debug(`Loading routes in ${options.routesDir}...`)
+
 	const routes = await loadRoutes(options.routesDir)
 	await Promise.all(routes.map(e => app.withTypeProvider<ZodTypeProvider>().route(e)))
+
+	logger.debug(`Loading jobs in ${options.jobsDir}...`)
 
 	const jobs = await loadJobs(options.jobsDir)
 	app.register(fastifyCron, {
