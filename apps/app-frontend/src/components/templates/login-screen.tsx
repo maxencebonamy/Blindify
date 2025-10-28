@@ -20,7 +20,7 @@ export const LoginScreen = () => {
 	const router = useRouter()
 
 	const login = () => router.navigate({
-		href: `${env.VITE_BACKEND_URL}/auth/login`,
+		href: `${env.VITE_BACKEND_URL}/auth/login?redirectUri=${encodeURIComponent(env.VITE_APP_REDIRECT_URL)}`,
 		reloadDocument: true
 	})
 

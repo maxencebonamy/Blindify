@@ -9,9 +9,6 @@ export const env = createEnv("node", process.env, z.object({
 	APP_ENV: z.enum([ "development", "production" ]),
 	ALLOWED_ORIGINS: z.string(),
 
-	// Frontend
-	FRONTEND_URL: z.string(),
-
 	// Spotify
 	SPOTIFY_CLIENT_ID: z.string(),
 	SPOTIFY_CLIENT_SECRET: z.string()

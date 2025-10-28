@@ -1,5 +1,6 @@
 import { env } from "#/config/env"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
+import { cache } from "lib-cache"
 import { z } from "zod"
 
 export const schema = {
@@ -73,6 +74,8 @@ export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) 
 		return reply.code(500).send({ error: `Invalid ID token: ${parsedIdToken.error}` })
 	}
 
+	const redirectUri = await cache.get<string>(`auth:${request.query.state}`)
+
 	const { access_token } = parsedIdToken.data
 	return reply
 		.setCookie("access_token", access_token, {
@@ -82,5 +85,5 @@ export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) 
 			path: "/",
 			maxAge: parsedIdToken.data.expires_in
 		})
-		.redirect(env.FRONTEND_URL)
+		.redirect(redirectUri)
 }
