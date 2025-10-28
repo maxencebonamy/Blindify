@@ -503,6 +503,12 @@ paths:
       tags:
         - auth
       description: Login with Spotify
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: redirectUri
+          required: true
       responses:
         "302":
           description: Default Response
