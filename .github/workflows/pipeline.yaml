@@ -91,7 +91,7 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG} ./app-${{ matrix.app }}.dockerfile
+          docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG} -f ./app-${{ matrix.app }}.dockerfile .
           docker push ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG}
 
 #   security:
