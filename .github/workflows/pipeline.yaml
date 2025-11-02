@@ -92,12 +92,12 @@ jobs:
           fi
 
       - name: Login Docker registry
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login registry.local:5000 -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin --tls-verify=false
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ${{ secrets.DOCKER_REGISTRY }} -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Build and push Docker images
         run: |
-          docker build --pull -t registry.local:5000/blindify-${{ matrix.app }}:${IMAGE_TAG} ./app-${{ matrix.app }}.dockerfile
-          docker push registry.local:5000/blindify-${{ matrix.app }}:${IMAGE_TAG}
+          docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG} ./app-${{ matrix.app }}.dockerfile
+          docker push ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG}
 
 #   security:
 #     runs-on: self-hosted
