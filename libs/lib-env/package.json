@@ -6,7 +6,8 @@
 	"types": "dist/index.d.ts",
 	"scripts": {
 		"dev": "tsup --watch",
-		"build": "tsup"
+		"build": "tsup",
+		"lint": "eslint . --ext .ts --fix"
 	},
 	"dependencies": {
 		"dotenv": "^16.4.7",
