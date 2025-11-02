@@ -41,20 +41,9 @@ jobs:
   lint:
     runs-on: self-hosted
     needs: build-librairies
-    strategy:
-      matrix:
-        subproject:
-          - apps/app-backend
-          - apps/app-frontend
-          - libs/lib-auto-loader
-          - libs/lib-cache
-          - libs/lib-clip
-          - libs/lib-env
-          - libs/lib-logger
     steps:
       - name: Run Lint
-        run: pnpm lint
-        working-directory: ${{ matrix.subproject }}
+        run: pnpm -r run lint
 
   test:
     runs-on: self-hosted
@@ -65,21 +54,22 @@ jobs:
           - libs/lib-cache
     steps:
       - name: Run Tests
-        run: pnpm test
+        run: pnpm run test
         working-directory: ${{ matrix.subproject }}
+
+  generate-openapis:
+    runs-on: self-hosted
+    needs: [lint, test]
+    steps:
+      - name: Generate OpenAPI
+        run: pnpm -r --filter "./apps/*" run gen
 
   build-apps:
     runs-on: self-hosted
-    needs: [lint, test]
-    strategy:
-      matrix:
-        subproject:
-          - apps/app-backend
-          - apps/app-frontend
+    needs: generate-openapis
     steps:
       - name: Build app
-        run: pnpm build
-        working-directory: ${{ matrix.subproject }}
+        run: pnpm -r --filter "./apps/*" run build
 
 #   docker:
 #     runs-on: self-hosted
