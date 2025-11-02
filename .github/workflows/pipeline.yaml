@@ -12,7 +12,7 @@ on:
 
 jobs:
   setup:
-    runs-on: self-hosted
+    runs-on: [self-hosted, linux, arm64]
     outputs:
       node-version: 18
     steps:
@@ -32,7 +32,7 @@ jobs:
         run: pnpm install
   
   install-dependencies:
-    runs-on: self-hosted
+    runs-on: [self-hosted, linux, arm64]
     needs: setup
     strategy:
       matrix:
@@ -52,7 +52,7 @@ jobs:
         run: pnpm install
 
   build-librairies:
-    runs-on: self-hosted
+    runs-on: [self-hosted, linux, arm64]
     needs: [setup, install-dependencies]
     strategy:
       matrix:
@@ -71,7 +71,7 @@ jobs:
 
   lint:
     needs: [setup, install-dependencies, build-librairies]
-    runs-on: self-hosted
+    runs-on: [self-hosted, linux, arm64]
     strategy:
       matrix:
         subproject:
@@ -94,7 +94,7 @@ jobs:
 
   test:
     needs: [setup, install-dependencies, build-librairies]
-    runs-on: self-hosted
+    runs-on: [self-hosted, linux, arm64]
     strategy:
       matrix:
         subproject:
@@ -111,7 +111,7 @@ jobs:
 
   build-apps:
     needs: [lint, test]
-    runs-on: self-hosted
+    runs-on: [self-hosted, linux, arm64]
     strategy:
       matrix:
         subproject:
@@ -129,7 +129,7 @@ jobs:
 
 #   docker:
 #     needs: build
-#     runs-on: self-hosted
+#     runs-on: [self-hosted, linux, arm64]
 #     steps:
 #       - name: Checkout repo
 #         uses: actions/checkout@v3
@@ -158,7 +158,7 @@ jobs:
 
 #   security:
 #     needs: build
-#     runs-on: self-hosted
+#     runs-on: [self-hosted, linux, arm64]
 #     steps:
 #       - name: Checkout repo
 #         uses: actions/checkout@v3
