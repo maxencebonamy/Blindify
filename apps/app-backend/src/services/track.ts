@@ -60,7 +60,6 @@ export const getAllTracksFromPlaylist = async (accessToken: string, spotifyPlayl
 		offset += limit
 		lastPage = spotifyTracks.next === null
 	}
-
 	await cache.set(cacheKey, tracks)
 
 	return tracks

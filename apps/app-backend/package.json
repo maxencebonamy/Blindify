@@ -22,6 +22,7 @@
 		"fastify-type-provider-zod": "^5.0.3",
 		"lib-auto-loader": "workspace:^",
 		"lib-cache": "workspace:^",
+		"lib-clip": "workspace:^",
 		"lib-env": "workspace:^",
 		"lib-logger": "workspace:^",
 		"tsconfig-paths": "^4.2.0",

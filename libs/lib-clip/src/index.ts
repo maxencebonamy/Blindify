@@ -1,0 +1,1 @@
+export { findClip } from "#/find"
