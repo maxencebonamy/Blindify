@@ -1,0 +1,26 @@
+{
+	"name": "lib-clip",
+	"version": "1.0.0",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"dev": "tsup --watch",
+		"build": "tsup",
+		"test": "vitest run"
+	},
+	"devDependencies": {
+		"@types/jaro-winkler": "^0.2.4",
+		"tsup": "^8.3.6",
+		"tsx": "^4.19.3"
+	},
+	"imports": {
+		"#/": "./src/"
+	},
+	"dependencies": {
+		"jaro-winkler": "^0.2.8",
+		"lib-cache": "workspace:^",
+		"lib-env": "workspace:^",
+		"lib-logger": "workspace:^"
+	}
+}

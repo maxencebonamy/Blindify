@@ -3,6 +3,8 @@ import { GameTitle } from "#/components/atoms/game-title"
 import { Icon } from "#/components/atoms/icon"
 import { Button } from "#/components/molecules/button"
 import { env } from "#/env"
+import type { AuthLoginData } from "#/generated"
+import { buildUrl } from "#/utils/api.util"
 import { cn } from "#/utils/tailwind.util"
 import { SiSpotifyHex, SiSpotify } from "@icons-pack/react-simple-icons"
 import { useRouter } from "@tanstack/react-router"
@@ -20,7 +22,7 @@ export const LoginScreen = () => {
 	const router = useRouter()
 
 	const login = () => router.navigate({
-		href: `${env.VITE_BACKEND_URL}/auth/login?redirectUri=${encodeURIComponent(env.VITE_APP_REDIRECT_URL)}`,
+		href: buildUrl<AuthLoginData>({ url: "/auth/login", query: { redirectUri: env.VITE_APP_REDIRECT_URL } }),
 		reloadDocument: true
 	})
 
