@@ -34,18 +34,9 @@ jobs:
   build-librairies:
     runs-on: self-hosted
     needs: setup
-    strategy:
-      matrix:
-        subproject:
-          - libs/lib-env
-          - libs/lib-logger
-          - libs/lib-auto-loader
-          - libs/lib-cache
-          - libs/lib-clip
     steps:
       - name: Build library
-        run: pnpm build
-        working-directory: ${{ matrix.subproject }}
+        run: pnpm -r --filter "./libs/*" run build
 
   lint:
     runs-on: self-hosted
