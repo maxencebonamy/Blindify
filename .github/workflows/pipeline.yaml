@@ -48,14 +48,9 @@ jobs:
   test:
     runs-on: self-hosted
     needs: build-librairies
-    strategy:
-      matrix:
-        subproject:
-          - libs/lib-cache
     steps:
       - name: Run Tests
-        run: pnpm run test
-        working-directory: ${{ matrix.subproject }}
+        run: pnpm -r run test
 
   generate-openapis:
     runs-on: self-hosted

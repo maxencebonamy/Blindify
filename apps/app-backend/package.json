@@ -6,9 +6,10 @@
 	"main": "src/index.ts",
 	"scripts": {
 		"dev": "tsx --watch src/index.ts",
+		"gen": "openapi-ts --silent",
 		"build": "tsup",
 		"lint": "eslint .",
-		"gen": "openapi-ts --silent"
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@fastify/cookie": "^11.0.2",
