@@ -30,28 +30,10 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-  
-  install-dependencies:
-    runs-on: self-hosted
-    needs: setup
-    strategy:
-      matrix:
-        subproject:
-          - apps/app-backend
-          - apps/app-frontend
-          - libs/lib-auto-loader
-          - libs/lib-cache
-          - libs/lib-clip
-          - libs/lib-env
-          - libs/lib-logger
-    steps:
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-        working-directory: ${{ matrix.subproject }}
 
   build-librairies:
     runs-on: self-hosted
-    needs: [setup, install-dependencies]
+    needs: setup
     strategy:
       matrix:
         subproject:
@@ -66,8 +48,8 @@ jobs:
         working-directory: ${{ matrix.subproject }}
 
   lint:
-    needs: [setup, install-dependencies, build-librairies]
     runs-on: self-hosted
+    needs: build-librairies
     strategy:
       matrix:
         subproject:
@@ -79,47 +61,38 @@ jobs:
           - libs/lib-env
           - libs/lib-logger
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
       - name: Run Lint
         run: pnpm lint
         working-directory: ${{ matrix.subproject }}
 
   test:
-    needs: [setup, install-dependencies, build-librairies]
     runs-on: self-hosted
+    needs: build-librairies
     strategy:
       matrix:
         subproject:
           - libs/lib-cache
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
       - name: Run Tests
         run: pnpm test
         working-directory: ${{ matrix.subproject }}
 
   build-apps:
-    needs: [lint, test]
     runs-on: self-hosted
+    needs: [lint, test]
     strategy:
       matrix:
         subproject:
           - apps/app-backend
           - apps/app-frontend
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
       - name: Build app
         run: pnpm build
         working-directory: ${{ matrix.subproject }}
 
 #   docker:
-#     needs: build
 #     runs-on: self-hosted
+#     needs: build
 #     steps:
 #       - name: Checkout repo
 #         uses: actions/checkout@v3
@@ -147,8 +120,8 @@ jobs:
 #           done
 
 #   security:
-#     needs: build
 #     runs-on: self-hosted
+#     needs: build
 #     steps:
 #       - name: Checkout repo
 #         uses: actions/checkout@v3
