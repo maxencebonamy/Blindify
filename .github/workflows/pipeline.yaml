@@ -53,7 +53,7 @@ jobs:
 
   build-librairies:
     runs-on: self-hosted
-    needs: setup
+    needs: [setup, install-dependencies]
     strategy:
       matrix:
         subproject:
