@@ -99,19 +99,19 @@ jobs:
           docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG} -f ./apps/app-${{ matrix.app }}/Dockerfile .
           docker push ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG}
 
-#   security:
-#     runs-on: self-hosted
-#     needs: build
-#     steps:
-#       - name: Checkout repo
-#         uses: actions/checkout@v3
+  security:
+    runs-on: self-hosted
+    needs: docker
+    strategy:
+      matrix:
+        app:
+          - backend
+          - frontend
+    steps:
+      - name: Audit dependencies
+        run: pnpm audit
 
-#       - name: Audit dependencies
-#         run: pnpm audit --audit-level=moderate
-
-#       - name: Scan Docker images with Trivy
-#         run: |
-#           for APP in app1 app2; do
-#             docker pull raspberrypi.local:5000/$APP:${IMAGE_TAG}
-#             trivy image --severity HIGH,CRITICAL raspberrypi.local:5000/$APP:${IMAGE_TAG}
-#           done
+      - name: Scan images
+        run: |
+          docker pull ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG}
+          trivy image --severity HIGH,CRITICAL ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG}
