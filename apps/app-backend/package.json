@@ -34,5 +34,22 @@
 		"esbuild-ts-paths": "^1.1.3",
 		"tsup": "^8.3.6",
 		"tsx": "^4.19.2"
+	},
+	"dependenciesMeta": {
+		"lib-auto-loader": {
+			"injected": true
+		},
+		"lib-cache": {
+			"injected": true
+		},
+		"lib-clip": {
+			"injected": true
+		},
+		"lib-env": {
+			"injected": true
+		},
+		"lib-logger": {
+			"injected": true
+		}
 	}
 }

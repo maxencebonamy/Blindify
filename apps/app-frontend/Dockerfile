@@ -1,30 +1,24 @@
-FROM node:20-alpine AS builder
-WORKDIR /app
+FROM node:20-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
+FROM base AS build
 ARG VITE_APP_REDIRECT_URL
 ENV VITE_APP_REDIRECT_URL=$VITE_APP_REDIRECT_URL
-
 ARG VITE_BACKEND_URL
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+COPY . /usr/src/app
+WORKDIR /usr/src/app
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run -r --filter="./libs/*" build
+RUN pnpm run -r --filter=app-backend gen
+RUN pnpm run -r --filter=app-backend build
+RUN pnpm deploy --filter=app-backend --prod /prod/app-frontend --legacy
 
-COPY package.json ./
-COPY tsconfig.json ./
-COPY apps/app-frontend ./apps/app-frontend
-COPY libs ./libs
-
-RUN npm install -g pnpm
-RUN pnpm install
-RUN pnpm --filter "./libs/*" install
-RUN pnpm --filter "./libs/*" build
-RUN pnpm --filter "./apps/app-frontend" install
-RUN pnpm --filter "./apps/app-frontend" gen
-RUN pnpm --filter "./apps/app-frontend" build
-
-FROM nginx:alpine
+FROM nginx:alpine AS app-frontend
 WORKDIR /usr/share/nginx/html
-
-COPY --from=builder /app/apps/app-frontend/dist ./
-
+COPY --from=build /prod/app-frontend/dist ./
 RUN echo 'server { \
     listen 80; \
     server_name _; \
@@ -34,6 +28,5 @@ RUN echo 'server { \
         try_files $uri /index.html; \
     } \
 }' > /etc/nginx/conf.d/default.conf
-
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

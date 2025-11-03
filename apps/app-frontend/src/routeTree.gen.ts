@@ -8,76 +8,32 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as LoginIndexRouteImport } from './routes/login/index'
+import { Route as CreateGameIndexRouteImport } from './routes/create-game/index'
+import { Route as GameGameIdIndexRouteImport } from './routes/game/$gameId/index'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
-import { Route as LoginIndexImport } from './routes/login/index'
-import { Route as CreateGameIndexImport } from './routes/create-game/index'
-import { Route as GameGameIdIndexImport } from './routes/game/$gameId/index'
-
-// Create/Update Routes
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const LoginIndexRoute = LoginIndexImport.update({
+const LoginIndexRoute = LoginIndexRouteImport.update({
   id: '/login/',
   path: '/login/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const CreateGameIndexRoute = CreateGameIndexImport.update({
+const CreateGameIndexRoute = CreateGameIndexRouteImport.update({
   id: '/create-game/',
   path: '/create-game/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const GameGameIdIndexRoute = GameGameIdIndexImport.update({
+const GameGameIdIndexRoute = GameGameIdIndexRouteImport.update({
   id: '/game/$gameId/',
   path: '/game/$gameId/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/create-game/': {
-      id: '/create-game/'
-      path: '/create-game'
-      fullPath: '/create-game'
-      preLoaderRoute: typeof CreateGameIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/login/': {
-      id: '/login/'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/game/$gameId/': {
-      id: '/game/$gameId/'
-      path: '/game/$gameId'
-      fullPath: '/game/$gameId'
-      preLoaderRoute: typeof GameGameIdIndexImport
-      parentRoute: typeof rootRoute
-    }
-  }
-}
-
-// Create and export the route tree
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -85,22 +41,19 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginIndexRoute
   '/game/$gameId': typeof GameGameIdIndexRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create-game': typeof CreateGameIndexRoute
   '/login': typeof LoginIndexRoute
   '/game/$gameId': typeof GameGameIdIndexRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/create-game/': typeof CreateGameIndexRoute
   '/login/': typeof LoginIndexRoute
   '/game/$gameId/': typeof GameGameIdIndexRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths: '/' | '/create-game' | '/login' | '/game/$gameId'
@@ -109,12 +62,44 @@ export interface FileRouteTypes {
   id: '__root__' | '/' | '/create-game/' | '/login/' | '/game/$gameId/'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CreateGameIndexRoute: typeof CreateGameIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   GameGameIdIndexRoute: typeof GameGameIdIndexRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login/': {
+      id: '/login/'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/create-game/': {
+      id: '/create-game/'
+      path: '/create-game'
+      fullPath: '/create-game'
+      preLoaderRoute: typeof CreateGameIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/game/$gameId/': {
+      id: '/game/$gameId/'
+      path: '/game/$gameId'
+      fullPath: '/game/$gameId'
+      preLoaderRoute: typeof GameGameIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -123,35 +108,6 @@ const rootRouteChildren: RootRouteChildren = {
   LoginIndexRoute: LoginIndexRoute,
   GameGameIdIndexRoute: GameGameIdIndexRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/create-game/",
-        "/login/",
-        "/game/$gameId/"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/create-game/": {
-      "filePath": "create-game/index.tsx"
-    },
-    "/login/": {
-      "filePath": "login/index.tsx"
-    },
-    "/game/$gameId/": {
-      "filePath": "game/$gameId/index.tsx"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
