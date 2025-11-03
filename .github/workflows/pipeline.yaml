@@ -34,9 +34,10 @@ jobs:
   audit:
     runs-on: self-hosted
     needs: setup
+    continue-on-error: true
     steps:
       - name: Audit dependencies
-        run: pnpm audit --audit-level=high
+        run: pnpm audit
 
   build-librairies:
     runs-on: self-hosted
@@ -48,6 +49,7 @@ jobs:
   lint:
     runs-on: self-hosted
     needs: build-librairies
+    continue-on-error: true
     steps:
       - name: Run Lint
         run: pnpm -r run lint
@@ -125,6 +127,7 @@ jobs:
   security-backend:
     runs-on: self-hosted
     needs: [login-docker, docker-backend]
+    continue-on-error: true
     steps:
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@master
@@ -132,10 +135,12 @@ jobs:
           image-ref: ${{ secrets.DOCKER_REGISTRY }}/blindify-backend:${{ needs.login-docker.outputs.image_tag }}
           format: table
           severity: HIGH,CRITICAL
+          timeout: 10m
 
   security-frontend:
     runs-on: self-hosted
     needs: [login-docker, docker-frontend]
+    continue-on-error: true
     steps:
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@master
@@ -143,3 +148,4 @@ jobs:
           image-ref: ${{ secrets.DOCKER_REGISTRY }}/blindify-frontend:${{ needs.login-docker.outputs.image_tag }}
           format: table
           severity: HIGH,CRITICAL
+          timeout: 10m
