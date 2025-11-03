@@ -110,7 +110,7 @@ jobs:
     steps:
       - name: Build and push Docker images
         run: |
-          docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-backend:${{ needs.login-docker.outputs.image_tag }} -f ./apps/app-${{ matrix.app }}/Dockerfile .
+          docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-backend:${{ needs.login-docker.outputs.image_tag }} -f ./apps/app-backend/Dockerfile .
           docker push ${{ secrets.DOCKER_REGISTRY }}/blindify-backend:${{ needs.login-docker.outputs.image_tag }}
 
   docker-frontend:
@@ -119,7 +119,7 @@ jobs:
     steps:
       - name: Build and push Docker images
         run: |
-          docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-frontend:${{ needs.login-docker.outputs.image_tag }} -f ./apps/app-${{ matrix.app }}/Dockerfile .
+          docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-frontend:${{ needs.login-docker.outputs.image_tag }} -f ./apps/app-frontend/Dockerfile .
           docker push ${{ secrets.DOCKER_REGISTRY }}/blindify-frontend:${{ needs.login-docker.outputs.image_tag }}
 
   security-backend:
