@@ -86,8 +86,9 @@ jobs:
             else
                 BRANCH_NAME=${GITHUB_REF##*/}
             fi
+            SAFE_BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
             SHORT_SHA=${GITHUB_SHA:0:7}
-            echo "IMAGE_TAG=${BRANCH_NAME}-${SHORT_SHA}" >> $GITHUB_ENV
+            echo "IMAGE_TAG=${SAFE_BRANCH_NAME}-${SHORT_SHA}" >> $GITHUB_ENV
           fi
 
       - name: Login Docker registry
