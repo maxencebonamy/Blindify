@@ -81,7 +81,11 @@ jobs:
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             echo "IMAGE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
           else
-            BRANCH_NAME=${GITHUB_REF##*/}
+            if [ -n "$GITHUB_HEAD_REF" ]; then
+                BRANCH_NAME=$GITHUB_HEAD_REF
+            else
+                BRANCH_NAME=${GITHUB_REF##*/}
+            fi
             SHORT_SHA=${GITHUB_SHA:0:7}
             echo "IMAGE_TAG=${BRANCH_NAME}-${SHORT_SHA}" >> $GITHUB_ENV
           fi
@@ -91,7 +95,7 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG} -f ./app-${{ matrix.app }}.dockerfile .
+          docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG} -f ./apps/app-${{ matrix.app }}/Dockerfile .
           docker push ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG}
 
 #   security:
