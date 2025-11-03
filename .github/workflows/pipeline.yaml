@@ -31,6 +31,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+  audit:
+    runs-on: self-hosted
+    needs: setup
+    steps:
+      - name: Audit dependencies
+        run: pnpm audit --audit-level=high
+
   build-librairies:
     runs-on: self-hosted
     needs: setup
@@ -52,29 +59,33 @@ jobs:
       - name: Run Tests
         run: pnpm -r run test
 
-  generate-openapis:
+  build-backend:
     runs-on: self-hosted
-    needs: [lint, test]
+    needs: [audit, lint, test]
     steps:
       - name: Generate OpenAPI
-        run: pnpm -r --filter "./apps/*" run gen
+        run: pnpm -r --filter "./apps/app-backend" run gen
 
-  build-apps:
-    runs-on: self-hosted
-    needs: generate-openapis
-    steps:
       - name: Build app
-        run: pnpm -r --filter "./apps/*" run build
+        run: pnpm -r --filter "./apps/app-backend" run build
 
-  docker:
+  build-frontend:
     runs-on: self-hosted
-    needs: build-apps
-    strategy:
-      matrix:
-        app:
-          - backend
-          - frontend
+    needs: [audit, lint, test]
     steps:
+      - name: Generate OpenAPI
+        run: pnpm -r --filter "./apps/app-frontend" run gen
+
+      - name: Build app
+        run: pnpm -r --filter "./apps/app-frontend" run build
+
+  login-docker:
+    runs-on: self-hosted
+    needs: [setup]
+    steps:
+      - name: Login Docker registry
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ${{ secrets.DOCKER_REGISTRY }} -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
       - name: Set Docker image tag
         id: docker_tag
         run: |
@@ -91,27 +102,42 @@ jobs:
             echo "IMAGE_TAG=${SAFE_BRANCH_NAME}-${SHORT_SHA}" >> $GITHUB_ENV
           fi
 
-      - name: Login Docker registry
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ${{ secrets.DOCKER_REGISTRY }} -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
+  docker-backend:
+    runs-on: self-hosted
+    needs: [login-docker, build-backend]
+    steps:
       - name: Build and push Docker images
         run: |
-          docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG} -f ./apps/app-${{ matrix.app }}/Dockerfile .
-          docker push ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG}
+          docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-backend:${IMAGE_TAG} -f ./apps/app-${{ matrix.app }}/Dockerfile .
+          docker push ${{ secrets.DOCKER_REGISTRY }}/blindify-backend:${IMAGE_TAG}
 
-  security:
+  docker-frontend:
     runs-on: self-hosted
-    needs: docker
-    strategy:
-      matrix:
-        app:
-          - backend
-          - frontend
+    needs: [login-docker, build-frontend]
     steps:
-      - name: Audit dependencies
-        run: pnpm audit
-
-      - name: Scan images
+      - name: Build and push Docker images
         run: |
-          docker pull ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG}
-          trivy image --severity HIGH,CRITICAL ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG}
+          docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-frontend:${IMAGE_TAG} -f ./apps/app-${{ matrix.app }}/Dockerfile .
+          docker push ${{ secrets.DOCKER_REGISTRY }}/blindify-frontend:${IMAGE_TAG}
+
+  security-backend:
+    runs-on: self-hosted
+    needs: [docker-backend]
+    steps:
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ secrets.DOCKER_REGISTRY }}/blindify-backend:${{ env.IMAGE_TAG }}
+          format: table
+          severity: HIGH,CRITICAL
+
+  security-frontend:
+    runs-on: self-hosted
+    needs: [docker-frontend]
+    steps:
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ secrets.DOCKER_REGISTRY }}/blindify-frontend:${{ env.IMAGE_TAG }}
+          format: table
+          severity: HIGH,CRITICAL
