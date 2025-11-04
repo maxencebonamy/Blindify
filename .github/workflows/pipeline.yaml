@@ -113,8 +113,7 @@ jobs:
       - name: Build and push Docker images
         run: |
           export DOCKER_BUILDKIT=1
-          docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-backend:${{ needs.login-docker.outputs.image_tag }} -f ./apps/app-backend/Dockerfile .
-          docker push ${{ secrets.DOCKER_REGISTRY }}/blindify-backend:${{ needs.login-docker.outputs.image_tag }}
+          docker buildx build --platform linux/amd64 --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-backend:${{ needs.login-docker.outputs.image_tag }} -f ./apps/app-backend/Dockerfile --push .
 
   docker-frontend:
     runs-on: self-hosted
@@ -123,8 +122,7 @@ jobs:
       - name: Build and push Docker images
         run: |
           export DOCKER_BUILDKIT=1
-          docker build --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-frontend:${{ needs.login-docker.outputs.image_tag }} -f ./apps/app-frontend/Dockerfile .
-          docker push ${{ secrets.DOCKER_REGISTRY }}/blindify-frontend:${{ needs.login-docker.outputs.image_tag }}
+          docker buildx build --platform linux/amd64 --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-frontend:${{ needs.login-docker.outputs.image_tag }} -f ./apps/app-frontend/Dockerfile --push .
 
   security-backend:
     runs-on: self-hosted
