@@ -12,9 +12,9 @@ COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run -r --filter="./libs/*" build
-RUN pnpm run -r --filter=app-backend gen
-RUN pnpm run -r --filter=app-backend build
-RUN pnpm deploy --filter=app-backend --prod /prod/app-frontend --legacy
+RUN pnpm run -r --filter=app-frontend gen
+RUN pnpm run -r --filter=app-frontend build
+RUN pnpm deploy --filter=app-frontend --prod /prod/app-frontend --legacy
 
 FROM nginx:alpine AS app-frontend
 WORKDIR /usr/share/nginx/html
