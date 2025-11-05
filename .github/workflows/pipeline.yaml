@@ -69,16 +69,16 @@ jobs:
         id: set_tag
         run: |
           if [[ "$GITHUB_REF" == refs/tags/* ]]; then
-          echo "IMAGE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+            echo "IMAGE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
           else
-          if [ -n "$GITHUB_HEAD_REF" ]; then
-            BRANCH_NAME="$GITHUB_HEAD_REF"
-          else
-            BRANCH_NAME="${GITHUB_REF##*/}"
-          fi
-          SAFE_BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
-          SHORT_SHA="${GITHUB_SHA:0:7}"
-          echo "IMAGE_TAG=${SAFE_BRANCH_NAME}-${SHORT_SHA}" >> $GITHUB_ENV
+            if [ -n "$GITHUB_HEAD_REF" ]; then
+              BRANCH_NAME="$GITHUB_HEAD_REF"
+            else
+              BRANCH_NAME="${GITHUB_REF##*/}"
+            fi
+            SAFE_BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+            SHORT_SHA="${GITHUB_SHA:0:7}"
+            echo "IMAGE_TAG=${SAFE_BRANCH_NAME}-${SHORT_SHA}" >> $GITHUB_ENV
           fi
 
       - name: Build and push Docker image
