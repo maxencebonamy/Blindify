@@ -90,21 +90,10 @@ jobs:
             -f ./apps/app-${{ matrix.app }}/Dockerfile \
             --push .
 
-
-  security:
-    runs-on: self-hosted
-    needs: docker
-    continue-on-error: true
-    strategy:
-      matrix:
-        app:
-          - backend
-          - frontend
-    steps:
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${{ needs.login-docker.outputs.image_tag }}
+          image-ref: ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG}
           format: table
           severity: HIGH,CRITICAL
           timeout: 10m
