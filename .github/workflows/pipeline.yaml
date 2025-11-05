@@ -30,6 +30,9 @@ jobs:
 
       - name: Build all packages
         run: |
+          pnpm -r run audit
+          pnpm -r run lint
+          pnpm -r run test
           pnpm -r --filter "./libs/*" run build
           pnpm -r --filter "./apps/*" run gen
           pnpm -r --filter "./apps/*" run build
@@ -42,43 +45,9 @@ jobs:
             apps/**/dist
             libs/**/dist
 
-  lint:
-    runs-on: self-hosted
-    needs: build
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'pnpm'
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Lint code
-        run: pnpm -r run lint
-
-  test:
-    runs-on: self-hosted
-    needs: build
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'pnpm'
-      - name: Install pnpm
-        run: npm install -g pnpm
-      - name: Run tests
-        run: pnpm -r run test
-
   login-docker:
     runs-on: self-hosted
-    needs: [lint, test]
+    needs: build
     outputs:
       image_tag: ${{ steps.set_tag.outputs.image_tag }}
     steps:
