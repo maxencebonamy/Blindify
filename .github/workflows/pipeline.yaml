@@ -41,6 +41,9 @@ jobs:
     needs: setup
     continue-on-error: true
     steps:
+      - name: Install pnpm
+        run: npm install -g pnpm
+
       - name: Audit dependencies
         run: pnpm audit
 
@@ -48,6 +51,9 @@ jobs:
     runs-on: self-hosted
     needs: setup
     steps:
+      - name: Install pnpm
+        run: npm install -g pnpm
+
       - name: Build library
         run: pnpm -r --filter "./libs/*" run build
 
