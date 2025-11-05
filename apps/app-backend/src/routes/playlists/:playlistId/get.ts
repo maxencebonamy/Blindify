@@ -13,6 +13,7 @@ export const schema = {
 	}),
 	response: {
 		200: zPlaylist,
+		401: zApiError,
 		500: zApiError
 	}
 } satisfies AutoLoaderSchema

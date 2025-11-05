@@ -1,15 +1,29 @@
+import type { CookieSerializeOptions, UnsignResult } from "@fastify/cookie"
 import type {
-	FastifySchema, FastifyInstance, FastifyReply, FastifyRequest, RawRequestDefaultExpression, RawServerDefault, RouteGenericInterface,
+	FastifySchema, FastifyInstance, RawRequestDefaultExpression, RawServerDefault, RouteGenericInterface,
 	RawReplyDefaultExpression,
 	ContextConfigDefault,
+	FastifyReply,
+	FastifyRequest,
 	setCookieWrapper
 } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
-import type { CookieSerializeOptions, UnsignResult } from "@fastify/cookie"
+import type z from "zod"
 
 type MaybePromise<T> = T | Promise<T>
 
 export type AutoLoaderSchema = FastifySchema
+
+// export type AutoLoaderHandler<Schema extends FastifySchema = FastifySchema> = RouteHandlerMethod<
+// 	RawServerDefault,
+// 	RawRequestDefaultExpression<RawServerDefault>,
+// 	RawReplyDefaultExpression<RawServerDefault>,
+// 	RouteGenericInterface,
+// 	ContextConfigDefault,
+// 	Schema,
+// 	ZodTypeProvider,
+// 	FastifyBaseLogger
+// >
 
 export type AutoLoaderHandler<Schema extends FastifySchema = FastifySchema> = (
 	request: FastifyRequest<
@@ -19,6 +33,8 @@ export type AutoLoaderHandler<Schema extends FastifySchema = FastifySchema> = (
 		Schema,
 		ZodTypeProvider
 	> & {
+		params: z.infer<Schema["params"]>
+		query: z.infer<Schema["querystring"]>
 		cookies: { [cookieName: string]: string | undefined }
 	},
 	reply: FastifyReply<
