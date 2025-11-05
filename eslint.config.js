@@ -1,7 +1,12 @@
-import globals from "globals"
-import pluginJs from "@eslint/js"
-import tseslint from "typescript-eslint"
-import stylistic from "@stylistic/eslint-plugin"
+import globals from "globals";
+import pluginJs from "@eslint/js";
+import tseslint from "typescript-eslint";
+import stylistic from "@stylistic/eslint-plugin";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const commonRules = {
 	// spacing
@@ -150,7 +155,7 @@ export default [
 		languageOptions: {
 			parserOptions: {
 				projectService: true,
-				tsconfigRootDir: import.meta.url
+				tsconfigRootDir: __dirname
 			}
 		}
 	},

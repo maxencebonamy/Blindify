@@ -81,7 +81,7 @@ export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) 
 		.setCookie("access_token", access_token, {
 			httpOnly: true,
 			secure: env.APP_ENV === "production",
-			sameSite: "lax",
+			sameSite: "none",
 			path: "/",
 			maxAge: parsedIdToken.data.expires_in
 		})
