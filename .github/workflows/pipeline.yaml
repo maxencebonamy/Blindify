@@ -11,42 +11,27 @@ on:
       - main
 
 jobs:
-  setup:
-    runs-on: self-hosted
-    outputs:
-      node-version: 18
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
   build:
     runs-on: self-hosted
-    needs: setup
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'pnpm'
+
       - name: Install pnpm
         run: npm install -g pnpm
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build all packages
         run: |
           pnpm -r --filter "./libs/*" run build
+          pnpm -r --filter "./apps/*" run gen
           pnpm -r --filter "./apps/*" run build
 
       - name: Upload build artifacts
@@ -63,13 +48,16 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'pnpm'
+
       - name: Install pnpm
         run: npm install -g pnpm
+
       - name: Lint code
         run: pnpm -r run lint
 
