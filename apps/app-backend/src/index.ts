@@ -17,7 +17,13 @@ const __dirname = path.dirname(__filename)
 const app = Fastify()
 
 app.register(cors, {
-	origin: env.ALLOWED_ORIGINS,
+	origin: (origin, callback) => {
+		if (!origin || env.ALLOWED_ORIGINS.includes(origin)) {
+			callback(null, true)
+		} else {
+			callback(new Error("Not allowed by CORS"), false)
+		}
+	},
 	credentials: true,
 	methods: [ "GET", "POST", "PUT", "PATCH", "DELETE" ] satisfies HTTPMethods[]
 })
