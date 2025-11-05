@@ -29,4 +29,6 @@ RUN echo 'server { \
     } \
 }' > /etc/nginx/conf.d/default.conf
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=build /usr/src/app/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+CMD ["/entrypoint.sh"]
