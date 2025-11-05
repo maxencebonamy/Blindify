@@ -89,3 +89,14 @@ jobs:
             -t ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${IMAGE_TAG} \
             -f ./apps/app-${{ matrix.app }}/Dockerfile \
             --push .
+
+  cleanup:
+    runs-on: self-hosted
+    needs: docker
+    if: always()
+    steps:
+      - name: Delete build artifacts
+        uses: actions/delete-artifact@v1
+        with:
+          name: dist-artifacts
+          
