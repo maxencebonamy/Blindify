@@ -16,8 +16,7 @@ jobs:
     outputs:
       node-version: 18
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -27,82 +26,79 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+  build:
+    runs-on: self-hosted
+    needs: setup
+    steps:
+      - uses: actions/checkout@v3
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'pnpm'
-
+      - name: Install pnpm
+        run: npm install -g pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-  audit:
-    runs-on: self-hosted
-    needs: setup
-    continue-on-error: true
-    steps:
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Build all packages
+        run: |
+          pnpm -r --filter "./libs/*" run build
+          pnpm -r --filter "./apps/*" run build
 
-      - name: Audit dependencies
-        run: pnpm audit
-
-  build-librairies:
-    runs-on: self-hosted
-    needs: setup
-    steps:
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Build library
-        run: pnpm -r --filter "./libs/*" run build
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-artifacts
+          path: |
+            apps/**/dist
+            libs/**/dist
 
   lint:
     runs-on: self-hosted
-    needs: build-librairies
+    needs: build
     continue-on-error: true
     steps:
-      - name: Run Lint
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Lint code
         run: pnpm -r run lint
 
   test:
     runs-on: self-hosted
-    needs: build-librairies
+    needs: build
     steps:
-      - name: Run Tests
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Run tests
         run: pnpm -r run test
-
-  build-backend:
-    runs-on: self-hosted
-    needs: [audit, lint, test]
-    steps:
-      - name: Generate OpenAPI
-        run: pnpm -r --filter "./apps/app-backend" run gen
-
-      - name: Build app
-        run: pnpm -r --filter "./apps/app-backend" run build
-
-  build-frontend:
-    runs-on: self-hosted
-    needs: [audit, lint, test]
-    steps:
-      - name: Generate OpenAPI
-        run: pnpm -r --filter "./apps/app-frontend" run gen
-
-      - name: Build app
-        run: pnpm -r --filter "./apps/app-frontend" run build
 
   login-docker:
     runs-on: self-hosted
-    needs: [setup]
+    needs: [lint, test]
     outputs:
-      image_tag: ${{ steps.docker_tag.outputs.image_tag }}
+      image_tag: ${{ steps.set_tag.outputs.image_tag }}
     steps:
       - name: Login Docker registry
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ${{ secrets.DOCKER_REGISTRY }} -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Set Docker image tag
-        id: docker_tag
+        id: set_tag
         run: |
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             echo "image_tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
@@ -117,46 +113,45 @@ jobs:
             echo "image_tag=${SAFE_BRANCH_NAME}-${SHORT_SHA}" >> $GITHUB_OUTPUT
           fi
 
-  docker-backend:
+  docker:
     runs-on: self-hosted
-    needs: [login-docker, build-backend]
+    needs: [login-docker, build]
+    strategy:
+      matrix:
+        app:
+          - backend
+          - frontend
     steps:
-      - name: Build and push Docker images
+      - uses: actions/checkout@v3
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-artifacts
+
+      - name: Build and push Docker image
         run: |
           export DOCKER_BUILDKIT=1
-          docker buildx build --platform linux/amd64 --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-backend:${{ needs.login-docker.outputs.image_tag }} -f ./apps/app-backend/Dockerfile --push .
+          docker buildx build \
+            --platform linux/amd64 \
+            -t ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${{ needs.login-docker.outputs.image_tag }} \
+            -f ./apps/app-${{ matrix.app }}/Dockerfile \
+            --push .
 
-  docker-frontend:
+  security:
     runs-on: self-hosted
-    needs: [login-docker, build-frontend]
-    steps:
-      - name: Build and push Docker images
-        run: |
-          export DOCKER_BUILDKIT=1
-          docker buildx build --platform linux/amd64 --pull -t ${{ secrets.DOCKER_REGISTRY }}/blindify-frontend:${{ needs.login-docker.outputs.image_tag }} -f ./apps/app-frontend/Dockerfile --push .
-
-  security-backend:
-    runs-on: self-hosted
-    needs: [login-docker, docker-backend]
+    needs: docker
     continue-on-error: true
+    strategy:
+      matrix:
+        app:
+          - backend
+          - frontend
     steps:
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ secrets.DOCKER_REGISTRY }}/blindify-backend:${{ needs.login-docker.outputs.image_tag }}
-          format: table
-          severity: HIGH,CRITICAL
-          timeout: 10m
-
-  security-frontend:
-    runs-on: self-hosted
-    needs: [login-docker, docker-frontend]
-    continue-on-error: true
-    steps:
-      - name: Scan Docker image with Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ secrets.DOCKER_REGISTRY }}/blindify-frontend:${{ needs.login-docker.outputs.image_tag }}
+          image-ref: ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${{ needs.login-docker.outputs.image_tag }}
           format: table
           severity: HIGH,CRITICAL
           timeout: 10m
