@@ -45,34 +45,9 @@ jobs:
             apps/**/dist
             libs/**/dist
 
-  login-docker:
-    runs-on: self-hosted
-    needs: build
-    outputs:
-      image_tag: ${{ steps.set_tag.outputs.image_tag }}
-    steps:
-      - name: Login Docker registry
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ${{ secrets.DOCKER_REGISTRY }} -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      - name: Set Docker image tag
-        id: set_tag
-        run: |
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            echo "image_tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-          else
-            if [ -n "$GITHUB_HEAD_REF" ]; then
-                BRANCH_NAME=$GITHUB_HEAD_REF
-            else
-                BRANCH_NAME=${GITHUB_REF##*/}
-            fi
-            SAFE_BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
-            SHORT_SHA=${GITHUB_SHA:0:7}
-            echo "image_tag=${SAFE_BRANCH_NAME}-${SHORT_SHA}" >> $GITHUB_OUTPUT
-          fi
-
   docker:
     runs-on: self-hosted
-    needs: [login-docker, build]
+    needs: build
     strategy:
       matrix:
         app:
@@ -85,13 +60,32 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist-artifacts
+    
+      - name: Login Docker registry
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ${{ secrets.DOCKER_REGISTRY }} -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Set Docker image tag
+        id: set_tag
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            echo "IMAGE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            if [ -n "$GITHUB_HEAD_REF" ]; then
+                BRANCH_NAME=$GITHUB_HEAD_REF
+            else
+                BRANCH_NAME=${GITHUB_REF##*/}
+            fi
+            SAFE_BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+            SHORT_SHA=${GITHUB_SHA:0:7}
+            echo "IMAGE_TAG=${SAFE_BRANCH_NAME}-${SHORT_SHA}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Build and push Docker image
         run: |
           export DOCKER_BUILDKIT=1
           docker buildx build \
             --platform linux/amd64 \
-            -t ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:${{ needs.login-docker.outputs.image_tag }} \
+            -t ${{ secrets.DOCKER_REGISTRY }}/blindify-${{ matrix.app }}:$IMAGE_TAG \
             -f ./apps/app-${{ matrix.app }}/Dockerfile \
             --push .
 
