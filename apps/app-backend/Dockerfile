@@ -1,0 +1,19 @@
+FROM node:20-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+FROM base AS build
+COPY . /usr/src/app
+WORKDIR /usr/src/app
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run -r --filter="./libs/*" build
+RUN pnpm run -r --filter=app-backend gen
+RUN pnpm run -r --filter=app-backend build
+RUN pnpm deploy --filter=app-backend --prod /prod/app-backend --legacy
+
+FROM base AS app-backend
+COPY --from=build /prod/app-backend /prod/app-backend
+WORKDIR /prod/app-backend
+EXPOSE 3000
+CMD [ "pnpm", "start" ]
