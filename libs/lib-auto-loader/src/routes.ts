@@ -3,6 +3,7 @@ import { logger } from "lib-logger"
 import path from "path"
 import { pathToFileURL } from "url"
 import fs from "fs"
+import z from "zod"
 
 type Route = {
 	method: string
@@ -30,27 +31,54 @@ export const loadRoutes = async (dir: string, basePath = ""): Promise<Route[]> =
 			const url = basePath || "/"
 
 			const mod = await import(pathToFileURL(fullPath).href)
-			if (!mod.schema || !mod.handler) {
+			const schema: AutoLoaderSchema = mod.schema
+			const handler: AutoLoaderHandler<AutoLoaderSchema> = mod.handler
+			if (!schema || !handler) {
 				throw new Error(`Missing schema or handler export in ${fullPath}`)
 			}
 
-			const debug = mod.debug !== undefined && typeof mod.debug === "boolean" && mod.debug
+			if (schema.auth) {
+				if (schema.response) {
+					(schema.response as Record<string, z.ZodTypeAny>)["401"] = z.object({ message: z.string() })
+				} else {
+					schema.response = { 401: z.object({ message: z.string() }) }
+				}
+			}
+
+			if (schema.response) {
+				(schema.response as Record<string, z.ZodTypeAny>)["500"] = z.object({ message: z.string() })
+			} else {
+				schema.response = { 500: z.object({ message: z.string() }) }
+			}
 
 			routes.push({
 				method,
 				url,
-				schema: mod.schema,
-				handler: async (...params) => {
-					if (!debug) return mod.handler(...params)
+				schema: schema,
+				handler: async (request, reply) => {
+					let accessToken: string | undefined = undefined
+					if (schema.auth) {
+						accessToken = request.cookies["access_token"]
+						if (!accessToken) {
+							return reply.code(401).send({ message: "Access token missing" })
+						}
+					}
 
-					logger.debug(`Entering ${method} ${url}`)
-					const start = performance.now()
-					const result = await mod.handler(...params)
+					try {
+						if (logger.level() !== "DEBUG") return mod.handler({ ...request, accessToken }, reply)
 
-					const end = performance.now()
-					const durationMs = end - start
-					logger.debug(`Leaving ${method} ${url} (${durationMs.toFixed(0)}ms)`)
-					return result
+						logger.debug(`Entering ${method} ${url}`)
+						const start = performance.now()
+						const result = await mod.handler({ ...request, accessToken }, reply)
+
+						const end = performance.now()
+						const durationMs = end - start
+						logger.debug(`Leaving ${method} ${url} (${durationMs.toFixed(0)}ms)`)
+						return result
+					} catch (error) {
+						logger.error(`Error in ${method} ${url}: ${(error as Error).message}`)
+						return reply.code(500).send({ message: "Internal server error" })
+					}
 				}
 			})
 		}

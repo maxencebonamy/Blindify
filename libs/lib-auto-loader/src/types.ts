@@ -12,20 +12,11 @@ import type z from "zod"
 
 type MaybePromise<T> = T | Promise<T>
 
-export type AutoLoaderSchema = FastifySchema
+export type AutoLoaderSchema = FastifySchema & {
+	auth?: boolean
+}
 
-// export type AutoLoaderHandler<Schema extends FastifySchema = FastifySchema> = RouteHandlerMethod<
-// 	RawServerDefault,
-// 	RawRequestDefaultExpression<RawServerDefault>,
-// 	RawReplyDefaultExpression<RawServerDefault>,
-// 	RouteGenericInterface,
-// 	ContextConfigDefault,
-// 	Schema,
-// 	ZodTypeProvider,
-// 	FastifyBaseLogger
-// >
-
-export type AutoLoaderHandler<Schema extends FastifySchema = FastifySchema> = (
+export type AutoLoaderHandler<Schema extends AutoLoaderSchema = AutoLoaderSchema> = (
 	request: FastifyRequest<
 		RouteGenericInterface,
 		RawServerDefault,
@@ -35,8 +26,10 @@ export type AutoLoaderHandler<Schema extends FastifySchema = FastifySchema> = (
 	> & {
 		params: z.infer<Schema["params"]>
 		query: z.infer<Schema["querystring"]>
+		body: z.infer<Schema["body"]>
 		cookies: { [cookieName: string]: string | undefined }
-	},
+	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+	} & (Schema["auth"] extends true ? { accessToken: string } : {}),
 	reply: FastifyReply<
 		RouteGenericInterface,
 		RawServerDefault,

@@ -1,5 +1,4 @@
 import { getPlaylistById } from "#/services/playlist"
-import { zApiError } from "#/types/error.type"
 import { zPlaylist } from "#/types/playlist.type"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import z from "zod"
@@ -7,24 +6,18 @@ import z from "zod"
 export const schema = {
 	operationId: "showUserPlaylist",
 	description: "Get current user's playlist",
+	auth: true,
 	tags: [ "playlists" ],
 	params: z.object({
 		playlistId: z.string()
 	}),
 	response: {
-		200: zPlaylist,
-		401: zApiError,
-		500: zApiError
+		200: zPlaylist
 	}
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
-	const accessToken = request.cookies["access_token"]
-	if (!accessToken) {
-		return reply.code(401).send({ message: "Access token missing" })
-	}
-
-	const playlist = await getPlaylistById(accessToken, request.params.playlistId)
+	const playlist = await getPlaylistById(request.accessToken, request.params.playlistId)
 
 	return reply.send(playlist)
 }

@@ -1,6 +1,12 @@
 import { logConsole } from "#/console"
+import { env } from "#/env"
 import { logFile } from "#/file"
+import type { Level } from "#/level"
 import chalk from "chalk"
+
+export const level = (): Level => {
+	return env.LOG_LEVEL
+}
 
 export const info = (...messages: unknown[]): void => {
 	logConsole("INFO", chalk.bold.green, ...messages)

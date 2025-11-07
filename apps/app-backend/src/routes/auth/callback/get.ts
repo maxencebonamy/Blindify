@@ -1,4 +1,5 @@
 import { env } from "#/config/env"
+import { zApiError } from "#/types/error.type"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import { cache } from "lib-cache"
 import { z } from "zod"
@@ -21,18 +22,9 @@ export const schema = {
 	]),
 	response: {
 		302: z.any(),
-		400: z.object({
-			error: z.string()
-		}),
-		403: z.object({
-			error: z.string()
-		}),
-		500: z.object({
-			error: z.string()
-		}),
-		502: z.object({
-			error: z.string()
-		})
+		400: zApiError,
+		403: zApiError,
+		502: zApiError
 	}
 } satisfies AutoLoaderSchema
 
@@ -71,7 +63,7 @@ export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) 
 	const idToken = await idTokenResponse.json()
 	const parsedIdToken = idTokenSchema.safeParse(idToken)
 	if (!parsedIdToken.success) {
-		return reply.code(500).send({ error: `Invalid ID token: ${parsedIdToken.error}` })
+		return reply.code(502).send({ error: `Invalid ID token: ${parsedIdToken.error}` })
 	}
 
 	const redirectUri = await cache.get<string>(`auth:${request.query.state}`)
@@ -80,7 +72,7 @@ export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) 
 	return reply
 		.setCookie("access_token", access_token, {
 			httpOnly: true,
-			secure: env.APP_ENV === "production",
+			secure: true,
 			sameSite: "none",
 			path: "/",
 			maxAge: parsedIdToken.data.expires_in

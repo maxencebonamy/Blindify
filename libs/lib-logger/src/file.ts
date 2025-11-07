@@ -13,7 +13,7 @@ export const logFile = (level: Level, ...messages: unknown[]): void => {
 
 	// Get current timestamp
 	const timestamp = currentTimestamp()
-	const fileName = timestamp.split(" ")[0].replace(/\//g, "-")
+	const fileName = timestamp.split(" ")?.[0]?.replace(/\//g, "-") ?? "unknown-date"
 	const logFile = path.join(logDirectory, `${fileName}.log`)
 
 	// Write log to file
