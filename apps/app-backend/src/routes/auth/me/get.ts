@@ -17,7 +17,7 @@ export const schema = {
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
 	const user = await getCurrentUsersProfile({ headers: { authorization: `Bearer ${request.accessToken}` } })
 	if (user.error) {
-		return reply.code(401).send({ error: user.error.error.message })
+		return reply.code(401).send({ message: user.error.error.message })
 	}
 
 	return reply.send(user.data)
