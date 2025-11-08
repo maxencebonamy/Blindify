@@ -82,7 +82,7 @@ services:
     depends_on:
       - backend
     environment:
-      - NODE_ENV=${ENVIRONMENT}
+      - NODE_ENV=production
       - VITE_APP_REDIRECT_URL=https://${FRONTEND_DOMAIN}
       - VITE_BACKEND_URL=https://${BACKEND_DOMAIN}
     labels:
@@ -101,7 +101,7 @@ services:
     depends_on:
       - backend
     environment:
-      - NODE_ENV=${ENVIRONMENT}
+      - NODE_ENV=production
       - VITE_APP_REDIRECT_URL=https://${FRONTEND_TEST_DOMAIN}
       - VITE_BACKEND_URL=https://${BACKEND_TEST_DOMAIN}
     labels:
