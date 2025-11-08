@@ -25,4 +25,4 @@ fi
 
 echo "✅ Version updated: $ENV -> $TAG"
 
-.deploy/deploy.sh
+./deploy/deploy.sh
