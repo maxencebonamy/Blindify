@@ -64,7 +64,7 @@ services:
 
   traefik:
     image: traefik:v2.11
-    container_name: ${PROJECT_NAME}-traefik
+    container_name: blindify-traefik
     command:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
