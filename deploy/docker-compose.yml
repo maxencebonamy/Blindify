@@ -1,0 +1,164 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: always
+    container_name: blindify-cache
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+      - redis-data:/data
+    networks:
+      - internal
+
+  redis-test:
+    image: redis:7-alpine
+    restart: always
+    container_name: blindify-cache-test
+    command: ["redis-server", "--requirepass", "${REDIS_TEST_PASSWORD}"]
+    environment:
+      - REDIS_PASSWORD=${REDIS_TEST_PASSWORD}
+    volumes:
+      - redis-data:/data
+    networks:
+      - internal
+
+  backend:
+    image: ${BACKEND_IMAGE}:${BACKEND_TAG}
+    restart: always
+    container_name: blindify-backend
+    depends_on:
+      - redis
+    environment:
+      - NODE_ENV=production
+      - APP_HOST=https://${BACKEND_DOMAIN}
+      - APP_PORT=${BACKEND_PORT}
+      - APP_URL=https://${BACKEND_DOMAIN}
+      - APP_ENV=production
+      - ALLOWED_ORIGINS=https://${FRONTEND_DOMAIN}
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - SPOTIFY_REDIRECT_URI=https://${BACKEND_DOMAIN}/auth/callback
+      - LOG_LEVEL=${LOG_LEVEL}
+      - CACHE_TTL=${CACHE_TTL}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_USERNAME=default
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - CLIP_PROVIDERS=${CLIP_PROVIDERS}
+      - CLIP_CACHING=${CLIP_CACHING}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.blindify-backend.rule=Host(`${BACKEND_DOMAIN}`)"
+      - "traefik.http.routers.blindify-backend.entrypoints=websecure"
+      - "traefik.http.routers.blindify-backend.tls.certresolver=myresolver"
+      - "traefik.http.services.blindify-backend.loadbalancer.server.port=${BACKEND_PORT}"
+    networks:
+      - internal
+      - web
+
+  backend-test:
+    image: ${BACKEND_IMAGE}:${BACKEND_TEST_TAG}
+    restart: always
+    container_name: blindify-backend-test
+    depends_on:
+      - redis-test
+    environment:
+      - NODE_ENV=production
+      - APP_HOST=https://${BACKEND_TEST_DOMAIN}
+      - APP_PORT=${BACKEND_PORT}
+      - APP_URL=https://${BACKEND_TEST_DOMAIN}
+      - APP_ENV=production
+      - ALLOWED_ORIGINS=https://${FRONTEND_TEST_DOMAIN}
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - SPOTIFY_REDIRECT_URI=https://${BACKEND_TEST_DOMAIN}/auth/callback
+      - LOG_LEVEL=${LOG_LEVEL}
+      - CACHE_TTL=${CACHE_TTL}
+      - REDIS_HOST=redis-test
+      - REDIS_PORT=6379
+      - REDIS_USERNAME=default
+      - REDIS_PASSWORD=${REDIS_TEST_PASSWORD}
+      - CLIP_PROVIDERS=${CLIP_PROVIDERS}
+      - CLIP_CACHING=${CLIP_CACHING}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.blindify-backend-test.rule=Host(`${BACKEND_TEST_DOMAIN}`)"
+      - "traefik.http.routers.blindify-backend-test.entrypoints=websecure"
+      - "traefik.http.routers.blindify-backend-test.tls.certresolver=myresolver"
+      - "traefik.http.services.blindify-backend-test.loadbalancer.server.port=${BACKEND_PORT}"
+    networks:
+      - internal
+      - web
+
+  frontend:
+    image: ${FRONTEND_IMAGE}:${FRONTEND_TAG}
+    restart: always
+    container_name: blindify-frontend
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=production
+      - VITE_APP_REDIRECT_URL=https://${FRONTEND_DOMAIN}
+      - VITE_BACKEND_URL=https://${BACKEND_DOMAIN}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.blindify-frontend.rule=Host(`${FRONTEND_DOMAIN}`)"
+      - "traefik.http.routers.blindify-frontend.entrypoints=websecure"
+      - "traefik.http.routers.blindify-frontend.tls.certresolver=myresolver"
+      - "traefik.http.services.blindify-frontend.loadbalancer.server.port=${FRONTEND_PORT}"
+    networks:
+      - internal
+      - web
+
+  frontend-test:
+    image: ${FRONTEND_IMAGE}:${FRONTEND_TEST_TAG}
+    restart: always
+    container_name: blindify-frontend-test
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=production
+      - VITE_APP_REDIRECT_URL=https://${FRONTEND_TEST_DOMAIN}
+      - VITE_BACKEND_URL=https://${BACKEND_TEST_DOMAIN}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.blindify-frontend-test.rule=Host(`${FRONTEND_TEST_DOMAIN}`)"
+      - "traefik.http.routers.blindify-frontend-test.entrypoints=websecure"
+      - "traefik.http.routers.blindify-frontend-test.tls.certresolver=myresolver"
+      - "traefik.http.services.blindify-frontend-test.loadbalancer.server.port=${FRONTEND_PORT}"
+    networks:
+      - internal
+      - web
+
+  traefik:
+    image: traefik:v2.11
+    restart: always
+    container_name: blindify-traefik
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=${EMAIL_LETSENCRYPT}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-cert:/letsencrypt
+    networks:
+      - internal
+      - web
+
+volumes:
+  redis-data:
+  traefik-cert:
+
+networks:
+  web:
+    external: true
+  internal:
+    driver: bridge
