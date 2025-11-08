@@ -8,8 +8,7 @@ if [ ! -f "$ENV_FILE" ]; then
   exit 1
 fi
 
-echo "Deploying Blindify..."
-echo "Using env file: $ENV_FILE"
+echo "🎯 Deploying..."
 
 # Ensure docker is logged in to GHCR
 docker login ghcr.io || true
@@ -26,4 +25,4 @@ docker compose \
   -f deploy/docker-compose.yml \
   up -d
 
-echo "✅ Deployment complete for Blindify"
+echo "✅ Deployed successfully"

@@ -22,7 +22,7 @@ services:
       - internal
 
   backend:
-    image: ${BACKEND_IMAGE}
+    image: ${BACKEND_IMAGE}:${BACKEND_TAG}
     container_name: blindify-backend
     depends_on:
       - redis
@@ -55,7 +55,7 @@ services:
       - web
 
   backend-test:
-    image: ${BACKEND_IMAGE}
+    image: ${BACKEND_IMAGE}:${BACKEND_TEST_TAG}
     container_name: blindify-backend-test
     depends_on:
       - redis-test
@@ -88,7 +88,7 @@ services:
       - web
 
   frontend:
-    image: ${FRONTEND_IMAGE}
+    image: ${FRONTEND_IMAGE}:${FRONTEND_TAG}
     container_name: blindify-frontend
     depends_on:
       - backend
@@ -107,7 +107,7 @@ services:
       - web
 
   frontend-test:
-    image: ${FRONTEND_IMAGE}
+    image: ${FRONTEND_IMAGE}:${FRONTEND_TEST_TAG}
     container_name: blindify-frontend-test
     depends_on:
       - backend
