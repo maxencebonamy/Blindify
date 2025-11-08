@@ -3,4 +3,3 @@ logs
 dist
 .env
 .DS_Store
-openapi-backend.yaml

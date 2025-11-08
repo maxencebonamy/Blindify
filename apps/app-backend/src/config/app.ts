@@ -10,6 +10,7 @@ import { validatorCompiler, serializerCompiler, jsonSchemaTransformObject, jsonS
 import { autoLoader } from "lib-auto-loader"
 import path from "path"
 import { fileURLToPath } from "url"
+import { writeFile } from "fs/promises"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -58,7 +59,10 @@ void app.register(autoLoader, {
 export const start = async (): Promise<void> => {
 	try {
 		await app.listen({ port: env.APP_PORT, host: "0.0.0.0" })
-		app.swagger()
+		const schema = app.swagger({ yaml: true })
+		if (env.APP_ENV === "development") {
+			await writeFile("openapi-backend.yaml", schema, { flag: "w+" })
+		}
 		app.cron.startAllJobs()
 		logger.info(`Server listening on ${env.APP_URL}`)
 	} catch (err) {
