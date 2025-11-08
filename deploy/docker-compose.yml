@@ -82,7 +82,7 @@ services:
       - "traefik.http.routers.blindify-backend-test.rule=Host(`${BACKEND_TEST_DOMAIN}`)"
       - "traefik.http.routers.blindify-backend-test.entrypoints=websecure"
       - "traefik.http.routers.blindify-backend-test.tls.certresolver=myresolver"
-      - "traefik.http.services.blindify-backend.test.loadbalancer.server.port=${BACKEND_PORT}"
+      - "traefik.http.services.blindify-backend-test.loadbalancer.server.port=${BACKEND_PORT}"
     networks:
       - internal
       - web
