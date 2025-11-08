@@ -17,12 +17,7 @@ docker compose \
   --env-file "$ENV_FILE" \
   -p "blindify" \
   -f deploy/docker-compose.yml \
-  pull
-
-docker compose \
-  --env-file "$ENV_FILE" \
-  -p "blindify" \
-  -f deploy/docker-compose.yml \
+  --pull always
   up -d
 
 echo "✅ Deployed successfully"
