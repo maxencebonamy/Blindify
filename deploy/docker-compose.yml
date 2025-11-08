@@ -80,6 +80,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik-cert:/letsencrypt
     networks:
+      - internal
       - web
 
 volumes:
