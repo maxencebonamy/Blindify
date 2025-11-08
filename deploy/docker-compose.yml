@@ -19,7 +19,7 @@ services:
       - NODE_ENV=${ENVIRONMENT}
       - APP_HOST=https://${BACKEND_DOMAIN}
       - APP_PORT=${BACKEND_PORT}
-      - APP_URL=https://${FRONTEND_DOMAIN}
+      - APP_URL=https://${BACKEND_DOMAIN}
       - APP_ENV=${ENVIRONMENT}
       - ALLOWED_ORIGINS=https://${FRONTEND_DOMAIN}
       - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
