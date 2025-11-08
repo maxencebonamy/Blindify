@@ -1,28 +1,23 @@
 import { env } from "#/config/env"
-import { zErrorObject } from "#/generated/zod.gen"
 import { addSubscriber, removeSubscriber } from "#/services/sse"
+import { zApiError } from "#/types/error.type"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import z from "zod"
 
 export const schema = {
 	operationId: "subscribeGameEvents",
 	description: "Subscribe to game events",
+	auth: true,
 	tags: [ "games" ],
 	params: z.object({
 		gameId: z.string()
 	}),
 	response: {
-		401: zErrorObject,
-		403: zErrorObject
+		403: zApiError
 	}
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
-	const accessToken = request.cookies["access_token"]
-	if (!accessToken) {
-		return reply.code(401).send({ message: "Access token missing" })
-	}
-
 	const origin = request.headers.origin ?? ""
 	if (!env.ALLOWED_ORIGINS.includes(origin)) {
 		return reply.code(403).send({ message: "Origin not allowed" })

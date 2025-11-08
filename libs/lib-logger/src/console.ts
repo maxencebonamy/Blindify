@@ -5,7 +5,7 @@ import type { ChalkInstance } from "chalk"
 import chalk from "chalk"
 
 export const logConsole = (level: Level, chalkize: ChalkInstance, ...messages: unknown[]): void => {
-	if (!isLevelEnabled(level, env.LOG_LEVEL ?? "INFO")) return
+	if (!isLevelEnabled(level, env.LOG_LEVEL)) return
 
 	const timestamp = currentTimestamp()
 

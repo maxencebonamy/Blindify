@@ -8,9 +8,6 @@ export const schema = {
 	response: {
 		200: z.object({
 			message: z.string()
-		}),
-		500: z.object({
-			error: z.string()
 		})
 	}
 } satisfies AutoLoaderSchema

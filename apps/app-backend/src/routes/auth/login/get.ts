@@ -13,10 +13,7 @@ export const schema = {
 		redirectUri: z.string()
 	}),
 	response: {
-		302: z.any(),
-		500: z.object({
-			error: z.string()
-		})
+		302: z.any()
 	}
 } satisfies AutoLoaderSchema
 
