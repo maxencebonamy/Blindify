@@ -4,7 +4,423 @@ info:
   description: Blindify Backend API
   version: 1.0.0
 components:
-  schemas: {}
+  schemas:
+    ApiErrorInput:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    TrackInput:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        artists:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        album:
+          type: string
+        coverUrl:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - title
+        - artists
+        - album
+        - coverUrl
+    PlaylistInput:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+        coverUrl:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+        trackCount:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+      required:
+        - id
+        - name
+        - description
+        - coverUrl
+        - trackCount
+    PlaylistArrayInput:
+      type: object
+      properties:
+        playlists:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlaylistInput"
+        lastFetchedAt: {}
+      required:
+        - playlists
+        - lastFetchedAt
+    SampleInput:
+      type: object
+      properties:
+        id:
+          type: string
+        order:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        clipUrl:
+          type: string
+      required:
+        - id
+        - order
+        - clipUrl
+    SampleMinimalInput:
+      type: object
+      properties:
+        id:
+          type: string
+        order:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+      required:
+        - id
+        - order
+    GameSettingsInput:
+      type: object
+      properties:
+        sampleCount:
+          anyOf:
+            - type: number
+              enum:
+                - 10
+            - type: number
+              enum:
+                - 20
+            - type: number
+              enum:
+                - 30
+        sampleDurationMs:
+          anyOf:
+            - type: number
+              enum:
+                - 10000
+            - type: number
+              enum:
+                - 20000
+      required:
+        - sampleCount
+        - sampleDurationMs
+    GameStatusInput:
+      type: string
+      enum:
+        - loading
+        - ready
+        - listening
+        - revealing
+        - finished
+    GameInput:
+      type: object
+      properties:
+        id:
+          type: string
+        playlist:
+          $ref: "#/components/schemas/PlaylistInput"
+        settings:
+          $ref: "#/components/schemas/GameSettingsInput"
+        samples:
+          type: array
+          items:
+            $ref: "#/components/schemas/SampleMinimalInput"
+        currentSampleIndex:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        status:
+          $ref: "#/components/schemas/GameStatusInput"
+        startTime:
+          anyOf:
+            - {}
+            - nullable: true
+              enum:
+                - null
+        endTime:
+          anyOf:
+            - {}
+            - nullable: true
+              enum:
+                - null
+        nextActionAt:
+          anyOf:
+            - {}
+            - nullable: true
+              enum:
+                - null
+        currentSample:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+        currentTrack:
+          anyOf:
+            - $ref: "#/components/schemas/TrackInput"
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - playlist
+        - settings
+        - samples
+        - currentSampleIndex
+        - status
+        - startTime
+        - endTime
+        - nextActionAt
+        - currentSample
+        - currentTrack
+    GameMinimalInput:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+    ApiError:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+      additionalProperties: false
+    Track:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        artists:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        album:
+          type: string
+        coverUrl:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - title
+        - artists
+        - album
+        - coverUrl
+      additionalProperties: false
+    Playlist:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+        coverUrl:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+        trackCount:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+      required:
+        - id
+        - name
+        - description
+        - coverUrl
+        - trackCount
+      additionalProperties: false
+    PlaylistArray:
+      type: object
+      properties:
+        playlists:
+          type: array
+          items:
+            $ref: "#/components/schemas/Playlist"
+        lastFetchedAt:
+          type: string
+          format: date-time
+      required:
+        - playlists
+        - lastFetchedAt
+      additionalProperties: false
+    Sample:
+      type: object
+      properties:
+        id:
+          type: string
+        order:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        clipUrl:
+          type: string
+      required:
+        - id
+        - order
+        - clipUrl
+      additionalProperties: false
+    SampleMinimal:
+      type: object
+      properties:
+        id:
+          type: string
+        order:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+      required:
+        - id
+        - order
+      additionalProperties: false
+    GameSettings:
+      type: object
+      properties:
+        sampleCount:
+          anyOf:
+            - type: number
+              enum:
+                - 10
+            - type: number
+              enum:
+                - 20
+            - type: number
+              enum:
+                - 30
+        sampleDurationMs:
+          anyOf:
+            - type: number
+              enum:
+                - 10000
+            - type: number
+              enum:
+                - 20000
+      required:
+        - sampleCount
+        - sampleDurationMs
+      additionalProperties: false
+    GameStatus:
+      type: string
+      enum:
+        - loading
+        - ready
+        - listening
+        - revealing
+        - finished
+    Game:
+      type: object
+      properties:
+        id:
+          type: string
+        playlist:
+          $ref: "#/components/schemas/Playlist"
+        settings:
+          $ref: "#/components/schemas/GameSettings"
+        samples:
+          type: array
+          items:
+            $ref: "#/components/schemas/SampleMinimal"
+        currentSampleIndex:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        status:
+          $ref: "#/components/schemas/GameStatus"
+        startTime:
+          anyOf:
+            - type: string
+              format: date-time
+            - nullable: true
+              enum:
+                - null
+        endTime:
+          anyOf:
+            - type: string
+              format: date-time
+            - nullable: true
+              enum:
+                - null
+        nextActionAt:
+          anyOf:
+            - type: string
+              format: date-time
+            - nullable: true
+              enum:
+                - null
+        currentSample:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+        currentTrack:
+          anyOf:
+            - $ref: "#/components/schemas/Track"
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - playlist
+        - settings
+        - samples
+        - currentSampleIndex
+        - status
+        - startTime
+        - endTime
+        - nextActionAt
+        - currentSample
+        - currentTrack
+      additionalProperties: false
+    GameMinimal:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+      additionalProperties: false
 paths:
   /auth/callback:
     get:
@@ -38,25 +454,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-                additionalProperties: false
+                $ref: "#/components/schemas/ApiError"
         "403":
           description: Default Response
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-                additionalProperties: false
+                $ref: "#/components/schemas/ApiError"
         "500":
           description: Default Response
           content:
@@ -74,13 +478,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-                additionalProperties: false
+                $ref: "#/components/schemas/ApiError"
   /auth/login:
     get:
       operationId: authLogin
@@ -283,13 +681,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-                additionalProperties: false
+                $ref: "#/components/schemas/ApiError"
         "500":
           description: Default Response
           content:
@@ -320,164 +712,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  playlist:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      name:
-                        type: string
-                      description:
-                        anyOf:
-                          - type: string
-                          - nullable: true
-                            enum:
-                              - null
-                      coverUrl:
-                        anyOf:
-                          - type: string
-                          - nullable: true
-                            enum:
-                              - null
-                      trackCount:
-                        type: integer
-                        minimum: 0
-                        maximum: 9007199254740991
-                    required:
-                      - id
-                      - name
-                      - description
-                      - coverUrl
-                      - trackCount
-                    additionalProperties: false
-                  settings:
-                    type: object
-                    properties:
-                      sampleCount:
-                        anyOf:
-                          - type: number
-                            enum:
-                              - 10
-                          - type: number
-                            enum:
-                              - 20
-                          - type: number
-                            enum:
-                              - 30
-                      sampleDurationMs:
-                        anyOf:
-                          - type: number
-                            enum:
-                              - 10000
-                          - type: number
-                            enum:
-                              - 20000
-                    required:
-                      - sampleCount
-                      - sampleDurationMs
-                    additionalProperties: false
-                  samples:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        order:
-                          type: integer
-                          minimum: 0
-                          maximum: 9007199254740991
-                      required:
-                        - id
-                        - order
-                      additionalProperties: false
-                  currentSampleIndex:
-                    type: integer
-                    minimum: 0
-                    maximum: 9007199254740991
-                  status:
-                    type: string
-                    enum:
-                      - loading
-                      - ready
-                      - listening
-                      - revealing
-                      - finished
-                  startTime:
-                    anyOf:
-                      - type: string
-                        format: date-time
-                      - nullable: true
-                        enum:
-                          - null
-                  endTime:
-                    anyOf:
-                      - type: string
-                        format: date-time
-                      - nullable: true
-                        enum:
-                          - null
-                  nextActionAt:
-                    anyOf:
-                      - type: string
-                        format: date-time
-                      - nullable: true
-                        enum:
-                          - null
-                  currentSample:
-                    anyOf:
-                      - type: string
-                      - nullable: true
-                        enum:
-                          - null
-                  currentTrack:
-                    anyOf:
-                      - type: object
-                        properties:
-                          id:
-                            type: string
-                          title:
-                            type: string
-                          artists:
-                            minItems: 1
-                            type: array
-                            items:
-                              type: string
-                          album:
-                            type: string
-                          coverUrl:
-                            anyOf:
-                              - type: string
-                              - nullable: true
-                                enum:
-                                  - null
-                        required:
-                          - id
-                          - title
-                          - artists
-                          - album
-                          - coverUrl
-                        additionalProperties: false
-                      - nullable: true
-                        enum:
-                          - null
-                required:
-                  - id
-                  - playlist
-                  - settings
-                  - samples
-                  - currentSampleIndex
-                  - status
-                  - startTime
-                  - endTime
-                  - nextActionAt
-                  - currentSample
-                  - currentTrack
-                additionalProperties: false
+                $ref: "#/components/schemas/Game"
         "401":
           description: Default Response
           content:
@@ -520,21 +755,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  order:
-                    type: integer
-                    minimum: 0
-                    maximum: 9007199254740991
-                  clipUrl:
-                    type: string
-                required:
-                  - id
-                  - order
-                  - clipUrl
-                additionalProperties: false
+                $ref: "#/components/schemas/Sample"
         "401":
           description: Default Response
           content:
@@ -577,32 +798,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  title:
-                    type: string
-                  artists:
-                    minItems: 1
-                    type: array
-                    items:
-                      type: string
-                  album:
-                    type: string
-                  coverUrl:
-                    anyOf:
-                      - type: string
-                      - nullable: true
-                        enum:
-                          - null
-                required:
-                  - id
-                  - title
-                  - artists
-                  - album
-                  - coverUrl
-                additionalProperties: false
+                $ref: "#/components/schemas/Track"
         "401":
           description: Default Response
           content:
@@ -642,30 +838,7 @@ paths:
                 playlistId:
                   type: string
                 settings:
-                  type: object
-                  properties:
-                    sampleCount:
-                      anyOf:
-                        - type: number
-                          enum:
-                            - 10
-                        - type: number
-                          enum:
-                            - 20
-                        - type: number
-                          enum:
-                            - 30
-                    sampleDurationMs:
-                      anyOf:
-                        - type: number
-                          enum:
-                            - 10000
-                        - type: number
-                          enum:
-                            - 20000
-                  required:
-                    - sampleCount
-                    - sampleDurationMs
+                  $ref: "#/components/schemas/GameSettingsInput"
               required:
                 - playlistId
                 - settings
@@ -676,164 +849,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  playlist:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      name:
-                        type: string
-                      description:
-                        anyOf:
-                          - type: string
-                          - nullable: true
-                            enum:
-                              - null
-                      coverUrl:
-                        anyOf:
-                          - type: string
-                          - nullable: true
-                            enum:
-                              - null
-                      trackCount:
-                        type: integer
-                        minimum: 0
-                        maximum: 9007199254740991
-                    required:
-                      - id
-                      - name
-                      - description
-                      - coverUrl
-                      - trackCount
-                    additionalProperties: false
-                  settings:
-                    type: object
-                    properties:
-                      sampleCount:
-                        anyOf:
-                          - type: number
-                            enum:
-                              - 10
-                          - type: number
-                            enum:
-                              - 20
-                          - type: number
-                            enum:
-                              - 30
-                      sampleDurationMs:
-                        anyOf:
-                          - type: number
-                            enum:
-                              - 10000
-                          - type: number
-                            enum:
-                              - 20000
-                    required:
-                      - sampleCount
-                      - sampleDurationMs
-                    additionalProperties: false
-                  samples:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        order:
-                          type: integer
-                          minimum: 0
-                          maximum: 9007199254740991
-                      required:
-                        - id
-                        - order
-                      additionalProperties: false
-                  currentSampleIndex:
-                    type: integer
-                    minimum: 0
-                    maximum: 9007199254740991
-                  status:
-                    type: string
-                    enum:
-                      - loading
-                      - ready
-                      - listening
-                      - revealing
-                      - finished
-                  startTime:
-                    anyOf:
-                      - type: string
-                        format: date-time
-                      - nullable: true
-                        enum:
-                          - null
-                  endTime:
-                    anyOf:
-                      - type: string
-                        format: date-time
-                      - nullable: true
-                        enum:
-                          - null
-                  nextActionAt:
-                    anyOf:
-                      - type: string
-                        format: date-time
-                      - nullable: true
-                        enum:
-                          - null
-                  currentSample:
-                    anyOf:
-                      - type: string
-                      - nullable: true
-                        enum:
-                          - null
-                  currentTrack:
-                    anyOf:
-                      - type: object
-                        properties:
-                          id:
-                            type: string
-                          title:
-                            type: string
-                          artists:
-                            minItems: 1
-                            type: array
-                            items:
-                              type: string
-                          album:
-                            type: string
-                          coverUrl:
-                            anyOf:
-                              - type: string
-                              - nullable: true
-                                enum:
-                                  - null
-                        required:
-                          - id
-                          - title
-                          - artists
-                          - album
-                          - coverUrl
-                        additionalProperties: false
-                      - nullable: true
-                        enum:
-                          - null
-                required:
-                  - id
-                  - playlist
-                  - settings
-                  - samples
-                  - currentSampleIndex
-                  - status
-                  - startTime
-                  - endTime
-                  - nextActionAt
-                  - currentSample
-                  - currentTrack
-                additionalProperties: false
+                $ref: "#/components/schemas/Game"
         "401":
           description: Default Response
           content:
@@ -909,35 +925,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  name:
-                    type: string
-                  description:
-                    anyOf:
-                      - type: string
-                      - nullable: true
-                        enum:
-                          - null
-                  coverUrl:
-                    anyOf:
-                      - type: string
-                      - nullable: true
-                        enum:
-                          - null
-                  trackCount:
-                    type: integer
-                    minimum: 0
-                    maximum: 9007199254740991
-                required:
-                  - id
-                  - name
-                  - description
-                  - coverUrl
-                  - trackCount
-                additionalProperties: false
+                $ref: "#/components/schemas/Playlist"
         "401":
           description: Default Response
           content:
@@ -1049,35 +1037,7 @@ paths:
                   items:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        name:
-                          type: string
-                        description:
-                          anyOf:
-                            - type: string
-                            - nullable: true
-                              enum:
-                                - null
-                        coverUrl:
-                          anyOf:
-                            - type: string
-                            - nullable: true
-                              enum:
-                                - null
-                        trackCount:
-                          type: integer
-                          minimum: 0
-                          maximum: 9007199254740991
-                      required:
-                        - id
-                        - name
-                        - description
-                        - coverUrl
-                        - trackCount
-                      additionalProperties: false
+                      $ref: "#/components/schemas/Playlist"
                   lastFetchedAt:
                     type: string
                     format: date-time
