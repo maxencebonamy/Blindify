@@ -36,7 +36,8 @@ export type AutoLoaderHandler<Schema extends AutoLoaderSchema = AutoLoaderSchema
 		RawRequestDefaultExpression<RawServerDefault>,
 		RawReplyDefaultExpression<RawServerDefault>,
 		ContextConfigDefault,
-		Schema
+		Schema,
+		ZodTypeProvider
 	> & {
 		setCookie: setCookieWrapper
 		cookie(name: string, value: string, options?: CookieSerializeOptions): FastifyReply

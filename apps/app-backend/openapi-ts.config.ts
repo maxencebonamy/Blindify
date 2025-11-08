@@ -1,7 +1,7 @@
 import { defineConfig } from "@hey-api/openapi-ts"
 
 export default defineConfig({
-	input: "https://developer.spotify.com/reference/web-api/open-api-schema.yaml",
+	input: "openapi-spotify.yaml",
 	output: "src/generated",
 	experimentalParser: true,
 	plugins: [

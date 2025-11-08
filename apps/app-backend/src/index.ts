@@ -1,20 +1,21 @@
 import type { HTTPMethods } from "fastify"
 import Fastify from "fastify"
-import cookie from "@fastify/cookie"
-import cors from "@fastify/cors"
 import swagger from "@fastify/swagger"
 import scalar from "@scalar/fastify-api-reference"
 import { logger } from "lib-logger"
 import { env } from "#/config/env"
 import { validatorCompiler, serializerCompiler, jsonSchemaTransformObject, jsonSchemaTransform } from "fastify-type-provider-zod"
-import { autoLoader } from "lib-auto-loader"
 import path from "path"
 import { fileURLToPath } from "url"
+import { writeFile } from "fs/promises"
+import { autoLoader } from "lib-auto-loader"
+import cors from "@fastify/cors"
+import cookie from "@fastify/cookie"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const app = Fastify()
+export const app = Fastify()
 
 app.register(cors, {
 	origin: env.ALLOWED_ORIGINS,
@@ -55,10 +56,14 @@ void app.register(autoLoader, {
 	jobsDir: path.join(__dirname, "jobs")
 })
 
-const start = async (): Promise<void> => {
+export const start = async (): Promise<void> => {
 	try {
+		await app.ready()
 		await app.listen({ port: env.APP_PORT, host: "0.0.0.0" })
-		app.swagger()
+		const schema = app.swagger({ yaml: true })
+		if (env.APP_ENV === "development") {
+			await writeFile("openapi-backend.yaml", schema, { flag: "w+" })
+		}
 		app.cron.startAllJobs()
 		logger.info(`Server listening on ${env.APP_URL}`)
 	} catch (err) {

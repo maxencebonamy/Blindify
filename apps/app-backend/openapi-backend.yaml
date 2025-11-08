@@ -5,6 +5,13 @@ info:
   version: 1.0.0
 components:
   schemas:
+    ApiErrorInput:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
     TrackInput:
       type: object
       properties:
@@ -199,13 +206,14 @@ components:
           type: string
       required:
         - id
-    ApiErrorInput:
+    ApiError:
       type: object
       properties:
         message:
           type: string
       required:
         - message
+      additionalProperties: false
     Track:
       type: object
       properties:
@@ -413,14 +421,6 @@ components:
       required:
         - id
       additionalProperties: false
-    ApiError:
-      type: object
-      properties:
-        message:
-          type: string
-      required:
-        - message
-      additionalProperties: false
 paths:
   /auth/callback:
     get:
@@ -454,25 +454,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                required:
-                  - error
-                additionalProperties: false
+                $ref: "#/components/schemas/ApiError"
         "403":
           description: Default Response
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                required:
-                  - error
-                additionalProperties: false
+                $ref: "#/components/schemas/ApiError"
         "500":
           description: Default Response
           content:
@@ -480,23 +468,17 @@ paths:
               schema:
                 type: object
                 properties:
-                  error:
+                  message:
                     type: string
                 required:
-                  - error
+                  - message
                 additionalProperties: false
         "502":
           description: Default Response
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                required:
-                  - error
-                additionalProperties: false
+                $ref: "#/components/schemas/ApiError"
   /auth/login:
     get:
       operationId: authLogin
@@ -522,10 +504,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  error:
+                  message:
                     type: string
                 required:
-                  - error
+                  - message
                 additionalProperties: false
   /auth/logout:
     post:
@@ -553,10 +535,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  error:
+                  message:
                     type: string
                 required:
-                  - error
+                  - message
                 additionalProperties: false
   /auth/me:
     get:
@@ -652,10 +634,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  error:
+                  message:
                     type: string
                 required:
-                  - error
+                  - message
                 additionalProperties: false
         "500":
           description: Default Response
@@ -664,10 +646,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  error:
+                  message:
                     type: string
                 required:
-                  - error
+                  - message
                 additionalProperties: false
   /games/{gameId}/events:
     get:
@@ -682,8 +664,36 @@ paths:
           name: gameId
           required: true
       responses:
-        "200":
+        "401":
           description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
+        "403":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
   /games/{gameId}:
     get:
       operationId: showGame
@@ -703,12 +713,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Game"
+        "401":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
         "500":
           description: Default Response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiError"
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
   /games/{gameId}/sample:
     get:
       operationId: showSampleGame
@@ -728,12 +756,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Sample"
+        "401":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
         "500":
           description: Default Response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiError"
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
   /games/{gameId}/track:
     get:
       operationId: showTrackGame
@@ -753,12 +799,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Track"
+        "401":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
         "500":
           description: Default Response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiError"
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
   /games:
     post:
       operationId: storeGame
@@ -786,12 +850,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Game"
+        "401":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
         "500":
           description: Default Response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiError"
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
   /health:
     get:
       operationId: checkHealth
@@ -813,6 +895,18 @@ paths:
                 required:
                   - status
                 additionalProperties: false
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
   /playlists/{playlistId}:
     get:
       operationId: showUserPlaylist
@@ -832,12 +926,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Playlist"
+        "401":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
         "500":
           description: Default Response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiError"
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
   /playlists:
     get:
       operationId: indexUserPlaylists
@@ -944,13 +1056,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiError"
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
         "500":
           description: Default Response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiError"
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
   /playlists/invalidate-cache:
     put:
       operationId: invalidateUserPlaylistsCache
@@ -969,13 +1093,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiError"
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
         "500":
           description: Default Response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiError"
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
 servers:
   - url: http://localhost:8000
     description: Blindify Backend
