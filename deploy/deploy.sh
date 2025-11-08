@@ -18,6 +18,9 @@ fi
 echo "Deploying environment: $ENV"
 echo "Using env file: $ENV_FILE"
 
+echo "Deploying Traefik..."
+docker-compose -f deploy/docker-compose.traefik.yml -p $PROJECT_NAME up -d
+
 # Ensure docker is logged in to GHCR
 docker login ghcr.io || true
 
