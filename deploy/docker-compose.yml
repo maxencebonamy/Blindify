@@ -10,6 +10,17 @@ services:
     networks:
       - internal
 
+  redis-test:
+    image: redis:7-alpine
+    container_name: blindify-cache
+    command: ["redis-server", "--requirepass", "${REDIS_TEST_PASSWORD}"]
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+      - redis-data:/data
+    networks:
+      - internal
+
   backend:
     image: ${BACKEND_IMAGE}
     container_name: blindify-backend
@@ -47,7 +58,7 @@ services:
     image: ${BACKEND_IMAGE}
     container_name: blindify-backend-test
     depends_on:
-      - redis
+      - redis-test
     environment:
       - NODE_ENV=production
       - APP_HOST=https://${BACKEND_TEST_DOMAIN}
@@ -60,7 +71,7 @@ services:
       - SPOTIFY_REDIRECT_URI=https://${BACKEND_TEST_DOMAIN}/auth/callback
       - LOG_LEVEL=${LOG_LEVEL}
       - CACHE_TTL=${CACHE_TTL}
-      - REDIS_HOST=redis
+      - REDIS_HOST=redis-test
       - REDIS_PORT=6379
       - REDIS_USERNAME=default
       - REDIS_PASSWORD=${REDIS_PASSWORD}
