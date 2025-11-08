@@ -24,10 +24,10 @@ RUN echo 'server { \
     server_name _; \
     root /usr/share/nginx/html; \
     index index.html; \
-	location ^~ /.well-known/ {
-        allow all;
-        try_files $uri =404;
-    }
+	location ^~ /.well-known/ { \
+        allow all; \
+        try_files $uri =404; \
+    } \
     location / { \
         try_files $uri /index.html; \
     } \
