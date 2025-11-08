@@ -57,13 +57,13 @@ export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) 
 		})
 	})
 	if (!idTokenResponse.ok) {
-		return reply.code(502).send({ message: "Token exchange failed" })
+		return reply.code(403).send({ message: "Token exchange failed" })
 	}
 
 	const idToken = await idTokenResponse.json()
 	const parsedIdToken = idTokenSchema.safeParse(idToken)
 	if (!parsedIdToken.success) {
-		return reply.code(502).send({ message: `Invalid ID token: ${parsedIdToken.error}` })
+		return reply.code(403).send({ message: `Invalid ID token: ${parsedIdToken.error}` })
 	}
 
 	const redirectUri = await cache.get<string>(`auth:${request.query.state}`)
