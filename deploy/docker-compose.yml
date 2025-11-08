@@ -50,14 +50,14 @@ services:
       - redis
     environment:
       - NODE_ENV=production
-      - APP_HOST=https://${TEST_BACKEND_DOMAIN}
+      - APP_HOST=https://${BACKEND_TEST_DOMAIN}
       - APP_PORT=${BACKEND_PORT}
-      - APP_URL=https://${TEST_BACKEND_DOMAIN}
+      - APP_URL=https://${BACKEND_TEST_DOMAIN}
       - APP_ENV=production
-      - ALLOWED_ORIGINS=https://${TEST_FRONTEND_DOMAIN}
+      - ALLOWED_ORIGINS=https://${FRONTEND_TEST_DOMAIN}
       - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
       - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
-      - SPOTIFY_REDIRECT_URI=https://${TEST_BACKEND_DOMAIN}/auth/callback
+      - SPOTIFY_REDIRECT_URI=https://${BACKEND_TEST_DOMAIN}/auth/callback
       - LOG_LEVEL=${LOG_LEVEL}
       - CACHE_TTL=${CACHE_TTL}
       - REDIS_HOST=redis
@@ -68,7 +68,7 @@ services:
       - CLIP_CACHING=${CLIP_CACHING}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.blindify-backend-test.rule=Host(`${TEST_BACKEND_DOMAIN}`)"
+      - "traefik.http.routers.blindify-backend-test.rule=Host(`${BACKEND_TEST_DOMAIN}`)"
       - "traefik.http.routers.blindify-backend-test.entrypoints=websecure"
       - "traefik.http.routers.blindify-backend-test.tls.certresolver=myresolver"
       - "traefik.http.services.blindify-backend.test.loadbalancer.server.port=${BACKEND_PORT}"
@@ -102,11 +102,11 @@ services:
       - backend
     environment:
       - NODE_ENV=${ENVIRONMENT}
-      - VITE_APP_REDIRECT_URL=https://${TEST_FRONTEND_DOMAIN}
-      - VITE_BACKEND_URL=https://${TEST_BACKEND_DOMAIN}
+      - VITE_APP_REDIRECT_URL=https://${FRONTEND_TEST_DOMAIN}
+      - VITE_BACKEND_URL=https://${BACKEND_TEST_DOMAIN}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.blindify-frontend-test.rule=Host(`${TEST_FRONTEND_DOMAIN}`)"
+      - "traefik.http.routers.blindify-frontend-test.rule=Host(`${FRONTEND_TEST_DOMAIN}`)"
       - "traefik.http.routers.blindify-frontend-test.entrypoints=websecure"
       - "traefik.http.routers.blindify-frontend-test.tls.certresolver=myresolver"
       - "traefik.http.services.blindify-frontend-test.loadbalancer.server.port=${FRONTEND_PORT}"
