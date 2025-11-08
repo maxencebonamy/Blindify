@@ -1,0 +1,94 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: ${PROJECT_NAME}-redis
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+      - redis-data:/data
+    networks:
+      - internal
+
+  backend:
+    image: ${BACKEND_IMAGE}
+    container_name: ${PROJECT_NAME}-backend
+    depends_on:
+      - redis
+    environment:
+      - NODE_ENV=${ENVIRONMENT}
+      - APP_HOST=https://${BACKEND_DOMAIN}
+      - APP_PORT=${BACKEND_PORT}
+      - APP_URL=https://${FRONTEND_DOMAIN}
+      - APP_ENV=${ENVIRONMENT}
+      - ALLOWED_ORIGINS=https://${FRONTEND_DOMAIN}
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - SPOTIFY_REDIRECT_URI=https://${FRONTEND_DOMAIN}/auth/callback
+      - LOG_LEVEL=${LOG_LEVEL}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_USERNAME=default
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - CLIP_PROVIDERS=${CLIP_PROVIDERS}
+      - CLIP_CACHING=${CLIP_CACHING}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${PROJECT_NAME}-backend.rule=Host(`${BACKEND_DOMAIN}`)"
+      - "traefik.http.routers.${PROJECT_NAME}-backend.entrypoints=websecure"
+      - "traefik.http.routers.${PROJECT_NAME}-backend.tls.certresolver=myresolver"
+      - "traefik.http.services.${PROJECT_NAME}-backend.loadbalancer.server.port=${BACKEND_PORT}"
+    networks:
+      - internal
+      - web
+
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    container_name: ${PROJECT_NAME}-frontend
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=${ENVIRONMENT}
+      - VITE_APP_REDIRECT_URL=https://${FRONTEND_DOMAIN}
+      - VITE_BACKEND_URL=https://${BACKEND_DOMAIN}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${PROJECT_NAME}-frontend.rule=Host(`${FRONTEND_DOMAIN}`)"
+      - "traefik.http.routers.${PROJECT_NAME}-frontend.entrypoints=websecure"
+      - "traefik.http.routers.${PROJECT_NAME}-frontend.tls.certresolver=myresolver"
+      - "traefik.http.services.${PROJECT_NAME}-frontend.loadbalancer.server.port=${FRONTEND_PORT}"
+    networks:
+      - internal
+      - web
+
+  traefik:
+    image: traefik:v2.12
+    container_name: ${PROJECT_NAME}-traefik
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=${EMAIL_LETSENCRYPT}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-cert:/letsencrypt
+    networks:
+      - web
+
+volumes:
+  redis-data:
+  traefik-cert:
+
+networks:
+  web:
+    external: true
+  internal:
+    driver: bridge

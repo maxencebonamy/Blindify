@@ -24,9 +24,6 @@ RUN echo 'server { \
     server_name _; \
     root /usr/share/nginx/html; \
     index index.html; \
-	location ~ /\.well-known/acme-challenge { \
-        allow all; \
-    } \
     location / { \
         try_files $uri /index.html; \
     } \
