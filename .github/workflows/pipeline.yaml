@@ -34,7 +34,9 @@ jobs:
           pnpm -r run lint
           pnpm -r run test
           pnpm -r --filter "./libs/*" run build
-          pnpm -r --filter "./apps/*" run gen
+          pnpm -r --filter app-backend run gen:client
+          pnpm -r --filter app-backend run gen:server
+          pnpm -r --filter app-frontend run gen:client
           pnpm -r --filter "./apps/*" run build
 
       - name: Login Docker registry

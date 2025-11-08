@@ -6,7 +6,8 @@
 	"main": "src/index.ts",
 	"scripts": {
 		"dev": "tsx --watch src/index.ts",
-		"gen": "openapi-ts --silent",
+		"gen:client": "openapi-ts --silent",
+		"gen:server": "tsx gen-openapi.ts",
 		"build": "tsup",
 		"start": "node dist/index.js",
 		"lint": "eslint .",
