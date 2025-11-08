@@ -15,7 +15,7 @@ services:
     container_name: blindify-cache-test
     command: ["redis-server", "--requirepass", "${REDIS_TEST_PASSWORD}"]
     environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PASSWORD=${REDIS_TEST_PASSWORD}
     volumes:
       - redis-data:/data
     networks:
@@ -74,7 +74,7 @@ services:
       - REDIS_HOST=redis-test
       - REDIS_PORT=6379
       - REDIS_USERNAME=default
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PASSWORD=${REDIS_TEST_PASSWORD}
       - CLIP_PROVIDERS=${CLIP_PROVIDERS}
       - CLIP_CACHING=${CLIP_CACHING}
     labels:
