@@ -5,8 +5,8 @@ import { zTrack } from "#/types/track.type"
 import { cache } from "lib-cache"
 import z from "zod"
 
-export const getAllTracksFromPlaylist = async (accessToken: string, spotifyPlaylistId: string): Promise<Track[]> => {
-	const cacheKey = `playlists:${spotifyPlaylistId}:tracks`
+export const getAllTracksFromPlaylist = async (accessToken: string, playlistId: string): Promise<Track[]> => {
+	const cacheKey = `playlists:${playlistId}:tracks`
 
 	try {
 		const tracks = await cache.get(cacheKey, z.array(zTrack))
@@ -22,7 +22,7 @@ export const getAllTracksFromPlaylist = async (accessToken: string, spotifyPlayl
 	let lastPage = false
 	while (!lastPage) {
 		const spotifyTracks = await getPlaylistsTracks({
-			path: { playlist_id: spotifyPlaylistId },
+			path: { playlist_id: playlistId },
 			query: { limit, offset },
 			headers: { authorization: `Bearer ${accessToken}` }
 		}).then(result => {

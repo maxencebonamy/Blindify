@@ -1,0 +1,27 @@
+{
+	"name": "lib-platform-connector",
+	"version": "1.0.0",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"dev": "tsup --watch",
+		"gen": "openapi-ts --silent",
+		"build": "tsup",
+		"lint": "eslint .",
+		"test": "vitest run"
+	},
+	"devDependencies": {
+		"@hey-api/openapi-ts": "^0.87.1",
+		"tsup": "^8.3.6"
+	},
+	"imports": {
+		"#/": "./src/"
+	},
+	"dependencies": {
+		"@hey-api/client-fetch": "^0.11.0",
+		"lib-env": "workspace:^",
+		"lib-logger": "workspace:^",
+		"lib-utils": "workspace:^"
+	}
+}
