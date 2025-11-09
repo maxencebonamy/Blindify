@@ -7,6 +7,15 @@ export const zToken = z.object({
 })
 export type Token = z.infer<typeof zToken>
 
+export const zUser = z.object({
+	id: z.string(),
+	name: z.string(),
+	email: z.string(),
+	avatar: z.url().nullable()
+})
+export type User = z.infer<typeof zUser>
+z.globalRegistry.add(zUser, { id: "User" })
+
 export const zArtist = z.object({
 	id: z.string(),
 	name: z.string()
@@ -45,6 +54,7 @@ z.globalRegistry.add(zPlaylist, { id: "Playlist" })
 export type PlatformConnector = {
 	oAuthAuthorizeUrl: (redirectUri: string, state: string) => string
 	oAuthTokenExchange: (redirectUri: string, code: string) => Promise<Token>
+	getCurrentUser: (accessToken: string) => Promise<User>
 	getAllUserPlaylists: (accessToken: string) => Promise<Playlist[]>
 	getPlaylist: (accessToken: string, playlistId: string) => Promise<Playlist>
 	getAllTracksFromPlaylist: (accessToken: string, playlistId: string) => Promise<Track[]>

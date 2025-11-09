@@ -1,5 +1,5 @@
-import type { PlaylistObject, PlaylistTrackObject, SimplifiedPlaylistObject } from "#/spotify/generated"
-import type { Playlist, Token, Track } from "#/types"
+import type { PlaylistObject, PlaylistTrackObject, PrivateUserObject, SimplifiedPlaylistObject } from "#/spotify/generated"
+import type { Playlist, Token, Track, User } from "#/types"
 import z from "zod"
 
 export const convertToken = (token: unknown): Token => z
@@ -14,6 +14,21 @@ export const convertToken = (token: unknown): Token => z
 		expiresIn: e.expires_in
 	} satisfies Token))
 	.parse(token)
+
+export const convertUser = (user: PrivateUserObject): User => z
+	.object({
+		id: z.string(),
+		display_name: z.string(),
+		email: z.email(),
+		images: z.array(z.object({ url: z.url().optional() })).optional()
+	})
+	.transform(e => ({
+		id: e.id,
+		name: e.display_name,
+		email: e.email,
+		avatar: e.images?.[0]?.url ?? null
+	} satisfies User))
+	.parse(user)
 
 export const convertPlaylistTrack = (playlistTrack: PlaylistTrackObject): Track => z
 	.object({

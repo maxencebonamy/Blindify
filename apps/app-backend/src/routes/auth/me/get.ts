@@ -1,7 +1,6 @@
-import { getCurrentUsersProfile } from "#/generated"
-import { zPrivateUserObject } from "#/generated/zod.gen"
 import { zApiError } from "#/types/error.type"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
+import { spotifyConnector, zUser } from "lib-platform-connector"
 
 export const schema = {
 	operationId: "authMe",
@@ -9,16 +8,13 @@ export const schema = {
 	auth: true,
 	tags: [ "auth" ],
 	response: {
-		200: zPrivateUserObject,
+		200: zUser,
 		401: zApiError
 	}
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
-	const user = await getCurrentUsersProfile({ headers: { authorization: `Bearer ${request.accessToken}` } })
-	if (user.error) {
-		return reply.code(401).send({ message: user.error.error.message })
-	}
+	const user = await spotifyConnector.getCurrentUser(request.accessToken)
 
-	return reply.send(user.data)
+	return reply.send(user)
 }
