@@ -1,6 +1,6 @@
 import { zApiError } from "#/types/error.type"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
-import { spotifyConnector, zUser } from "lib-platform-connector"
+import { connector, zUser } from "lib-platform-connector"
 
 export const schema = {
 	operationId: "authMe",
@@ -14,7 +14,7 @@ export const schema = {
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
-	const user = await spotifyConnector.getCurrentUser(request.accessToken)
+	const user = await connector("deezer").getCurrentUser(request.accessToken)
 
 	return reply.send(user)
 }

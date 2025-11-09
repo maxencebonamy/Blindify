@@ -1,4 +1,4 @@
-import { convertPlaylistTrack } from "#/spotify/convert"
+import { convertTrack } from "#/spotify/convert"
 import { getPlaylistsTracks } from "#/spotify/generated"
 import type { PlatformConnector, Track } from "#/types"
 
@@ -26,7 +26,7 @@ export const getAllTracksFromPlaylist: PlatformConnector["getAllTracksFromPlayli
 
 		allTracks.push(...tracks.items?.map(item => {
 			try {
-				return convertPlaylistTrack(item)
+				return convertTrack(item)
 			} catch {
 				return null
 			}

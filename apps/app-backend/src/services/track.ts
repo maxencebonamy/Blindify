@@ -1,6 +1,6 @@
 import { cache } from "lib-cache"
 import type { Track } from "lib-platform-connector"
-import { spotifyConnector, zTrack } from "lib-platform-connector"
+import { connector, zTrack } from "lib-platform-connector"
 import z from "zod"
 
 export const getAllTracksFromPlaylist = async (accessToken: string, playlistId: string): Promise<Track[]> => {
@@ -13,7 +13,7 @@ export const getAllTracksFromPlaylist = async (accessToken: string, playlistId: 
 		// Not found, continue
 	}
 
-	const tracks = await spotifyConnector.getAllTracksFromPlaylist(accessToken, playlistId)
+	const tracks = await connector("deezer").getAllTracksFromPlaylist(accessToken, playlistId)
 	await cache.set(cacheKey, tracks)
 
 	return tracks

@@ -2,7 +2,7 @@ import { env } from "#/config/env"
 import { zApiError } from "#/types/error.type"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import { cache } from "lib-cache"
-import { spotifyConnector } from "lib-platform-connector"
+import { connector } from "lib-platform-connector"
 import { z } from "zod"
 
 export const schema = {
@@ -37,7 +37,7 @@ export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) 
 	const { code } = request.query
 	const redirectUri = await cache.get<string>(`auth:${request.query.state}`)
 
-	const { accessToken, expiresIn } = await spotifyConnector.oAuthTokenExchange(`${env.APP_URL}/auth/callback`, code)
+	const { accessToken, expiresIn } = await connector("deezer").oAuthTokenExchange(`${env.APP_URL}/auth/callback`, code)
 
 	return reply
 		.setCookie("access_token", accessToken, {

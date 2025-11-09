@@ -2,7 +2,7 @@ import { env } from "#/config/env"
 import { generateRandomState } from "#/utils/random"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import { cache } from "lib-cache"
-import { spotifyConnector } from "lib-platform-connector"
+import { connector } from "lib-platform-connector"
 import z from "zod"
 
 export const schema = {
@@ -21,6 +21,6 @@ export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) 
 	const state = generateRandomState()
 	await cache.set(`auth:${state}`, request.query.redirectUri)
 
-	const authorizeUrl = spotifyConnector.oAuthAuthorizeUrl(`${env.APP_URL}/auth/callback`, state)
+	const authorizeUrl = connector("deezer").oAuthAuthorizeUrl(`${env.APP_URL}/auth/callback`, state)
 	return reply.redirect(authorizeUrl)
 }

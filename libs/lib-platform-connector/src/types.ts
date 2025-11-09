@@ -51,6 +51,10 @@ export const zPlaylist = z.object({
 export type Playlist = z.infer<typeof zPlaylist>
 z.globalRegistry.add(zPlaylist, { id: "Playlist" })
 
+const zPlatform = z.enum([ "spotify", "deezer" ])
+export type Platform = z.infer<typeof zPlatform>
+z.globalRegistry.add(zPlatform, { id: "Platform" })
+
 export type PlatformConnector = {
 	oAuthAuthorizeUrl: (redirectUri: string, state: string) => string
 	oAuthTokenExchange: (redirectUri: string, code: string) => Promise<Token>

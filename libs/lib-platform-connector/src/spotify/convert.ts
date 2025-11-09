@@ -30,7 +30,7 @@ export const convertUser = (user: PrivateUserObject): User => z
 	} satisfies User))
 	.parse(user)
 
-export const convertPlaylistTrack = (playlistTrack: PlaylistTrackObject): Track => z
+export const convertTrack = (track: PlaylistTrackObject): Track => z
 	.object({
 		track: z.object({
 			type: z.literal("track"),
@@ -62,7 +62,7 @@ export const convertPlaylistTrack = (playlistTrack: PlaylistTrackObject): Track 
 		},
 		clip: e.track.preview_url
 	} satisfies Track))
-	.parse(playlistTrack)
+	.parse(track)
 
 export const convertPlaylist = (playlist: SimplifiedPlaylistObject | PlaylistObject): Playlist => z
 	.object({

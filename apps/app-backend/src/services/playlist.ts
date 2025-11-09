@@ -2,7 +2,7 @@ import type { PlaylistsWithLastFetched } from "#/types/playlist.type"
 import { zPlaylistsWithLastFetched } from "#/types/playlist.type"
 import { cache } from "lib-cache"
 import type { Playlist } from "lib-platform-connector"
-import { spotifyConnector, zPlaylist } from "lib-platform-connector"
+import { zPlaylist, connector } from "lib-platform-connector"
 import z from "zod"
 
 export const getAllUserPlaylists = async (accessToken: string): Promise<PlaylistsWithLastFetched> => {
@@ -15,7 +15,7 @@ export const getAllUserPlaylists = async (accessToken: string): Promise<Playlist
 		// Not found, continue
 	}
 
-	const playlists = await spotifyConnector.getAllUserPlaylists(accessToken)
+	const playlists = await connector("deezer").getAllUserPlaylists(accessToken)
 
 	const playlistsWithLastFetched: PlaylistsWithLastFetched = {
 		playlists,
@@ -44,5 +44,5 @@ export const getPlaylistById = async (accessToken: string, playlistId: string): 
 		// Not found, continue
 	}
 
-	return spotifyConnector.getPlaylist(accessToken, playlistId)
+	return connector("deezer").getPlaylist(accessToken, playlistId)
 }
