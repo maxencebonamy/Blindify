@@ -23,8 +23,8 @@ export const PlaylistIndicator = ({ playlist, className }: PlaylistIndicatorProp
 				<p className="text-xs">From playlist</p>
 				<p className="text-xl font-bold -mb-1">{playlist.name}</p>
 			</div>
-			{playlist.coverUrl && (
-				<img src={playlist.coverUrl} className="size-10 rounded-md shadow-neo-sm border-2 border-foreground" />
+			{playlist.cover && (
+				<img src={playlist.cover} className="size-10 rounded-md shadow-neo-sm border-2 border-foreground" />
 			)}
 		</div>
 	)

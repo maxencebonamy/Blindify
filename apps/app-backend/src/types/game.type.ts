@@ -1,6 +1,5 @@
-import { zPlaylist } from "#/types/playlist.type"
 import { zSampleMinimal } from "#/types/sample.type"
-import { zTrack } from "#/types/track.type"
+import { zPlaylist, zTrack } from "lib-platform-connector"
 import z from "zod"
 
 export const zGameSettings = z.object({

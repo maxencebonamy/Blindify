@@ -1,6 +1,6 @@
 import { getCurrentTrackGame } from "#/services/game"
-import { zTrack } from "#/types/track.type"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
+import { zTrack } from "lib-platform-connector"
 import z from "zod"
 
 export const schema = {

@@ -1,9 +1,9 @@
 import { convertPlaylistTrack } from "#/spotify/convert"
 import { getPlaylistsTracks } from "#/spotify/generated"
-import type { PlatformConnector, PlatformTrack } from "#/types"
+import type { PlatformConnector, Track } from "#/types"
 
 export const getAllTracksFromPlaylist: PlatformConnector["getAllTracksFromPlaylist"] = async (accessToken, playlistId) => {
-	const allTracks: PlatformTrack[] = []
+	const allTracks: Track[] = []
 
 	const limit = 50
 	let offset = 0

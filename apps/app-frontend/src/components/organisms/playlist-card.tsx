@@ -14,7 +14,7 @@ export const PlaylistCard = ({ playlist, link, className }: PlaylistCardProps) =
 	return (
 		<Card link={link} className={className}>
 			<img
-				src={playlist.coverUrl ?? ""}
+				src={playlist.cover ?? ""}
 				alt={playlist.name}
 				className="w-full aspect-square object-cover rounded-sm border border-foreground"
 			/>

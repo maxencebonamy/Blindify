@@ -1,8 +1,8 @@
 import { getAllGames, getGameById } from "#/services/game"
 import { broadcastGameUpdate } from "#/services/sse"
-import { zTrack } from "#/types/track.type"
 import type { AutoLoaderTask } from "lib-auto-loader"
 import { cache } from "lib-cache"
+import { zTrack } from "lib-platform-connector"
 import z from "zod"
 
 export const cron = "* * * * * *"

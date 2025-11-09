@@ -1,8 +1,8 @@
 import type { PlaylistObject, PlaylistTrackObject, SimplifiedPlaylistObject } from "#/spotify/generated"
-import type { PlatformPlaylist, PlatformToken, PlatformTrack } from "#/types"
+import type { Playlist, Token, Track } from "#/types"
 import z from "zod"
 
-export const convertToken = (token: unknown): PlatformToken => z
+export const convertToken = (token: unknown): Token => z
 	.object({
 		access_token: z.string(),
 		refresh_token: z.string().optional(),
@@ -12,10 +12,10 @@ export const convertToken = (token: unknown): PlatformToken => z
 		accessToken: e.access_token,
 		refreshToken: e.refresh_token ?? null,
 		expiresIn: e.expires_in
-	} satisfies PlatformToken))
+	} satisfies Token))
 	.parse(token)
 
-export const convertPlaylistTrack = (playlistTrack: PlaylistTrackObject): PlatformTrack => z
+export const convertPlaylistTrack = (playlistTrack: PlaylistTrackObject): Track => z
 	.object({
 		track: z.object({
 			type: z.literal("track"),
@@ -46,10 +46,10 @@ export const convertPlaylistTrack = (playlistTrack: PlaylistTrackObject): Platfo
 			cover: e.track.album.images?.[0]?.url ?? null
 		},
 		clip: e.track.preview_url
-	} satisfies PlatformTrack))
+	} satisfies Track))
 	.parse(playlistTrack)
 
-export const convertPlaylist = (playlist: SimplifiedPlaylistObject | PlaylistObject): PlatformPlaylist => z
+export const convertPlaylist = (playlist: SimplifiedPlaylistObject | PlaylistObject): Playlist => z
 	.object({
 		id: z.string(),
 		name: z.string(),
@@ -63,5 +63,5 @@ export const convertPlaylist = (playlist: SimplifiedPlaylistObject | PlaylistObj
 		description: e.description,
 		cover: e.images?.[0]?.url ?? null,
 		trackCount: e.tracks?.total ?? 0
-	} satisfies PlatformPlaylist))
+	} satisfies Playlist))
 	.parse(playlist)

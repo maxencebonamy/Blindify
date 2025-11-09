@@ -21,19 +21,19 @@ export const TrackInfo = ({ track, className }: TrackInfoProps) => {
 
 	return (
 		<div className={tailwind}>
-			{track.coverUrl && (
-				<img src={track.coverUrl} className="size-72 rounded-xl border-2 border-foreground shadow-neo-md" />
+			{track.album.cover && (
+				<img src={track.album.cover} className="size-72 rounded-xl border-2 border-foreground shadow-neo-md" />
 			)}
 			<div className="flex flex-col items-center gap-1">
 				<p className="text-2xl font-bold text-center">{track.title}</p>
 				<div className="flex gap-6">
 					<span className="flex items-center gap-1">
 						<Icon icon={Mic2Icon} />
-						{track.artists.join(", ")}
+						{track.artists.map(e => e.name).join(", ")}
 					</span>
 					<span className="flex items-center gap-1">
 						<Icon icon={Disc3Icon} className="animate-[spin_3s_linear_infinite] duration-700" />
-						{track.album}
+						{track.album.name}
 					</span>
 				</div>
 			</div>

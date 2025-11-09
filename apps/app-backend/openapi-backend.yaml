@@ -12,6 +12,34 @@ components:
           type: string
       required:
         - message
+    ArtistInput:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+    AlbumInput:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        cover:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - name
+        - cover
     TrackInput:
       type: object
       properties:
@@ -19,25 +47,25 @@ components:
           type: string
         title:
           type: string
-        artists:
-          minItems: 1
-          type: array
-          items:
-            type: string
-        album:
-          type: string
-        coverUrl:
+        clip:
           anyOf:
             - type: string
+              format: uri
             - nullable: true
               enum:
                 - null
+        artists:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArtistInput"
+        album:
+          $ref: "#/components/schemas/AlbumInput"
       required:
         - id
         - title
+        - clip
         - artists
         - album
-        - coverUrl
     PlaylistInput:
       type: object
       properties:
@@ -51,33 +79,21 @@ components:
             - nullable: true
               enum:
                 - null
-        coverUrl:
+        cover:
           anyOf:
             - type: string
+              format: uri
             - nullable: true
               enum:
                 - null
         trackCount:
-          type: integer
-          minimum: 0
-          maximum: 9007199254740991
+          type: number
       required:
         - id
         - name
         - description
-        - coverUrl
+        - cover
         - trackCount
-    PlaylistArrayInput:
-      type: object
-      properties:
-        playlists:
-          type: array
-          items:
-            $ref: "#/components/schemas/PlaylistInput"
-        lastFetchedAt: {}
-      required:
-        - playlists
-        - lastFetchedAt
     SampleInput:
       type: object
       properties:
@@ -214,6 +230,36 @@ components:
       required:
         - message
       additionalProperties: false
+    Artist:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+      additionalProperties: false
+    Album:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        cover:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - name
+        - cover
+      additionalProperties: false
     Track:
       type: object
       properties:
@@ -221,25 +267,25 @@ components:
           type: string
         title:
           type: string
-        artists:
-          minItems: 1
-          type: array
-          items:
-            type: string
-        album:
-          type: string
-        coverUrl:
+        clip:
           anyOf:
             - type: string
+              format: uri
             - nullable: true
               enum:
                 - null
+        artists:
+          type: array
+          items:
+            $ref: "#/components/schemas/Artist"
+        album:
+          $ref: "#/components/schemas/Album"
       required:
         - id
         - title
+        - clip
         - artists
         - album
-        - coverUrl
       additionalProperties: false
     Playlist:
       type: object
@@ -254,36 +300,21 @@ components:
             - nullable: true
               enum:
                 - null
-        coverUrl:
+        cover:
           anyOf:
             - type: string
+              format: uri
             - nullable: true
               enum:
                 - null
         trackCount:
-          type: integer
-          minimum: 0
-          maximum: 9007199254740991
+          type: number
       required:
         - id
         - name
         - description
-        - coverUrl
+        - cover
         - trackCount
-      additionalProperties: false
-    PlaylistArray:
-      type: object
-      properties:
-        playlists:
-          type: array
-          items:
-            $ref: "#/components/schemas/Playlist"
-        lastFetchedAt:
-          type: string
-          format: date-time
-      required:
-        - playlists
-        - lastFetchedAt
       additionalProperties: false
     Sample:
       type: object

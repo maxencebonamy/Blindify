@@ -1,7 +1,7 @@
 import { getAllUserPlaylists } from "#/services/playlist"
 import { paginateFromAllItems, zPage } from "#/types/page.type"
-import { zPlaylist } from "#/types/playlist.type"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
+import { zPlaylist } from "lib-platform-connector"
 import z from "zod"
 
 export const schema = {

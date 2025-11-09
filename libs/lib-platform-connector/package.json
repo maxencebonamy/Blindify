@@ -22,6 +22,7 @@
 		"@hey-api/client-fetch": "^0.11.0",
 		"lib-env": "workspace:^",
 		"lib-logger": "workspace:^",
-		"lib-utils": "workspace:^"
+		"lib-utils": "workspace:^",
+		"zod": "4.0.14"
 	}
 }
