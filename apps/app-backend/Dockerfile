@@ -1,7 +1,6 @@
 FROM node:20-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-ENV PRISMA_QUERY_ENGINE_LIBRARY="./src/generated/libquery_engine-debian-openssl-1.1.x.so.node"
 RUN corepack enable
 
 FROM base AS build
@@ -19,6 +18,7 @@ FROM base AS app-backend
 COPY --from=build /prod/app-backend /prod/app-backend
 COPY --from=build /usr/src/app/libs/lib-database/src/generated /prod/app-backend/src/generated
 COPY --from=build /usr/src/app/libs/lib-database/prisma /prod/app-backend/prisma
+ENV PRISMA_QUERY_ENGINE_LIBRARY="/prod/app-backend/src/generated/libquery_engine-debian-openssl-1.1.x.so.node"
 WORKDIR /prod/app-backend
 EXPOSE 3000
 CMD [ "pnpm", "start" ]
