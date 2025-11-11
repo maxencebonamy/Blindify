@@ -11,8 +11,9 @@ ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run -r --filter="./libs/*" build
+RUN pnpm run -r --filter="./libs/*" gen
 RUN pnpm run -r --filter=app-frontend gen
+RUN pnpm run -r --filter="./libs/*" build
 RUN pnpm run -r --filter=app-frontend build
 RUN pnpm deploy --filter=app-frontend --prod /prod/app-frontend --legacy
 

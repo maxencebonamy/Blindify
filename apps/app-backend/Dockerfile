@@ -7,13 +7,16 @@ FROM base AS build
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run -r --filter="./libs/*" build
+RUN pnpm run -r --filter=app-database db:generate
+RUN pnpm run -r --filter="./libs/*" gen
 RUN pnpm run -r --filter=app-backend gen
+RUN pnpm run -r --filter="./libs/*" build
 RUN pnpm run -r --filter=app-backend build
 RUN pnpm deploy --filter=app-backend --prod /prod/app-backend --legacy
 
 FROM base AS app-backend
 COPY --from=build /prod/app-backend /prod/app-backend
+COPY ./libs/lib-database/prisma /prod/app-backend/prisma
 WORKDIR /prod/app-backend
 EXPOSE 3000
-CMD [ "pnpm", "start" ]
+CMD sh -c "pnpm start"
