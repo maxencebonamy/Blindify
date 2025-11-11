@@ -8,6 +8,7 @@ export const oAuthAuthorizeUrl: PlatformConnector["oAuthAuthorizeUrl"] = (redire
 		response_type: "code",
 		redirect_uri: redirectUri,
 		state,
-		scope: "user-read-private user-read-email playlist-read-private"
+		scope: "user-read-private user-read-email playlist-read-private",
+		show_dialog: "true"
 	})
 }
