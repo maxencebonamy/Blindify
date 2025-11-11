@@ -1,9 +1,11 @@
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
+import { deleteSession } from "lib-session"
 import z from "zod"
 
 export const schema = {
 	operationId: "authLogout",
 	description: "Logout from Spotify",
+	auth: true,
 	tags: [ "auth" ],
 	response: {
 		200: z.object({
@@ -12,8 +14,10 @@ export const schema = {
 	}
 } satisfies AutoLoaderSchema
 
-export const handler: AutoLoaderHandler<typeof schema> = async (_, reply) => {
-	return reply.clearCookie("access_token", {
+export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
+	await deleteSession(request.session.id)
+
+	return reply.clearCookie("session_id", {
 		path: "/",
 		httpOnly: true,
 		secure: false

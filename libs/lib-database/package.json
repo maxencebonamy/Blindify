@@ -8,7 +8,11 @@
 		"dev": "tsup --watch",
 		"build": "tsup",
 		"lint": "eslint .",
-		"test": "vitest run"
+		"test": "vitest run",
+		"db:generate": "prisma generate",
+		"db:migrate": "prisma migrate dev",
+		"db:deploy": "prisma migrate deploy",
+		"db:studio": "prisma studio"
 	},
 	"devDependencies": {
 		"tsup": "^8.3.6"
@@ -19,7 +23,6 @@
 	"dependencies": {
 		"@prisma/client": "^6.19.0",
 		"lib-env": "workspace:^",
-		"lib-logger": "workspace:^",
 		"prisma": "^6.19.0"
 	}
 }

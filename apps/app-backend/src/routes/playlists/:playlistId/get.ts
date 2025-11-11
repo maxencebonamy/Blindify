@@ -17,7 +17,7 @@ export const schema = {
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
-	const playlist = await getPlaylistById(request.accessToken, request.params.playlistId)
+	const playlist = await getPlaylistById(request.session.accessToken, request.params.playlistId)
 
 	return reply.send(playlist)
 }

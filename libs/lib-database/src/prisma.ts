@@ -1,18 +1,14 @@
-import { PrismaClient } from "@prisma/client"
+import { env } from "#/env"
+import { PrismaClient } from "#/generated/client"
 
-let prisma: PrismaClient
+const extendedPrisma = new PrismaClient()
 
-declare global {
-	var prisma: PrismaClient | undefined
+const globalForPrisma = globalThis as typeof globalThis & {
+	prisma?: PrismaClient
 }
 
-if (!global.prisma) {
-	prisma = new PrismaClient({
-		log: [ "query", "error", "warn" ]
-	})
-	global.prisma = prisma
-} else {
-	prisma = global.prisma
-}
+export const prisma: PrismaClient = globalForPrisma.prisma ?? extendedPrisma
 
-export default prisma
+if (env.APP_ENV !== "production") {
+	globalForPrisma.prisma = prisma
+}

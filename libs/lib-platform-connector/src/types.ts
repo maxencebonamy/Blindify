@@ -2,7 +2,7 @@ import z from "zod"
 
 export const zToken = z.object({
 	accessToken: z.string(),
-	refreshToken: z.string().nullable(),
+	refreshToken: z.string(),
 	expiresIn: z.number()
 })
 export type Token = z.infer<typeof zToken>

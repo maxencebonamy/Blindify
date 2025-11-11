@@ -81,9 +81,15 @@ importers:
       lib-platform-connector:
         specifier: workspace:^
         version: file:libs/lib-platform-connector(@hey-api/openapi-ts@0.69.2(typescript@5.9.3))
+      lib-session:
+        specifier: workspace:^
+        version: file:libs/lib-session
       lib-utils:
         specifier: workspace:^
         version: link:../../libs/lib-utils
+      moment:
+        specifier: ^2.30.1
+        version: 2.30.1
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
@@ -118,6 +124,8 @@ importers:
       lib-logger:
         injected: true
       lib-platform-connector:
+        injected: true
+      lib-session:
         injected: true
       lib-utils:
         injected: true
@@ -227,6 +235,9 @@ importers:
       lib-logger:
         specifier: workspace:^
         version: link:../lib-logger
+      lib-session:
+        specifier: workspace:^
+        version: link:../lib-session
     devDependencies:
       tsup:
         specifier: ^8.3.6
@@ -281,9 +292,6 @@ importers:
       lib-env:
         specifier: workspace:^
         version: link:../lib-env
-      lib-logger:
-        specifier: workspace:^
-        version: link:../lib-logger
       prisma:
         specifier: ^6.19.0
         version: 6.19.0(typescript@5.9.3)
@@ -342,6 +350,22 @@ importers:
       '@hey-api/openapi-ts':
         specifier: ^0.87.1
         version: 0.87.1(typescript@5.9.3)
+      tsup:
+        specifier: ^8.3.6
+        version: 8.5.0(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+
+  libs/lib-session:
+    dependencies:
+      lib-database:
+        specifier: workspace:^
+        version: link:../lib-database
+      lib-env:
+        specifier: workspace:^
+        version: link:../lib-env
+      moment:
+        specifier: ^2.30.1
+        version: 2.30.1
+    devDependencies:
       tsup:
         specifier: ^8.3.6
         version: 8.5.0(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
@@ -2280,6 +2304,9 @@ packages:
 
   lib-platform-connector@file:libs/lib-platform-connector:
     resolution: {directory: libs/lib-platform-connector, type: directory}
+
+  lib-session@file:libs/lib-session:
+    resolution: {directory: libs/lib-session, type: directory}
 
   light-my-request@6.6.0:
     resolution: {integrity: sha512-CHYbu8RtboSIoVsHZ6Ye4cj4Aw/yg2oAFimlF7mNvfDV192LR7nDiKtSIfCuLT7KokPSTn/9kfVLm5OGN0A28A==}
@@ -5337,6 +5364,7 @@ snapshots:
       fastify-plugin: 5.1.0
       fastify-type-provider-zod: 5.1.0(@fastify/swagger@9.6.0)(fastify@5.6.1)(openapi-types@12.1.3)(zod@4.0.14)
       lib-logger: link:libs/lib-logger
+      lib-session: link:libs/lib-session
     transitivePeerDependencies:
       - '@fastify/swagger'
       - openapi-types
@@ -5372,6 +5400,12 @@ snapshots:
       zod: 4.0.14
     transitivePeerDependencies:
       - '@hey-api/openapi-ts'
+
+  lib-session@file:libs/lib-session:
+    dependencies:
+      lib-database: link:libs/lib-database
+      lib-env: link:libs/lib-env
+      moment: 2.30.1
 
   light-my-request@6.6.0:
     dependencies:

@@ -13,7 +13,7 @@ export const schema = {
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
-	await invalidateUserPlaylistsCache(request.accessToken)
+	await invalidateUserPlaylistsCache(request.session.accessToken)
 
 	return reply.send("Cache invalidated")
 }

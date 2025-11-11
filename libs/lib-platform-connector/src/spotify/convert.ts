@@ -5,12 +5,12 @@ import z from "zod"
 export const convertToken = (token: unknown): Token => z
 	.object({
 		access_token: z.string(),
-		refresh_token: z.string().optional(),
+		refresh_token: z.string(),
 		expires_in: z.number()
 	})
 	.transform(e => ({
 		accessToken: e.access_token,
-		refreshToken: e.refresh_token ?? null,
+		refreshToken: e.refresh_token,
 		expiresIn: e.expires_in
 	} satisfies Token))
 	.parse(token)
