@@ -65,11 +65,12 @@ export const loadRoutes = async (dir: string, basePath = ""): Promise<Route[]> =
 					}
 
 					try {
-						if (logger.level() !== "DEBUG") return mod.handler({ ...request, accessToken }, reply)
+						(request as (Parameters<AutoLoaderHandler>["0"] & { accessToken: string | null })).accessToken = accessToken ?? null
+						if (logger.level() !== "DEBUG") return mod.handler(request, reply)
 
 						logger.debug(`Entering ${method} ${url}`)
 						const start = performance.now()
-						const result = await mod.handler({ ...request, accessToken }, reply)
+						const result = await mod.handler(request, reply)
 
 						const end = performance.now()
 						const durationMs = end - start

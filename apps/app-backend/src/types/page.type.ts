@@ -1,4 +1,3 @@
-import type { PagingObject } from "#/generated"
 import z from "zod"
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -96,20 +95,5 @@ export const paginateFromAllItems = <T>(allItems: T[], page: number, limit: numb
 		totalItems: allItems.length,
 		totalPages,
 		items: allItems.slice(startIndex, endIndex)
-	}
-}
-
-export const paginateFromSpotify = <T>(spotifyPage: PagingObject, items: T[]): Page<T> => {
-	const page = Math.floor(spotifyPage.offset / spotifyPage.limit) + 1
-	const totalPages = Math.max(1, Math.ceil(spotifyPage.total / spotifyPage.limit))
-
-	return {
-		page,
-		previousPage: (spotifyPage.previous && page > 1) ? page - 1 : null,
-		nextPage: (spotifyPage.next && page < totalPages) ? page + 1 : null,
-		pageSize: spotifyPage.limit,
-		totalItems: spotifyPage.total,
-		totalPages,
-		items
 	}
 }

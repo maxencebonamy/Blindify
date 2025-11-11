@@ -1,5 +1,6 @@
 node_modules
 logs
 dist
+generated
 .env
 .DS_Store

@@ -12,6 +12,55 @@ components:
           type: string
       required:
         - message
+    UserInput:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        avatar:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - name
+        - email
+        - avatar
+    ArtistInput:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+    AlbumInput:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        cover:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - name
+        - cover
     TrackInput:
       type: object
       properties:
@@ -19,25 +68,25 @@ components:
           type: string
         title:
           type: string
-        artists:
-          minItems: 1
-          type: array
-          items:
-            type: string
-        album:
-          type: string
-        coverUrl:
+        clip:
           anyOf:
             - type: string
+              format: uri
             - nullable: true
               enum:
                 - null
+        artists:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArtistInput"
+        album:
+          $ref: "#/components/schemas/AlbumInput"
       required:
         - id
         - title
+        - clip
         - artists
         - album
-        - coverUrl
     PlaylistInput:
       type: object
       properties:
@@ -51,33 +100,26 @@ components:
             - nullable: true
               enum:
                 - null
-        coverUrl:
+        cover:
           anyOf:
             - type: string
+              format: uri
             - nullable: true
               enum:
                 - null
         trackCount:
-          type: integer
-          minimum: 0
-          maximum: 9007199254740991
+          type: number
       required:
         - id
         - name
         - description
-        - coverUrl
+        - cover
         - trackCount
-    PlaylistArrayInput:
-      type: object
-      properties:
-        playlists:
-          type: array
-          items:
-            $ref: "#/components/schemas/PlaylistInput"
-        lastFetchedAt: {}
-      required:
-        - playlists
-        - lastFetchedAt
+    PlatformInput:
+      type: string
+      enum:
+        - spotify
+        - deezer
     SampleInput:
       type: object
       properties:
@@ -214,6 +256,58 @@ components:
       required:
         - message
       additionalProperties: false
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        avatar:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - name
+        - email
+        - avatar
+      additionalProperties: false
+    Artist:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+      additionalProperties: false
+    Album:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        cover:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - name
+        - cover
+      additionalProperties: false
     Track:
       type: object
       properties:
@@ -221,25 +315,25 @@ components:
           type: string
         title:
           type: string
-        artists:
-          minItems: 1
-          type: array
-          items:
-            type: string
-        album:
-          type: string
-        coverUrl:
+        clip:
           anyOf:
             - type: string
+              format: uri
             - nullable: true
               enum:
                 - null
+        artists:
+          type: array
+          items:
+            $ref: "#/components/schemas/Artist"
+        album:
+          $ref: "#/components/schemas/Album"
       required:
         - id
         - title
+        - clip
         - artists
         - album
-        - coverUrl
       additionalProperties: false
     Playlist:
       type: object
@@ -254,37 +348,27 @@ components:
             - nullable: true
               enum:
                 - null
-        coverUrl:
+        cover:
           anyOf:
             - type: string
+              format: uri
             - nullable: true
               enum:
                 - null
         trackCount:
-          type: integer
-          minimum: 0
-          maximum: 9007199254740991
+          type: number
       required:
         - id
         - name
         - description
-        - coverUrl
+        - cover
         - trackCount
       additionalProperties: false
-    PlaylistArray:
-      type: object
-      properties:
-        playlists:
-          type: array
-          items:
-            $ref: "#/components/schemas/Playlist"
-        lastFetchedAt:
-          type: string
-          format: date-time
-      required:
-        - playlists
-        - lastFetchedAt
-      additionalProperties: false
+    Platform:
+      type: string
+      enum:
+        - spotify
+        - deezer
     Sample:
       type: object
       properties:
@@ -552,81 +636,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  country:
-                    type: string
-                  display_name:
-                    type: string
-                  email:
-                    type: string
-                  explicit_content:
-                    type: object
-                    properties:
-                      filter_enabled:
-                        type: boolean
-                      filter_locked:
-                        type: boolean
-                    additionalProperties: false
-                  external_urls:
-                    type: object
-                    properties:
-                      spotify:
-                        type: string
-                    additionalProperties: false
-                  followers:
-                    type: object
-                    properties:
-                      href:
-                        anyOf:
-                          - type: string
-                          - nullable: true
-                            enum:
-                              - null
-                      total:
-                        type: integer
-                        minimum: -9007199254740991
-                        maximum: 9007199254740991
-                    additionalProperties: false
-                  href:
-                    type: string
-                  id:
-                    type: string
-                  images:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        url:
-                          type: string
-                        height:
-                          anyOf:
-                            - type: integer
-                              minimum: -9007199254740991
-                              maximum: 9007199254740991
-                            - nullable: true
-                              enum:
-                                - null
-                        width:
-                          anyOf:
-                            - type: integer
-                              minimum: -9007199254740991
-                              maximum: 9007199254740991
-                            - nullable: true
-                              enum:
-                                - null
-                      required:
-                        - url
-                        - height
-                        - width
-                      additionalProperties: false
-                  product:
-                    type: string
-                  type:
-                    type: string
-                  uri:
-                    type: string
-                additionalProperties: false
+                $ref: "#/components/schemas/User"
         "401":
           description: Default Response
           content:

@@ -1,13 +1,12 @@
 import { getAllTracksFromPlaylist } from "#/services/track"
 import type { GameMinimal } from "#/types/game.type"
 import { minimizeGame, zGame, zGameMinimal, type Game, type GameSettings } from "#/types/game.type"
-import type { Playlist } from "#/types/playlist.type"
 import type { Sample, SampleMinimal } from "#/types/sample.type"
-import type { Track } from "#/types/track.type"
-import { zTrack } from "#/types/track.type"
 import { generateUUID, scrambleArray } from "#/utils/random"
 import { cache } from "lib-cache"
 import { findClip } from "lib-clip"
+import type { Playlist, Track } from "lib-platform-connector"
+import { zTrack } from "lib-platform-connector"
 import z from "zod"
 
 export const getAllGames = async (): Promise<GameMinimal[]> => {
@@ -55,7 +54,7 @@ export const loadGame = async (accessToken: string, game: Game): Promise<Game> =
 	const samples: SampleMinimal[] = []
 
 	for (const track of tracks) {
-		const clip = await findClip({ ...track, artist: track.artists.join(", ") })
+		const clip = await findClip({ ...track, artist: track.artists.join(", "), album: track.album.name })
 		// const clip = await getClip(track)
 		if (clip === null) continue
 
