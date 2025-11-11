@@ -4,6 +4,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
 FROM base AS build
+RUN apt-get update -y && apt-get install -y openssl
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
@@ -19,4 +20,4 @@ COPY --from=build /prod/app-backend /prod/app-backend
 COPY ./libs/lib-database/prisma /prod/app-backend/prisma
 WORKDIR /prod/app-backend
 EXPOSE 3000
-CMD sh -c "pnpm start"
+CMD [ "pnpm", "start" ]
