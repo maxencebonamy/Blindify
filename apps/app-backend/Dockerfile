@@ -17,7 +17,8 @@ RUN pnpm deploy --filter=app-backend --prod /prod/app-backend --legacy
 
 FROM base AS app-backend
 COPY --from=build /prod/app-backend /prod/app-backend
-COPY ./libs/lib-database/prisma /prod/app-backend/prisma
+COPY --from=build /usr/src/app/libs/lib-database/src/generated /prod/app-backend/src/generated
+COPY --from=build /usr/src/app/libs/lib-database/prisma /prod/app-backend/prisma
 WORKDIR /prod/app-backend
 EXPOSE 3000
 CMD [ "pnpm", "start" ]
