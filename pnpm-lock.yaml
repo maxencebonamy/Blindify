@@ -81,6 +81,9 @@ importers:
       lib-platform-connector:
         specifier: workspace:^
         version: file:libs/lib-platform-connector(@hey-api/openapi-ts@0.69.2(typescript@5.9.3))
+      lib-utils:
+        specifier: workspace:^
+        version: link:../../libs/lib-utils
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
@@ -115,6 +118,8 @@ importers:
       lib-logger:
         injected: true
       lib-platform-connector:
+        injected: true
+      lib-utils:
         injected: true
 
   apps/app-frontend:
@@ -323,6 +328,10 @@ importers:
         version: 8.5.0(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
 
   libs/lib-utils:
+    dependencies:
+      uuid:
+        specifier: ^11.1.0
+        version: 11.1.0
     devDependencies:
       tsup:
         specifier: ^8.3.6
@@ -5207,6 +5216,7 @@ snapshots:
       lib-env: link:libs/lib-env
       lib-logger: link:libs/lib-logger
       lib-utils: link:libs/lib-utils
+      zod: 4.0.14
     transitivePeerDependencies:
       - '@hey-api/openapi-ts'
 

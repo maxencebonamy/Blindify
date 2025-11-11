@@ -26,6 +26,7 @@
 		"lib-env": "workspace:^",
 		"lib-logger": "workspace:^",
 		"lib-platform-connector": "workspace:^",
+		"lib-utils": "workspace:^",
 		"tsconfig-paths": "^4.2.0",
 		"uuid": "^11.1.0",
 		"zod": "4.0.14"
@@ -53,6 +54,9 @@
 			"injected": true
 		},
 		"lib-platform-connector": {
+			"injected": true
+		},
+		"lib-utils": {
 			"injected": true
 		}
 	}
