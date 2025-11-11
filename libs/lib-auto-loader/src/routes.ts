@@ -4,6 +4,8 @@ import path from "path"
 import { pathToFileURL } from "url"
 import fs from "fs"
 import z from "zod"
+import type { Session } from "lib-session"
+import { getSession } from "lib-session"
 
 type Route = {
 	method: string
@@ -56,16 +58,20 @@ export const loadRoutes = async (dir: string, basePath = ""): Promise<Route[]> =
 				url,
 				schema: schema,
 				handler: async (request, reply) => {
-					let accessToken: string | undefined = undefined
+					let session: Session | null = null
 					if (schema.auth) {
-						accessToken = request.cookies["access_token"]
-						if (!accessToken) {
-							return reply.code(401).send({ message: "Access token missing" })
+						const sessionId = request.cookies["session_id"]
+						if (!sessionId) {
+							return reply.code(401).send({ message: "Session ID cookie not present" })
+						}
+						session = await getSession(sessionId)
+						if (!session) {
+							return reply.code(401).send({ message: "Session not found" })
 						}
 					}
 
 					try {
-						(request as (Parameters<AutoLoaderHandler>["0"] & { accessToken: string | null })).accessToken = accessToken ?? null
+						(request as (Parameters<AutoLoaderHandler>["0"] & { session: Session | null })).session = session
 						if (logger.level() !== "DEBUG") return mod.handler(request, reply)
 
 						logger.debug(`Entering ${method} ${url}`)

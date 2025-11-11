@@ -24,7 +24,7 @@ export const schema = {
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
-	const playlistArray = await getAllUserPlaylists(request.accessToken)
+	const playlistArray = await getAllUserPlaylists(request.session.accessToken)
 
 	const filteredPlaylists = playlistArray.playlists.filter(
 		playlist => !request.query.search || playlist.name.toLocaleLowerCase().includes(request.query.search.toLocaleLowerCase())

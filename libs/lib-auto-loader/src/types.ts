@@ -8,6 +8,7 @@ import type {
 	setCookieWrapper
 } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
+import type { Session } from "lib-session"
 import type z from "zod"
 
 type MaybePromise<T> = T | Promise<T>
@@ -29,7 +30,7 @@ export type AutoLoaderHandler<Schema extends AutoLoaderSchema = AutoLoaderSchema
 		body: z.infer<Schema["body"]>
 		cookies: { [cookieName: string]: string | undefined }
 	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-	} & (Schema["auth"] extends true ? { accessToken: string } : {}),
+	} & (Schema["auth"] extends true ? { session: Session } : {}),
 	reply: FastifyReply<
 		RouteGenericInterface,
 		RawServerDefault,

@@ -1,5 +1,6 @@
 import type { PlaylistObject, PlaylistTrackObject, PrivateUserObject, SimplifiedPlaylistObject } from "#/spotify/generated"
 import type { Playlist, Token, Track, User } from "#/types"
+import moment from "moment"
 import z from "zod"
 
 export const convertToken = (token: unknown): Token => z
@@ -11,7 +12,7 @@ export const convertToken = (token: unknown): Token => z
 	.transform(e => ({
 		accessToken: e.access_token,
 		refreshToken: e.refresh_token ?? null,
-		expiresIn: e.expires_in
+		accessExpiresAt: moment().add(e.expires_in, "second").toDate()
 	} satisfies Token))
 	.parse(token)
 

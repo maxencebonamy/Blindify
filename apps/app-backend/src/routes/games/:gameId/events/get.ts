@@ -2,7 +2,6 @@ import { env } from "#/config/env"
 import { addSubscriber, removeSubscriber } from "#/services/sse"
 import { zApiError } from "#/types/error.type"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
-import { logger } from "lib-logger"
 import z from "zod"
 
 export const schema = {
@@ -19,7 +18,6 @@ export const schema = {
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
-	logger.info(request.headers)
 	const origin = request.headers?.origin ?? ""
 	if (!env.ALLOWED_ORIGINS.includes(origin)) {
 		return reply.code(403).send({ message: "Origin not allowed" })

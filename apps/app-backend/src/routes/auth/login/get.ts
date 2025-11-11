@@ -1,8 +1,8 @@
 import { env } from "#/config/env"
-import { generateRandomState } from "#/utils/random"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import { cache } from "lib-cache"
 import { connector } from "lib-platform-connector"
+import { random } from "lib-utils"
 import z from "zod"
 
 export const schema = {
@@ -18,7 +18,7 @@ export const schema = {
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
-	const state = generateRandomState()
+	const state = random.uuid()
 	await cache.set(`auth:${state}`, request.query.redirectUri)
 
 	const authorizeUrl = connector("spotify").oAuthAuthorizeUrl(`${env.APP_URL}/auth/callback`, state)

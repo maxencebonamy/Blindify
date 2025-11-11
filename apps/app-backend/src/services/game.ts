@@ -2,11 +2,11 @@ import { getAllTracksFromPlaylist } from "#/services/track"
 import type { GameMinimal } from "#/types/game.type"
 import { minimizeGame, zGame, zGameMinimal, type Game, type GameSettings } from "#/types/game.type"
 import type { Sample, SampleMinimal } from "#/types/sample.type"
-import { generateUUID, scrambleArray } from "#/utils/random"
 import { cache } from "lib-cache"
 import { findClip } from "lib-clip"
 import type { Playlist, Track } from "lib-platform-connector"
 import { zTrack } from "lib-platform-connector"
+import { arrays, random } from "lib-utils"
 import z from "zod"
 
 export const getAllGames = async (): Promise<GameMinimal[]> => {
@@ -25,7 +25,7 @@ export const registerGame = async (game: GameMinimal): Promise<void> => {
 }
 
 export const createGame = async (playlist: Playlist, settings: GameSettings): Promise<Game> => {
-	const id = generateUUID()
+	const id = random.uuid()
 
 	const game: Game = {
 		id,
@@ -49,7 +49,7 @@ export const createGame = async (playlist: Playlist, settings: GameSettings): Pr
 
 export const loadGame = async (accessToken: string, game: Game): Promise<Game> => {
 	const tracks = await getAllTracksFromPlaylist(accessToken, game.playlist.id)
-	scrambleArray(tracks)
+	arrays.scramble(tracks)
 
 	const samples: SampleMinimal[] = []
 
@@ -58,7 +58,7 @@ export const loadGame = async (accessToken: string, game: Game): Promise<Game> =
 		// const clip = await getClip(track)
 		if (clip === null) continue
 
-		const sampleId = generateUUID()
+		const sampleId = random.uuid()
 		await cache.set(`clip:${sampleId}`, clip)
 		await cache.set(`track:${sampleId}`, track)
 

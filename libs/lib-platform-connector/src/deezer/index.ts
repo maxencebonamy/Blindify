@@ -4,11 +4,13 @@ import { getCurrentUser } from "#/deezer/get-current-user"
 import { getPlaylist } from "#/deezer/get-playlist"
 import { oAuthAuthorizeUrl } from "#/deezer/oauth-authorize-url"
 import { oAuthTokenExchange } from "#/deezer/oauth-token-exchange"
+import { oAuthTokenRefresh } from "#/deezer/oauth-token-refresh"
 import type { PlatformConnector } from "#/types"
 
 export const deezerConnector = {
 	oAuthAuthorizeUrl,
 	oAuthTokenExchange,
+	oAuthTokenRefresh,
 	getCurrentUser,
 	getAllUserPlaylists,
 	getPlaylist: getPlaylist,
