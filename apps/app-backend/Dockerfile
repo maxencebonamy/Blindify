@@ -15,6 +15,7 @@ RUN pnpm run -r --filter=app-backend build
 RUN pnpm deploy --filter=app-backend --prod /prod/app-backend --legacy
 
 FROM base AS app-backend
+RUN apt-get update -y && apt-get install -y openssl
 COPY --from=build /prod/app-backend /prod/app-backend
 COPY ./libs/lib-database/prisma /prod/app-backend/prisma
 WORKDIR /prod/app-backend
