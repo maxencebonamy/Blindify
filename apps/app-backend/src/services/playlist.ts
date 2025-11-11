@@ -15,7 +15,7 @@ export const getAllUserPlaylists = async (accessToken: string): Promise<Playlist
 		// Not found, continue
 	}
 
-	const playlists = await connector("deezer").getAllUserPlaylists(accessToken)
+	const playlists = await connector("spotify").getAllUserPlaylists(accessToken)
 
 	const playlistsWithLastFetched: PlaylistsWithLastFetched = {
 		playlists,
@@ -44,5 +44,5 @@ export const getPlaylistById = async (accessToken: string, playlistId: string): 
 		// Not found, continue
 	}
 
-	return connector("deezer").getPlaylist(accessToken, playlistId)
+	return connector("spotify").getPlaylist(accessToken, playlistId)
 }

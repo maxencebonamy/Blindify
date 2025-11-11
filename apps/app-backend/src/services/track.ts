@@ -13,7 +13,7 @@ export const getAllTracksFromPlaylist = async (accessToken: string, playlistId: 
 		// Not found, continue
 	}
 
-	const tracks = await connector("deezer").getAllTracksFromPlaylist(accessToken, playlistId)
+	const tracks = await connector("spotify").getAllTracksFromPlaylist(accessToken, playlistId)
 	await cache.set(cacheKey, tracks)
 
 	return tracks

@@ -14,7 +14,7 @@ export const schema = {
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
-	const user = await connector("deezer").getCurrentUser(request.accessToken)
+	const user = await connector("spotify").getCurrentUser(request.accessToken)
 
 	return reply.send(user)
 }

@@ -21,6 +21,6 @@ export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) 
 	const state = generateRandomState()
 	await cache.set(`auth:${state}`, request.query.redirectUri)
 
-	const authorizeUrl = connector("deezer").oAuthAuthorizeUrl(`${env.APP_URL}/auth/callback`, state)
+	const authorizeUrl = connector("spotify").oAuthAuthorizeUrl(`${env.APP_URL}/auth/callback`, state)
 	return reply.redirect(authorizeUrl)
 }

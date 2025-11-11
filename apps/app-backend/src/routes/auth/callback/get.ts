@@ -37,7 +37,7 @@ export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) 
 	const { code } = request.query
 	const redirectUri = await cache.get<string>(`auth:${request.query.state}`)
 
-	const { accessToken, expiresIn } = await connector("deezer").oAuthTokenExchange(`${env.APP_URL}/auth/callback`, code)
+	const { accessToken, expiresIn } = await connector("spotify").oAuthTokenExchange(`${env.APP_URL}/auth/callback`, code)
 
 	return reply
 		.setCookie("access_token", accessToken, {
