@@ -23,6 +23,7 @@
 		"lib-env": "workspace:^",
 		"lib-logger": "workspace:^",
 		"lib-utils": "workspace:^",
+		"moment": "^2.30.1",
 		"zod": "4.0.14"
 	}
 }

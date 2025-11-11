@@ -1,13 +1,14 @@
 import type { Session } from "lib-database"
 import { database } from "lib-database"
+import { logger } from "lib-logger"
+import { connector, type Platform, type Token } from "lib-platform-connector"
 import moment from "moment"
 
-export const createSession = async (accessToken: string, refreshToken: string, accessExpiresAt: Date): Promise<string> => {
+export const createSession = async (token: Token, platform: Platform): Promise<string> => {
 	const session = await database.session.create({
 		data: {
-			accessToken,
-			refreshToken,
-			accessExpiresAt
+			...token,
+			platform
 		}
 	})
 
@@ -22,13 +23,33 @@ export const getSession = async (sessionId: string): Promise<Session | null> => 
 	})
 
 	if (!session) {
+		logger.error(`Session ${sessionId} does not exist`)
 		return null
 	}
 
 	if (moment(session.accessExpiresAt).isBefore()) {
-		// TODO: refresh session using refresh token
-		await deleteSession(sessionId)
-		return null
+		if (!session.refreshToken) {
+			await deleteSession(sessionId)
+			return null
+		}
+
+		logger.warn(`Session ${sessionId} has expired, trying to refresh it...`)
+
+		const token = await connector(session.platform).oAuthTokenRefresh(session.refreshToken)
+		if (!token.refreshToken) {
+			token.refreshToken = session.refreshToken
+		}
+
+		await database.session.update({
+			where: {
+				id: sessionId
+			},
+			data: {
+				...token
+			}
+		})
+
+		logger.info(`Session ${sessionId} has been refreshed successfully`)
 	}
 
 	return session

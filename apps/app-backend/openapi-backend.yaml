@@ -12,114 +12,6 @@ components:
           type: string
       required:
         - message
-    UserInput:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        email:
-          type: string
-        avatar:
-          anyOf:
-            - type: string
-              format: uri
-            - nullable: true
-              enum:
-                - null
-      required:
-        - id
-        - name
-        - email
-        - avatar
-    ArtistInput:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-      required:
-        - id
-        - name
-    AlbumInput:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        cover:
-          anyOf:
-            - type: string
-              format: uri
-            - nullable: true
-              enum:
-                - null
-      required:
-        - id
-        - name
-        - cover
-    TrackInput:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        clip:
-          anyOf:
-            - type: string
-              format: uri
-            - nullable: true
-              enum:
-                - null
-        artists:
-          type: array
-          items:
-            $ref: "#/components/schemas/ArtistInput"
-        album:
-          $ref: "#/components/schemas/AlbumInput"
-      required:
-        - id
-        - title
-        - clip
-        - artists
-        - album
-    PlaylistInput:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        description:
-          anyOf:
-            - type: string
-            - nullable: true
-              enum:
-                - null
-        cover:
-          anyOf:
-            - type: string
-              format: uri
-            - nullable: true
-              enum:
-                - null
-        trackCount:
-          type: number
-      required:
-        - id
-        - name
-        - description
-        - cover
-        - trackCount
-    PlatformInput:
-      type: string
-      enum:
-        - spotify
-        - deezer
     SampleInput:
       type: object
       properties:
@@ -248,15 +140,7 @@ components:
           type: string
       required:
         - id
-    ApiError:
-      type: object
-      properties:
-        message:
-          type: string
-      required:
-        - message
-      additionalProperties: false
-    User:
+    UserInput:
       type: object
       properties:
         id:
@@ -277,8 +161,7 @@ components:
         - name
         - email
         - avatar
-      additionalProperties: false
-    Artist:
+    ArtistInput:
       type: object
       properties:
         id:
@@ -288,8 +171,7 @@ components:
       required:
         - id
         - name
-      additionalProperties: false
-    Album:
+    AlbumInput:
       type: object
       properties:
         id:
@@ -307,8 +189,7 @@ components:
         - id
         - name
         - cover
-      additionalProperties: false
-    Track:
+    TrackInput:
       type: object
       properties:
         id:
@@ -325,17 +206,16 @@ components:
         artists:
           type: array
           items:
-            $ref: "#/components/schemas/Artist"
+            $ref: "#/components/schemas/ArtistInput"
         album:
-          $ref: "#/components/schemas/Album"
+          $ref: "#/components/schemas/AlbumInput"
       required:
         - id
         - title
         - clip
         - artists
         - album
-      additionalProperties: false
-    Playlist:
+    PlaylistInput:
       type: object
       properties:
         id:
@@ -363,12 +243,19 @@ components:
         - description
         - cover
         - trackCount
-      additionalProperties: false
-    Platform:
+    PlatformInput:
       type: string
       enum:
         - spotify
         - deezer
+    ApiError:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+      additionalProperties: false
     Sample:
       type: object
       properties:
@@ -505,6 +392,119 @@ components:
       required:
         - id
       additionalProperties: false
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        avatar:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - name
+        - email
+        - avatar
+      additionalProperties: false
+    Artist:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+      additionalProperties: false
+    Album:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        cover:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - name
+        - cover
+      additionalProperties: false
+    Track:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        clip:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+        artists:
+          type: array
+          items:
+            $ref: "#/components/schemas/Artist"
+        album:
+          $ref: "#/components/schemas/Album"
+      required:
+        - id
+        - title
+        - clip
+        - artists
+        - album
+      additionalProperties: false
+    Playlist:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          anyOf:
+            - type: string
+            - nullable: true
+              enum:
+                - null
+        cover:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+        trackCount:
+          type: number
+      required:
+        - id
+        - name
+        - description
+        - cover
+        - trackCount
+      additionalProperties: false
+    Platform:
+      type: string
+      enum:
+        - spotify
+        - deezer
 paths:
   /auth/callback:
     get:

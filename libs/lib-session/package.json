@@ -19,6 +19,8 @@
 	"dependencies": {
 		"lib-database": "workspace:^",
 		"lib-env": "workspace:^",
+		"lib-logger": "workspace:^",
+		"lib-platform-connector": "workspace:^",
 		"moment": "^2.30.1"
 	}
 }
