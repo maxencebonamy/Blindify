@@ -1,3 +1,3 @@
-export * as arrays from "#/arrays"
-export * as http from "#/http"
-export * as random from "#/random"
+export * as arrays from "#/arrays/arrays"
+export * as http from "#/http/http"
+export * as random from "#/random/random"
