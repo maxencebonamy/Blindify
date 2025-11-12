@@ -5,11 +5,12 @@
 	"type": "module",
 	"main": "src/index.ts",
 	"scripts": {
-		"dev": "tsx --watch src/index.ts",
+		"dev": "concurrently \"tsx --watch src/index.ts\" \"pnpm sync --watch\" --names \"dev, sync\"",
 		"build": "tsup",
 		"start": "prisma migrate deploy && node dist/index.js",
 		"lint": "eslint .",
-		"test": "vitest run"
+		"test": "vitest run",
+		"sync": "pnpm sync-dependencies-meta-injected"
 	},
 	"dependencies": {
 		"@fastify/cookie": "^11.0.2",
