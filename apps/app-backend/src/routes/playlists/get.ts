@@ -1,5 +1,5 @@
 import { getAllUserPlaylists } from "#/services/playlist"
-import { paginateFromAllItems, zPage } from "#/types/page.type"
+import { paginate, zPage } from "lib-pagination"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import { zPlaylist } from "lib-platform-connector"
 import z from "zod"
@@ -30,7 +30,7 @@ export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) 
 		playlist => !request.query.search || playlist.name.toLocaleLowerCase().includes(request.query.search.toLocaleLowerCase())
 	)
 
-	const paginatedPlaylists = paginateFromAllItems(filteredPlaylists, request.query.page, request.query.limit)
+	const paginatedPlaylists = paginate.fromSource(filteredPlaylists, { currentPage: request.query.page, pageSize: request.query.limit })
 
 	return reply.send({
 		...paginatedPlaylists,

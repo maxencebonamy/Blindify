@@ -1024,7 +1024,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  page:
+                  currentPage:
                     type: integer
                     minimum: 1
                     maximum: 9007199254740991
@@ -1064,7 +1064,7 @@ paths:
                     type: string
                     format: date-time
                 required:
-                  - page
+                  - currentPage
                   - previousPage
                   - nextPage
                   - totalPages
