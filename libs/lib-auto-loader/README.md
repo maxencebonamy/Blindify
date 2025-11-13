@@ -1,91 +1,100 @@
 # lib-auto-loader
 
-A simple caching library backed by Redis with type-safe retrieval.
-
+Fastify plugin that loads routes and jobs using folder architecture.
 
 ## Get started
 
 Install the lib:
 
 ```bash
-pnpm i lib-cache --workspace
+pnpm add --workspace lib-auto-loader
 ```
 
-
-## Usage
-
-Import the cache functions and use them to get, set, delete, or check cached values.
-
-### `get(key, schema?)`
-
-Retrieve a cached value by key.
-
-* **Parameters:**
-
-  * `key` (string): The cache key.
-  * `schema` (optional, Zod schema): A Zod schema to validate and parse the cached value.
-
-* **Returns:** The cached value, typed if schema is provided.
-
-* **Behavior:**
-
-  * Throws an error if the key does not exist in the cache.
-  * If a schema is provided, the cached value is validated against it; throws if validation fails.
-  * If no schema is provided, returns the raw decoded value.
+Register the plugin to your Fastify app:
 
 ```ts
-const userSchema = z.object({ id: z.string(), name: z.string() })
+import { autoLoader } from "lib-auto-loader"
 
-const user = await get("user:123", userSchema) // typed as { id: string; name: string }
-const rawValue = await get<string>("someKey") // typed as string
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+export const app = Fastify()
+
+void app.register(autoLoader, {
+	routesDir: path.join(__dirname, "routes"),
+	jobsDir: path.join(__dirname, "jobs")
+})
 ```
 
-### `set(key, value, ttl?)`
+## Routes
 
-Store a value in cache under the specified key.
+A route is defined using a `.ts` file that must be placed either in one or many subfolders of the `routesDir` folder, or directly at the root of the latter.
+If the name of the file starts with `_`, then it will be ignored.
 
-* **Parameters:**
+The path of the file from the `routesDir` indicates the URI of the route that will be exposed by Fastify.
+In addition, the name of the file corresponds to the HTTP method.
 
-  * `key` (string): The cache key.
-  * `value` (unknown): The value to cache.
-  * `ttl` (optional, number): Time-to-live in seconds. If omitted, the default TTL from env (`CACHE_TTL`) is used.
+For example, considering that `routesDir` is the `routes` folder, if you have a file `routes/get.ts`, then an endpoint `GET /` will be exposed.
+If you have a file `routes/articles/post.ts`, then an endpoint `POST /articles` will be exposed.
+
+You can add path params by letting a subfolder name start by `:`.
+For example, if you have a file `routes/articles/:id/patch.ts`, then an endpoint `PATCH /articles/{id}` will be exposed.
+
+A route file must export these values:
+- `schema`: the Fastify schema that describes the endpoint (params, response, ...)
+- `handler`: the function executed at each endpoint call
+
+Note that the handler parameters, `request` and `reply`, are automatically type-inferred by the schema.
+
+Example:
 
 ```ts
-import { set } from "lib-cache"
+import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
+import z from "zod"
+import { zArticle } from "#/types/articles"
+import { getArticleById } from "#/services/articles"
 
-await set("user:123", { id: "123", name: "Alice" }, 3600) // cache for 1 hour
-await set("session:abc", "some data") // cache with default TTL
+export const schema = {
+	operationId: "showArticle",
+	description: "Get an article",
+	auth: true,
+	tags: [ "articles" ],
+	params: z.object({
+		id: z.string()
+	}),
+	response: {
+		200: zArticle
+	}
+} satisfies AutoLoaderSchema
+
+export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
+	const article = await getArticleById(request.session.id, request.params.id)
+	return reply.send(article)
+}
 ```
 
-### `del(key)`
+If `auth` is set to `true` in the schema, the handler will automatically check for a `sessionId` cookie and verify the session using `lib-session`.
+Then the `session` object will be present in the `request variable`.
+If the session is invalid or cannot be checked, a `401` error is returned.
 
-Delete a cache entry by key.
+## Jobs
 
-* Throws an error if the key did not exist or deletion failed.
+A job is defined using a `.ts` file that must be placed directly at the root of the `jobDir` folder.
+The name of the file does not matter, except if it starts with `_`, then it will be ignored.
+
+A job file must export these values:
+- `cron`: the CRON time string that indicates the frequency of the task
+- `task`: the function executed at each job invocation
+
+Example:
 
 ```ts
-import { del } from "lib-cache"
+import type { AutoLoaderTask } from "lib-auto-loader"
+import { logger } from "lib-logger"
 
-await del("user:123")
+export const cron = "0 * * * * *"
+
+export const task: AutoLoaderTask = async () => {
+	logger.info("I am invoked every minute")
+}
 ```
-
-### `has(key)`
-
-Check if a key exists in the cache.
-
-* Returns `true` if the key exists, otherwise `false`.
-
-```ts
-import { has } from "lib-cache"
-
-const exists = await has("user:123")
-```
-
-
-## Environment Variables
-
-| Name       | Description                  | Values/Format              |
-| ---------- | ---------------------------- | -------------------------- |
-| CACHE_TTL  | Default cache TTL in seconds | Number (e.g., 3600)        |
-| REDIS_HOST | Redis server hostname        | String (e.g., "localhost") |
-| REDIS_PORT | Redis server port            | Number (e.g., 6379)        |
