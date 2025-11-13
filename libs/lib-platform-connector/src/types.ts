@@ -1,3 +1,4 @@
+import type { Page } from "lib-pagination"
 import z from "zod"
 
 export const zToken = z.object({
@@ -53,8 +54,12 @@ export type PlatformConnector = {
 	oAuthAuthorizeUrl: (redirectUri: string, state: string) => string
 	oAuthTokenExchange: (redirectUri: string, code: string) => Promise<Token>
 	oAuthTokenRefresh: (refreshToken: string) => Promise<Token>
+
 	getCurrentUser: (accessToken: string) => Promise<User>
 	getAllUserPlaylists: (accessToken: string) => Promise<Playlist[]>
+
+	searchPublicPlaylists: (query: string, page: number, limit: number) => Promise<Page<Playlist>>
+
 	getPlaylist: (accessToken: string, playlistId: string) => Promise<Playlist>
 	getAllTracksFromPlaylist: (accessToken: string, playlistId: string) => Promise<Track[]>
 }

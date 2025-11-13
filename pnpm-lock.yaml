@@ -90,6 +90,9 @@ importers:
       lib-logger:
         specifier: workspace:^
         version: file:libs/lib-logger
+      lib-pagination:
+        specifier: workspace:^
+        version: link:../../libs/lib-pagination
       lib-platform-connector:
         specifier: workspace:^
         version: file:libs/lib-platform-connector(@hey-api/openapi-ts@0.69.2(typescript@5.9.3))
@@ -137,6 +140,8 @@ importers:
       lib-env:
         injected: true
       lib-logger:
+        injected: true
+      lib-pagination:
         injected: true
       lib-platform-connector:
         injected: true
@@ -344,6 +349,12 @@ importers:
         specifier: ^8.3.6
         version: 8.5.0(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
 
+  libs/lib-pagination:
+    devDependencies:
+      tsup:
+        specifier: ^8.3.6
+        version: 8.5.0(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+
   libs/lib-platform-connector:
     dependencies:
       '@hey-api/client-fetch':
@@ -355,6 +366,9 @@ importers:
       lib-logger:
         specifier: workspace:^
         version: link:../lib-logger
+      lib-pagination:
+        specifier: workspace:^
+        version: link:../lib-pagination
       lib-utils:
         specifier: workspace:^
         version: link:../lib-utils
