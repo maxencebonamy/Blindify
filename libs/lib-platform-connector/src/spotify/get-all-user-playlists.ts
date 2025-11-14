@@ -1,14 +1,16 @@
 import { convertPlaylist } from "#/spotify/convert"
 import { getAListOfCurrentUsersPlaylists } from "#/spotify/generated"
 import type { PlatformConnector } from "#/types"
+import { logger } from "lib-logger"
+import { errors } from "lib-utils"
 
 export const getAllUserPlaylists: PlatformConnector["getAllUserPlaylists"] = async accessToken => {
 	const playlistCount = await getAListOfCurrentUsersPlaylists({
-		query: { limit: 1 },
-		headers: { authorization: `Bearer ${accessToken}` }
+		headers: { authorization: `Bearer ${accessToken}` },
+		query: { limit: 1 }
 	}).then(result => {
 		if (result.error) {
-			throw new Error(`Failed to fetch total user playlists: ${result.error.error.message}`)
+			throw new Error(`Failed to get total user playlists: ${result.error.error.message}`)
 		}
 		return result.data.total
 	})
@@ -20,8 +22,8 @@ export const getAllUserPlaylists: PlatformConnector["getAllUserPlaylists"] = asy
 		const offset = limit * i
 
 		const playlists = await getAListOfCurrentUsersPlaylists({
-			query: { limit, offset },
-			headers: { authorization: `Bearer ${accessToken}` }
+			headers: { authorization: `Bearer ${accessToken}` },
+			query: { limit, offset }
 		}).then(result => {
 			if (result.error) {
 				throw new Error(`Failed to fetch user playlists: ${result.error.error.message}`)
@@ -32,7 +34,8 @@ export const getAllUserPlaylists: PlatformConnector["getAllUserPlaylists"] = asy
 		return playlists.items?.map(item => {
 			try {
 				return convertPlaylist(item)
-			} catch {
+			} catch (error) {
+				logger.warn(`Failed to convert playlist: ${errors.from(error).message} (${JSON.stringify(item)})`)
 				return null
 			}
 		}).filter(playlist => playlist !== null) ?? []

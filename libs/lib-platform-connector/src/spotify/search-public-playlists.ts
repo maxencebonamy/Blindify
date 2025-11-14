@@ -1,10 +1,18 @@
 import { convertPlaylist } from "#/deezer/convert"
+import { PlatformConnectorError } from "#/error"
 import { search } from "#/spotify/generated"
 import type { PlatformConnector } from "#/types"
+import { logger } from "lib-logger"
 import { paginate } from "lib-pagination"
+import { errors } from "lib-utils"
 
-export const searchPublicPlaylists: PlatformConnector["searchPublicPlaylists"] = async (query, page, limit) => {
+export const searchPublicPlaylists: PlatformConnector["searchPublicPlaylists"] = async (accessToken, query, page, limit) => {
+	if (query === "") {
+		throw new PlatformConnectorError("Cannot search public playlsts with empty query string")
+	}
+
 	const playlists = await search({
+		headers: { authorization: `Bearer ${accessToken}` },
 		query: {
 			q: query,
 			offset: (page - 1) * limit,
@@ -13,10 +21,10 @@ export const searchPublicPlaylists: PlatformConnector["searchPublicPlaylists"] =
 		}
 	}).then(result => {
 		if (result.error) {
-			throw new Error(`Failed to fetch public playlists: ${result.error.error.message}`)
+			throw new PlatformConnectorError(`Failed to search public playlists: ${result.error.error.message}`)
 		}
 		if (!result.data.playlists) {
-			throw new Error("Failed to fetch public playlists")
+			throw new PlatformConnectorError("Failed to search public playlists")
 		}
 		return result.data.playlists
 	})
@@ -24,7 +32,8 @@ export const searchPublicPlaylists: PlatformConnector["searchPublicPlaylists"] =
 	return paginate.fromSubset(playlists.items?.map(item => {
 		try {
 			return convertPlaylist(item)
-		} catch {
+		} catch (error) {
+			logger.warn(`Failed to convert playlist: ${errors.from(error).message}`)
 			return null
 		}
 	}).filter(playlist => playlist !== null) ?? [], { currentPage: page, pageSize: limit, totalItems: playlists.total })

@@ -1,4 +1,5 @@
 import { deezerConnector } from "#/deezer"
+import { PlatformConnectorError } from "#/error"
 import { spotifyConnector } from "#/spotify"
 import type { Platform, PlatformConnector } from "#/types"
 
@@ -9,6 +10,6 @@ export const connector = (platform: Platform): PlatformConnector => {
 		case "deezer":
 			return deezerConnector
 		default:
-			throw new Error(`Unsupported platform: ${platform}`)
+			throw new PlatformConnectorError(`Unsupported platform: ${platform}`)
 	}
 }
