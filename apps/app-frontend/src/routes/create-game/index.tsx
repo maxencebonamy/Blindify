@@ -1,5 +1,5 @@
 import { Button } from "#/components/molecules/button"
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
+import { createFileRoute, useRouter } from "@tanstack/react-router"
 import { ChevronLeftIcon, PlayIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import z from "zod"
@@ -69,12 +69,10 @@ function RouteComponent() {
 		<>
 			<TopBar
 				left={(
-					<Link to="/">
-						<Button variant="outline" className="justify-self-start">
-							<Icon icon={ChevronLeftIcon} />
-							Back
-						</Button>
-					</Link>
+					<Button variant="outline" className="justify-self-start" onClick={() => router.history.back()}>
+						<Icon icon={ChevronLeftIcon} />
+						Back
+					</Button>
 				)}
 			/>
 
