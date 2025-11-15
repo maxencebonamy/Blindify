@@ -10,6 +10,12 @@ export default defineConfig({
 	test: {
 		globals: true,
 		environment: "node",
-		passWithNoTests: true
+		passWithNoTests: true,
+		env: {
+			SPOTIFY_CLIENT_ID: "",
+			SPOTIFY_CLIENT_SECRET: ""
+		},
+		printConsoleTrace: true,
+		silent: false
 	}
 })
