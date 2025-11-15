@@ -19,6 +19,15 @@ import { arrays } from "lib-utils"
 arrays.scramble(things)
 ```
 
+## Errors
+
+```ts
+import { errors } from "lib-utils"
+
+// from() takes an unknown parameter and transforms it to an error (useful in try/catch blocks)
+errors.from(error)
+```
+
 ## HTTP
 
 ```ts
