@@ -1,6 +1,9 @@
+import { PlatformConnectorError } from "#/error"
 import { convertTrack } from "#/spotify/convert"
 import { getPlaylistsTracks } from "#/spotify/generated"
 import type { PlatformConnector, Track } from "#/types"
+import { logger } from "lib-logger"
+import { errors } from "lib-utils"
 
 export const getAllTracksFromPlaylist: PlatformConnector["getAllTracksFromPlaylist"] = async (accessToken, playlistId) => {
 	const allTracks: Track[] = []
@@ -14,12 +17,12 @@ export const getAllTracksFromPlaylist: PlatformConnector["getAllTracksFromPlayli
 		iterationCount--
 
 		const tracks = await getPlaylistsTracks({
-			path: { playlist_id: playlistId },
 			headers: { authorization: `Bearer ${accessToken}` },
+			path: { playlist_id: playlistId },
 			query: { limit, offset }
 		}).then(result => {
 			if (result.error) {
-				throw new Error(`Failed to fetch playlist tracks: ${result.error.error.message}`)
+				throw new PlatformConnectorError(`Failed to get playlist ${playlistId} tracks: ${result.error.error.message}`)
 			}
 			return result.data
 		})
@@ -27,7 +30,8 @@ export const getAllTracksFromPlaylist: PlatformConnector["getAllTracksFromPlayli
 		allTracks.push(...tracks.items?.map(item => {
 			try {
 				return convertTrack(item)
-			} catch {
+			} catch (error) {
+				logger.warn(`Failed to convert track: ${errors.from(error).message} (${JSON.stringify(item)})`)
 				return null
 			}
 		}).filter(track => track !== null) ?? [])
@@ -36,6 +40,9 @@ export const getAllTracksFromPlaylist: PlatformConnector["getAllTracksFromPlayli
 		if (tracks.next === null) {
 			lastPage = true
 		}
+	}
+	if (iterationCount === 0) {
+		logger.warn(`Max iterations count has been reached when getting all tracks from playlist ${playlistId}`)
 	}
 
 	return allTracks
