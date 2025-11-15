@@ -1,39 +1,26 @@
-import { getAllUserPlaylists } from "#/services/playlist"
-import { paginateFromAllItems, zPage } from "#/types/page.type"
+import { zPage } from "lib-pagination"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
-import { zPlaylist } from "lib-platform-connector"
+import { connector, zPlaylist } from "lib-platform-connector"
 import z from "zod"
 
 export const schema = {
-	operationId: "indexUserPlaylists",
-	description: "Get current user's playlists",
+	operationId: "indexPlaylists",
+	description: "Get all playlists",
 	auth: true,
 	tags: [ "playlists" ],
 	querystring: z.object({
 		page: z.coerce.number().int().min(1).optional().default(1),
 		limit: z.coerce.number().int().min(1).max(50).optional().default(20),
-		search: z.string().optional(),
-		sort: z.enum([ "name", "trackCount" ]).optional(),
-		order: z.enum([ "asc", "desc" ]).optional()
+		search: z.string().optional()
 	}),
 	response: {
-		200: zPage(zPlaylist).extend({
-			lastFetchedAt: z.date()
-		})
+		200: zPage(zPlaylist.nullable())
 	}
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
-	const playlistArray = await getAllUserPlaylists(request.session.accessToken)
+	const { page, limit, search } = request.query
+	const playlists = await connector("spotify").searchPublicPlaylists(request.session.accessToken, search ?? "", page, limit)
 
-	const filteredPlaylists = playlistArray.playlists.filter(
-		playlist => !request.query.search || playlist.name.toLocaleLowerCase().includes(request.query.search.toLocaleLowerCase())
-	)
-
-	const paginatedPlaylists = paginateFromAllItems(filteredPlaylists, request.query.page, request.query.limit)
-
-	return reply.send({
-		...paginatedPlaylists,
-		lastFetchedAt: playlistArray.lastFetchedAt
-	})
+	return reply.send(playlists)
 }

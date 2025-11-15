@@ -2,13 +2,13 @@ import z from "zod"
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const zPage = <T>(zItem: z.ZodType<T>) => z.object({
-	page: z.number().int().min(1),
-	previousPage: z.number().int().min(1).nullable(),
-	nextPage: z.number().int().min(2).nullable(),
-	totalPages: z.number().int().min(1),
-	totalItems: z.number().int().min(0),
-	pageSize: z.number().int().min(1),
-	items: z.array(zItem)
+	currentPage: z.int().min(1), // current page, from 1 to whatever
+	previousPage: z.int().min(1).nullable(), // previous page = page - 1 (or null if the current page is the first one)
+	nextPage: z.int().min(2).nullable(), // next page = page + 1 (or null if the current page is the last one)
+	totalPages: z.int().min(1), // total of pages (minimum 1 because empty page is allowed)
+	totalItems: z.int().min(0), // total of items in all pages (must be consistent with the total of pages and the page size)
+	pageSize: z.int().min(1), // page size in general (can be greater than the items length, for example with the last page)
+	items: z.array(zItem) // only items of that page
 }).superRefine((data, ctx) => {
 	const expectedTotalPages = Math.max(1, Math.ceil(data.totalItems / data.pageSize))
 	if (data.totalPages !== expectedTotalPages) {
@@ -19,40 +19,40 @@ export const zPage = <T>(zItem: z.ZodType<T>) => z.object({
 		})
 	}
 
-	if (data.page > data.totalPages) {
+	if (data.currentPage > data.totalPages) {
 		ctx.addIssue({
 			code: "custom",
-			message: "page cannot be greater than totalPages",
-			path: [ "page" ]
+			message: "currentPage cannot be greater than totalPages",
+			path: [ "currentPage" ]
 		})
 	}
 
-	if (data.page === 1 && data.previousPage !== null) {
+	if (data.currentPage === 1 && data.previousPage !== null) {
 		ctx.addIssue({
 			code: "custom",
 			message: "previousPage must be null on first page",
 			path: [ "previousPage" ]
 		})
 	}
-	if (data.page > 1 && data.previousPage !== data.page - 1) {
+	if (data.currentPage > 1 && data.previousPage !== data.currentPage - 1) {
 		ctx.addIssue({
 			code: "custom",
-			message: "previousPage must be page - 1",
+			message: "previousPage must be currentPage - 1",
 			path: [ "previousPage" ]
 		})
 	}
 
-	if (data.page === data.totalPages && data.nextPage !== null) {
+	if (data.currentPage === data.totalPages && data.nextPage !== null) {
 		ctx.addIssue({
 			code: "custom",
 			message: "nextPage must be null on last page",
 			path: [ "nextPage" ]
 		})
 	}
-	if (data.page < data.totalPages && data.nextPage !== data.page + 1) {
+	if (data.currentPage < data.totalPages && data.nextPage !== data.currentPage + 1) {
 		ctx.addIssue({
 			code: "custom",
-			message: "nextPage must be page + 1",
+			message: "nextPage must be currentPage + 1",
 			path: [ "nextPage" ]
 		})
 	}
@@ -66,7 +66,7 @@ export const zPage = <T>(zItem: z.ZodType<T>) => z.object({
 	}
 
 	if (
-		data.page === data.totalPages
+		data.currentPage === data.totalPages
 		&& data.totalItems > 0
 		&& data.items.length !== data.totalItems - (data.pageSize * (data.totalPages - 1))
 	) {
@@ -79,21 +79,3 @@ export const zPage = <T>(zItem: z.ZodType<T>) => z.object({
 })
 
 export type Page<T> = z.infer<ReturnType<typeof zPage<T>>>
-
-export const paginateFromAllItems = <T>(allItems: T[], page: number, limit: number): Page<T> => {
-	const totalPages = Math.max(1, Math.ceil(allItems.length / limit))
-	if (page > totalPages) page = totalPages
-
-	const startIndex = (page - 1) * limit
-	const endIndex = Math.min(startIndex + limit, allItems.length)
-
-	return {
-		page,
-		previousPage: page > 1 ? page - 1 : null,
-		nextPage: page < totalPages ? page + 1 : null,
-		pageSize: limit,
-		totalItems: allItems.length,
-		totalPages,
-		items: allItems.slice(startIndex, endIndex)
-	}
-}

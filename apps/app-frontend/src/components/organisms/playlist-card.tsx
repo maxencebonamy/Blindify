@@ -18,8 +18,8 @@ export const PlaylistCard = ({ playlist, link, className }: PlaylistCardProps) =
 				alt={playlist.name}
 				className="w-full aspect-square object-cover rounded-sm border border-foreground"
 			/>
-			<Col className="items-center">
-				<Text level="heading-3" className="text-center">
+			<Col className="items-center mt-1">
+				<Text level="heading-3" className="text-center line-clamp-2">
 					{playlist.name}
 				</Text>
 				<Text level="paragraph">

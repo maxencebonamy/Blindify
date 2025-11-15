@@ -5,6 +5,7 @@ import { getPlaylist } from "#/spotify/get-playlist"
 import { oAuthAuthorizeUrl } from "#/spotify/oauth-authorize-url"
 import { oAuthTokenExchange } from "#/spotify/oauth-token-exchange"
 import { oAuthTokenRefresh } from "#/spotify/oauth-token-refresh"
+import { searchPublicPlaylists } from "#/spotify/search-public-playlists"
 import type { PlatformConnector } from "#/types"
 
 export const spotifyConnector = {
@@ -13,6 +14,7 @@ export const spotifyConnector = {
 	oAuthTokenRefresh,
 	getCurrentUser,
 	getAllUserPlaylists,
+	searchPublicPlaylists,
 	getPlaylist: getPlaylist,
 	getAllTracksFromPlaylist
 } satisfies PlatformConnector

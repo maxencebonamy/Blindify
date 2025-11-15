@@ -1,19 +1,6 @@
 import { useState, useEffect, type Dispatch, type SetStateAction } from "react"
 
-export type UseDebouncedStateParams<T> = {
-	initialValue: T
-	delayMs?: number
-}
-
-export type UseDebouncedStateReturn<T> = {
-	value: T
-	debouncedValue: T
-	setValue: Dispatch<SetStateAction<T>>
-	setDebouncedValue: Dispatch<SetStateAction<T>>
-}
-
-export const useDebouncedState = <T>({ initialValue, delayMs = 500 }: UseDebouncedStateParams<T>): UseDebouncedStateReturn<T> => {
-	const [ value, setValue ] = useState(initialValue)
+export const useDebouncedState = <T>(value: T, delayMs: number = 500): [ T, Dispatch<SetStateAction<T>> ] => {
 	const [ debouncedValue, setDebouncedValue ] = useState(value)
 
 	useEffect(() => {
@@ -24,5 +11,5 @@ export const useDebouncedState = <T>({ initialValue, delayMs = 500 }: UseDebounc
 		return () => clearTimeout(handler)
 	}, [ value ])
 
-	return { value, debouncedValue, setValue, setDebouncedValue }
+	return [ debouncedValue, setDebouncedValue ]
 }

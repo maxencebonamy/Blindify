@@ -26,6 +26,7 @@
 		"lib-clip": "workspace:^",
 		"lib-env": "workspace:^",
 		"lib-logger": "workspace:^",
+		"lib-pagination": "workspace:^",
 		"lib-platform-connector": "workspace:^",
 		"lib-session": "workspace:^",
 		"lib-utils": "workspace:^",
@@ -55,6 +56,9 @@
 			"injected": true
 		},
 		"lib-logger": {
+			"injected": true
+		},
+		"lib-pagination": {
 			"injected": true
 		},
 		"lib-platform-connector": {
