@@ -63,7 +63,7 @@ function RouteComponent() {
 					<QueryHandler
 						result={result}
 						handler={playlists => {
-							const allPlaylists = playlists.pages.flatMap(e => e.items)
+							const allPlaylists = playlists.pages.flatMap(e => e.items).filter(e => e !== null)
 							if (allPlaylists.length === 0) {
 								return <Text level="paragraph">No playlist found...</Text>
 							}

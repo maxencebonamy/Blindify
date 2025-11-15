@@ -1,4 +1,4 @@
-import { convertPlaylist } from "#/deezer/convert"
+import { convertPlaylist } from "#/spotify/convert"
 import { PlatformConnectorError } from "#/error"
 import { search } from "#/spotify/generated"
 import type { PlatformConnector } from "#/types"
@@ -36,5 +36,5 @@ export const searchPublicPlaylists: PlatformConnector["searchPublicPlaylists"] =
 			logger.warn(`Failed to convert playlist: ${errors.from(error).message}`)
 			return null
 		}
-	}).filter(playlist => playlist !== null) ?? [], { currentPage: page, pageSize: limit, totalItems: playlists.total })
+	}) ?? [], { currentPage: page, pageSize: limit, totalItems: playlists.total })
 }
