@@ -5,7 +5,7 @@ import { pathToFileURL } from "url"
 import fs from "fs"
 import z from "zod"
 import type { Session } from "lib-session"
-import { getSession } from "lib-session"
+import { sessions } from "lib-session"
 
 type Route = {
 	method: string
@@ -64,7 +64,7 @@ export const loadRoutes = async (dir: string, basePath = ""): Promise<Route[]> =
 						if (!sessionId) {
 							return reply.code(401).send({ message: "Session ID cookie not present" })
 						}
-						session = await getSession(sessionId)
+						session = await sessions.retrieve(sessionId)
 						if (!session) {
 							return reply.code(401).send({ message: "Session not found" })
 						}

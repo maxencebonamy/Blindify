@@ -3,7 +3,7 @@ import { zApiError } from "#/types/error.type"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import { cache } from "lib-cache"
 import { connector } from "lib-platform-connector"
-import { createSession } from "lib-session"
+import { sessions } from "lib-session"
 import { z } from "zod"
 
 export const schema = {
@@ -39,10 +39,10 @@ export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) 
 	const redirectUri = await cache.get<string>(`auth:${request.query.state}`)
 
 	const token = await connector("spotify").oAuthTokenExchange(`${env.APP_URL}/auth/callback`, code)
-	const sessionId = await createSession(token, "spotify")
+	const session = await sessions.create(token, "spotify")
 
 	return reply
-		.setCookie("session_id", sessionId, {
+		.setCookie("session_id", session.id, {
 			httpOnly: true,
 			secure: true,
 			sameSite: "none",

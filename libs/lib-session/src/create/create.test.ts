@@ -53,8 +53,8 @@ describe("createSession", () => {
 			createdAt: new Date(),
 			lastUsedAt: new Date()
 		})
-		const sessionId = await create(token, platform)
-		expect(sessionId).toBe("session-id-123")
+		const session = await create(token, platform)
+		expect(session.id).toBe("session-id-123")
 	})
 
 	it("should handle null refreshToken", async () => {
@@ -67,14 +67,14 @@ describe("createSession", () => {
 			lastUsedAt: new Date()
 		})
 
-		const sessionId = await create(tokenWithNull, platform)
+		const session = await create(tokenWithNull, platform)
 		expect(mockCreate).toHaveBeenCalledWith({
 			data: {
 				...tokenWithNull,
 				platform
 			}
 		})
-		expect(sessionId).toBe("session-id-123")
+		expect(session.id).toBe("session-id-123")
 	})
 
 	it("should propagate errors from database.session.create", async () => {

@@ -2,7 +2,7 @@ import { create } from "#/create/create"
 import { retrieve } from "#/retrieve/retrieve"
 import { revoke } from "#/revoke/revoke"
 
-export const session = {
+export const sessions = {
 	create,
 	retrieve,
 	revoke
