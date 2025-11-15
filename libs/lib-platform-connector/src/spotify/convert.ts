@@ -70,8 +70,8 @@ export const convertPlaylist = (playlist: SimplifiedPlaylistObject | PlaylistObj
 		id: z.string(),
 		name: z.string(),
 		description: z.string().nullish().transform(e => e ?? null),
-		images: z.array(z.object({ url: z.string().optional() })).optional(),
-		tracks: z.object({ total: z.number().optional() }).optional()
+		images: z.array(z.object({ url: z.string().nullish() })).nullish(),
+		tracks: z.object({ total: z.number().nullish() }).nullish()
 	})
 	.transform(e => ({
 		id: e.id,

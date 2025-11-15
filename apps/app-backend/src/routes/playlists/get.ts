@@ -4,8 +4,8 @@ import { connector, zPlaylist } from "lib-platform-connector"
 import z from "zod"
 
 export const schema = {
-	operationId: "indexUserPlaylists",
-	description: "Get current user's playlists",
+	operationId: "indexPlaylists",
+	description: "Get all playlists",
 	auth: true,
 	tags: [ "playlists" ],
 	querystring: z.object({
@@ -14,33 +14,13 @@ export const schema = {
 		search: z.string().optional()
 	}),
 	response: {
-		200: zPage(zPlaylist.nullable()).extend({
-			lastFetchedAt: z.date()
-		})
+		200: zPage(zPlaylist.nullable())
 	}
 } satisfies AutoLoaderSchema
-
-// export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
-// 	const playlistArray = await getAllUserPlaylists(request.session.accessToken)
-
-// 	const filteredPlaylists = playlistArray.playlists.filter(
-// 		playlist => !request.query.search || playlist.name.toLocaleLowerCase().includes(request.query.search.toLocaleLowerCase())
-// 	)
-
-// 	const paginatedPlaylists = paginate.fromSource(filteredPlaylists, { currentPage: request.query.page, pageSize: request.query.limit })
-
-// 	return reply.send({
-// 		...paginatedPlaylists,
-// 		lastFetchedAt: playlistArray.lastFetchedAt
-// 	})
-// }
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
 	const { page, limit, search } = request.query
 	const playlists = await connector("spotify").searchPublicPlaylists(request.session.accessToken, search ?? "", page, limit)
 
-	return reply.send({
-		...playlists,
-		lastFetchedAt: new Date()
-	})
+	return reply.send(playlists)
 }
