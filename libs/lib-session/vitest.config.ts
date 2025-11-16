@@ -4,7 +4,8 @@ import path from "path"
 export default defineConfig({
 	resolve: {
 		alias: {
-			"#": path.resolve(__dirname, "src")
+			"#": path.resolve(__dirname, "src"),
+			"lib-database": path.resolve(__dirname, "../lib-database/src")
 		}
 	},
 	test: {
@@ -14,8 +15,6 @@ export default defineConfig({
 		env: {
 			SPOTIFY_CLIENT_ID: "",
 			SPOTIFY_CLIENT_SECRET: ""
-		},
-		printConsoleTrace: true,
-		silent: false
+		}
 	}
 })
