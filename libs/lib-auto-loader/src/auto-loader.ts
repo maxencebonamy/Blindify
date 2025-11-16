@@ -1,9 +1,9 @@
 import type { FastifyPluginAsync } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
 import fp from "fastify-plugin"
-import { loadRoutes } from "#/routes"
+import { loadRoutes } from "#/routes/routes"
 import fastifyCron from "fastify-cron"
-import { loadJobs } from "#/jobs"
+import { loadJobs } from "#/jobs/jobs"
 import { logger } from "lib-logger"
 import { pluralize } from "#/utils"
 

@@ -1,5 +1,5 @@
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
-import { deleteSession } from "lib-session"
+import { sessions } from "lib-session"
 import z from "zod"
 
 export const schema = {
@@ -15,7 +15,7 @@ export const schema = {
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
-	await deleteSession(request.session.id)
+	await sessions.revoke(request.session.id)
 
 	return reply.clearCookie("session_id", {
 		path: "/",
