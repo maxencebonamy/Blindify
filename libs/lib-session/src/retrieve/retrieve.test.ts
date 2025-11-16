@@ -23,7 +23,6 @@ vi.mock("lib-platform-connector", () => ({
 vi.mock("lib-logger", () => ({
 	logger: {
 		error: vi.fn(),
-		warn: vi.fn(),
 		info: vi.fn()
 	}
 }))
@@ -98,7 +97,7 @@ describe("getSession", () => {
 
 		const result = await retrieve(sessionId)
 
-		expect(logger.warn).toHaveBeenCalledWith(`Session ${sessionId} has expired, trying to refresh it...`)
+		expect(logger.info).toHaveBeenCalledWith(`Session ${sessionId} has expired, trying to refresh it...`)
 		expect(tokenRefreshMock).toHaveBeenCalledWith(mockSession.refreshToken)
 		expect(updateMock).toHaveBeenCalledWith({
 			where: { id: sessionId },

@@ -23,7 +23,7 @@ export const retrieve = async (sessionId: string): Promise<Session | null> => {
 			return null
 		}
 
-		logger.warn(`Session ${sessionId} has expired, trying to refresh it...`)
+		logger.info(`Session ${sessionId} has expired, trying to refresh it...`)
 
 		const token = await connector(session.platform).oAuthTokenRefresh(session.refreshToken)
 		if (!token.refreshToken) {
