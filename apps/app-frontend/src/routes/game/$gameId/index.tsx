@@ -13,6 +13,7 @@ import { TimedProgressBar } from "#/components/organisms/timed-progress-bar"
 import { WaveformAnimation } from "#/components/organisms/waveform-animation"
 import { useEffect, useState } from "react"
 import { LoadingScreen } from "#/components/templates/loading-screen"
+import { Loader } from "#/components/atoms/loader"
 
 export const Route = createFileRoute("/game/$gameId/")({
 	component: RouteComponent
@@ -25,11 +26,15 @@ function RouteComponent() {
 	const { data: game } = useQuery(showGameOptions({ path: { gameId } }))
 
 	const [ rounds, setRounds ] = useState<RoundIndicatorProps["state"][]>([])
+	const [ playing, setPlaying ] = useState(false)
 
 	useEffect(() => {
 		if (!game) return
 		if (game.status === "finished") {
 			router.navigate({ to: "/create-game", search: { playlistId: game.playlist.id } })
+		}
+		if (game.status === "revealing") {
+			setPlaying(false)
 		}
 		setRounds(game.samples.map((_, index) => {
 			if (index < game.currentSampleIndex) return "done"
@@ -70,14 +75,23 @@ function RouteComponent() {
 				<PlaylistIndicator playlist={game.playlist} className="justify-self-end" />
 			</div>
 
-			{game.currentSample && <AudioPlayer url={game.currentSample} />}
+			{game.currentSample && (
+				<AudioPlayer url={game.currentSample} onPlay={() => setPlaying(true)} />
+			)}
 
 			{game.currentTrack && (
 				<TrackInfo track={game.currentTrack} />
 			)}
 
 			{!game.currentTrack && (
-				<WaveformAnimation barCount={30} className="h-20" />
+				<>
+					{playing && (
+						<WaveformAnimation barCount={30} className="h-20" />
+					)}
+					{!playing && (
+						<Loader />
+					)}
+				</>
 			)}
 
 			<TimedProgressBar
