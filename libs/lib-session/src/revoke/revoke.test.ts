@@ -12,7 +12,7 @@ vi.mock("lib-database", () => {
 	}
 })
 
-describe("deleteSession", () => {
+describe("revoke", () => {
 	const sessionId = "session-id-123"
 	let mockDelete: ReturnType<typeof vi.fn>
 

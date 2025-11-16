@@ -33,7 +33,7 @@ vi.mock("#/revoke/revoke", async () => {
 	}
 })
 
-describe("getSession", () => {
+describe("retrieve", () => {
 	const sessionId = "session-id-123"
 	const mockSession = {
 		id: sessionId,
@@ -46,14 +46,14 @@ describe("getSession", () => {
 	}
 
 	let findUniqueMock: ReturnType<typeof vi.fn>
-	let deleteSessionMock: ReturnType<typeof vi.fn>
+	let revokeMock: ReturnType<typeof vi.fn>
 	let updateMock: ReturnType<typeof vi.fn>
 	let connectorMock: ReturnType<typeof vi.fn>
 	let tokenRefreshMock: ReturnType<typeof vi.fn>
 
 	beforeEach(() => {
 		findUniqueMock = database.session.findUnique as unknown as ReturnType<typeof vi.fn>
-		deleteSessionMock = revoke as unknown as ReturnType<typeof vi.fn>
+		revokeMock = revoke as unknown as ReturnType<typeof vi.fn>
 		updateMock = database.session.update as unknown as ReturnType<typeof vi.fn>
 		connectorMock = connector as unknown as ReturnType<typeof vi.fn>
 
@@ -85,7 +85,7 @@ describe("getSession", () => {
 
 		const result = await retrieve(sessionId)
 
-		expect(deleteSessionMock).toHaveBeenCalledWith(sessionId)
+		expect(revokeMock).toHaveBeenCalledWith(sessionId)
 		expect(result).toBeNull()
 	})
 

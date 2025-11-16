@@ -6,6 +6,7 @@ import fs from "fs"
 import z from "zod"
 import type { Session } from "lib-session"
 import { sessions } from "lib-session"
+import type { DynamicImport } from "#/utils"
 
 type Route = {
 	method: string
@@ -14,7 +15,7 @@ type Route = {
 	handler: AutoLoaderHandler
 }
 
-export const loadRoutes = async (dir: string, basePath = ""): Promise<Route[]> => {
+export const loadRoutes = async (dir: string, basePath = "", dynamicImport: DynamicImport = p => import(p)): Promise<Route[]> => {
 	const routes: Route[] = []
 	const entries = fs.readdirSync(dir, { withFileTypes: true })
 
@@ -26,13 +27,13 @@ export const loadRoutes = async (dir: string, basePath = ""): Promise<Route[]> =
 			if (trimmedName.startsWith("_")) {
 				trimmedName = `:${trimmedName.slice(1)}`
 			}
-			const newRoutes = await loadRoutes(fullPath, `${basePath}/${trimmedName}`)
+			const newRoutes = await loadRoutes(fullPath, `${basePath}/${trimmedName}`, dynamicImport)
 			routes.push(...newRoutes)
 		} else if (entry.isFile() && !entry.name.startsWith("_") && (entry.name.endsWith(".ts") || entry.name.endsWith(".js"))) {
 			const method = entry.name.replace(/\.ts$/, "").replace(/\.js$/, "").toUpperCase()
 			const url = basePath || "/"
 
-			const mod = await import(pathToFileURL(fullPath).href)
+			const mod = await dynamicImport(pathToFileURL(fullPath).href)
 			const schema: AutoLoaderSchema = mod.schema
 			const handler: AutoLoaderHandler<AutoLoaderSchema> = mod.handler
 			if (!schema || !handler) {

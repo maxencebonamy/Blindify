@@ -14,7 +14,7 @@ vi.mock("lib-database", () => {
 	}
 })
 
-describe("createSession", () => {
+describe("create", () => {
 	const token: Token = {
 		accessToken: "token123",
 		refreshToken: "refresh123",

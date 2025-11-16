@@ -3,13 +3,14 @@ import path from "path"
 import { pathToFileURL } from "url"
 import fs from "fs"
 import type { AutoLoaderTask } from "#/types"
+import type { DynamicImport } from "#/utils"
 
 type Job = {
 	cron: string
 	task: AutoLoaderTask
 }
 
-export const loadJobs = async (dir: string): Promise<Job[]> => {
+export const loadJobs = async (dir: string, dynamicImport: DynamicImport = p => import(p)): Promise<Job[]> => {
 	const jobs: Job[] = []
 	const entries = fs.readdirSync(dir, { withFileTypes: true })
 
@@ -19,7 +20,7 @@ export const loadJobs = async (dir: string): Promise<Job[]> => {
 		if (entry.isFile() && !entry.name.startsWith("_") && (entry.name.endsWith(".ts") || entry.name.endsWith(".js"))) {
 			const name = entry.name.replace(/\.ts$/, "").replace(/\.js$/, "")
 
-			const mod = await import(pathToFileURL(fullPath).href)
+			const mod = await dynamicImport(pathToFileURL(fullPath).href)
 			if (!mod.cron || !mod.task) {
 				throw new Error(`Missing cron or task export in ${fullPath}`)
 			}
