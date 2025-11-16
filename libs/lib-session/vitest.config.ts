@@ -5,7 +5,8 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			"#": path.resolve(__dirname, "src"),
-			"lib-database": path.resolve(__dirname, "../lib-database/src")
+			"lib-database": path.resolve(__dirname, "../lib-database/src"),
+			"lib-platform-connector": path.resolve(__dirname, "../lib-platform-connector/src")
 		}
 	},
 	test: {
