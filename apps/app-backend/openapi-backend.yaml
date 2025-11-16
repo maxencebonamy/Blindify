@@ -42,6 +42,21 @@ components:
     GameSettingsInput:
       type: object
       properties:
+        challengeMode:
+          type: string
+          enum:
+            - classic
+            - reverse
+            - speed-up
+            - slow-down
+            - low-quality
+            - snippet
+        guessMode:
+          type: string
+          enum:
+            - freeplay
+            - keyboard
+            - choice
         sampleCount:
           anyOf:
             - type: number
@@ -62,6 +77,8 @@ components:
               enum:
                 - 20000
       required:
+        - challengeMode
+        - guessMode
         - sampleCount
         - sampleDurationMs
     GameStatusInput:
@@ -288,6 +305,21 @@ components:
     GameSettings:
       type: object
       properties:
+        challengeMode:
+          type: string
+          enum:
+            - classic
+            - reverse
+            - speed-up
+            - slow-down
+            - low-quality
+            - snippet
+        guessMode:
+          type: string
+          enum:
+            - freeplay
+            - keyboard
+            - choice
         sampleCount:
           anyOf:
             - type: number
@@ -308,6 +340,8 @@ components:
               enum:
                 - 20000
       required:
+        - challengeMode
+        - guessMode
         - sampleCount
         - sampleDurationMs
       additionalProperties: false
