@@ -33,7 +33,7 @@ jobs:
           pnpm --filter "lib-database" run db:generate
           pnpm -r --filter "./libs/*" run gen
           pnpm -r --filter "./apps/*" run gen
-          # pnpm -r run lint
+          pnpm -r run lint
           pnpm -r run test
           pnpm -r --filter "./libs/*" run build
           pnpm -r --filter "./apps/*" run build
