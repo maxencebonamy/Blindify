@@ -21,6 +21,7 @@
 		"fastify": "^5.6.1",
 		"fastify-cron": "^1.4.0",
 		"fastify-type-provider-zod": "^5.1.0",
+		"lib-audio": "workspace:^",
 		"lib-auto-loader": "workspace:^",
 		"lib-cache": "workspace:^",
 		"lib-clip": "workspace:^",
@@ -43,6 +44,9 @@
 		"tsx": "^4.20.6"
 	},
 	"dependenciesMeta": {
+		"lib-audio": {
+			"injected": true
+		},
 		"lib-auto-loader": {
 			"injected": true
 		},

@@ -15,6 +15,7 @@ RUN pnpm run -r --filter=app-backend build
 RUN pnpm deploy --filter=app-backend --prod /prod/app-backend --legacy
 
 FROM base AS app-backend
+RUN apt-get update && apt-get install -y ffmpeg && apt-get clean
 COPY --from=build /prod/app-backend /prod/app-backend
 COPY --from=build /usr/src/app/libs/lib-database/src/generated /prod/app-backend/src/generated
 COPY --from=build /usr/src/app/libs/lib-database/prisma /prod/app-backend/prisma
