@@ -506,6 +506,54 @@ components:
         - spotify
         - deezer
 paths:
+  /audio/{audioId}:
+    get:
+      operationId: getAudio
+      tags:
+        - audio
+      description: Get audio
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: audioId
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema: {}
+        "401":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
+        "404":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
   /auth/callback:
     get:
       operationId: authCallback
