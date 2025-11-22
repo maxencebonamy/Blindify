@@ -7,11 +7,11 @@ export type FadeOutParams = {
 	durationSec: number
 }
 
-export const fadeOut = async (input: Audio, _: FadeOutParams): Promise<Audio> => {
+export const fadeOut = async (input: Audio, { durationSec }: FadeOutParams): Promise<Audio> => {
 	return new Promise((resolve, reject) => {
 		const inputStream = Readable.from(input.buffer)
 		const chunks: Buffer[] = []
-		logger.debug("test")
+		logger.debug(durationSec)
 
 		ffmpeg()
 			.input(inputStream)
