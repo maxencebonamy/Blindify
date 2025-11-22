@@ -60,9 +60,9 @@ export const loadGame = async (accessToken: string, game: Game): Promise<Game> =
 		if (clip === null) continue
 
 		const clipId = random.uuid()
-		let buffer = await audio.download(clip)
-		buffer = await audio.fadeOut(buffer)
-		await cache.set(`audio:${clipId}`, buffer.toString("base64"))
+		let buffer = await audio.fromUrl(clip)
+		buffer = await audio.fadeOut(buffer, { durationSec: 5 })
+		await cache.set(`audio:${clipId}`, buffer.buffer.toString("base64"))
 		await cache.set(`clip:${clipId}`, `${env.APP_URL}/audio/${clipId}`)
 		await cache.set(`track:${clipId}`, track)
 

@@ -10,6 +10,8 @@ ARG VITE_BACKEND_URL
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 COPY . /usr/src/app
 WORKDIR /usr/src/app
+RUN apt-get update && apt-get install -y jq && apt-get clean
+RUN ./install-dependencies.sh ./apps/app-frontend/package.json
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run -r --filter="./libs/*" gen
 RUN pnpm run -r --filter=app-frontend gen

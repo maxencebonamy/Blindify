@@ -25,6 +25,7 @@ export type AutoLoaderHandler<Schema extends AutoLoaderSchema = AutoLoaderSchema
 		Schema,
 		ZodTypeProvider
 	> & {
+		headers: z.infer<Schema["headers"]>
 		params: z.infer<Schema["params"]>
 		query: z.infer<Schema["querystring"]>
 		body: z.infer<Schema["body"]>

@@ -3,13 +3,12 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "concurrently \"vite --port 3000\" \"pnpm sync --watch\" --names \"dev, sync\"",
+		"dev": "vite --port 3000",
 		"gen": "openapi-ts --silent",
 		"build": "vite build && tsc",
 		"serve": "vite preview",
 		"lint": "eslint .",
-		"test": "vitest run",
-		"sync": "pnpm sync-dependencies-meta-injected"
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@hey-api/client-fetch": "^0.11.0",
@@ -41,10 +40,5 @@
 		"jsdom": "^26.0.0",
 		"vite": "^6.4.1",
 		"web-vitals": "^4.2.4"
-	},
-	"dependenciesMeta": {
-		"lib-env": {
-			"injected": true
-		}
 	}
 }

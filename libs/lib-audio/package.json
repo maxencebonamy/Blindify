@@ -18,6 +18,8 @@
 		"#/": "./src/"
 	},
 	"dependencies": {
-		"fluent-ffmpeg": "^2.1.3"
+		"fluent-ffmpeg": "^2.1.3",
+		"lib-logger": "workspace:^",
+		"music-metadata": "^11.10.2"
 	}
 }

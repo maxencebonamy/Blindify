@@ -1,21 +1,31 @@
 import { Readable } from "stream"
 import ffmpeg from "fluent-ffmpeg"
+import type { Audio } from "#/types"
+import { logger } from "lib-logger"
 
-export const fadeOut = async (input: Buffer): Promise<Buffer> => {
+export type FadeOutParams = {
+	durationSec: number
+}
+
+export const fadeOut = async (input: Audio, _: FadeOutParams): Promise<Audio> => {
 	return new Promise((resolve, reject) => {
-		const inputStream = Readable.from(input)
+		const inputStream = Readable.from(input.buffer)
 		const chunks: Buffer[] = []
+		logger.debug("test")
 
 		ffmpeg()
 			.input(inputStream)
 			.inputFormat("mp3")
 			.audioFilters([
 				"atempo=1.2",
-				"afade=t=out:st=5:d=2"
+				"afade=t=out:st=20:d=10"
 			])
 			.format("mp3")
 			.on("error", reject)
-			.on("end", () => resolve(Buffer.concat(chunks)))
+			.on("end", () => resolve({
+				...input,
+				buffer: Buffer.concat(chunks)
+			}))
 			.pipe()
 			.on("data", (d: Buffer) => chunks.push(d))
 	})
