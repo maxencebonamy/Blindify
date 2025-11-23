@@ -14,12 +14,15 @@ import { WaveformAnimation } from "#/components/organisms/waveform-animation"
 import { useEffect, useState } from "react"
 import { LoadingScreen } from "#/components/templates/loading-screen"
 import { Loader } from "#/components/atoms/loader"
+import { useBreakpoint } from "#/hooks/use-breakpoint"
+import { Col } from "#/components/atoms/col"
 
 export const Route = createFileRoute("/game/$gameId/")({
 	component: RouteComponent
 })
 
 function RouteComponent() {
+	const breakpoint = useBreakpoint()
 	const router = useRouter()
 	const { gameId } = Route.useParams()
 
@@ -53,27 +56,35 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="h-screen flex flex-col items-center justify-between p-20">
-			<div className="w-full grid grid-cols-3 gap-8 items-center">
-				<div className="flex gap-4">
-					<Link to="/">
-						<Button size="icon">
-							<Icon icon={HomeIcon} />
+		<div className="h-screen flex flex-col items-center justify-between p-8 sm:p-20">
+			<Col className="w-full gap-6">
+				<div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-8 items-center">
+					<div className="flex gap-4">
+						<Link to="/">
+							<Button size="icon">
+								<Icon icon={HomeIcon} />
+							</Button>
+						</Link>
+						<Button size="icon" variant="outline">
+							<Icon icon={SettingsIcon} />
 						</Button>
-					</Link>
-					<Button size="icon" variant="outline">
-						<Icon icon={SettingsIcon} />
-					</Button>
+					</div>
+
+					<div className="grid grid-cols-10 gap-2 justify-self-center max-sm:hidden">
+						{rounds.map((round, index) => (
+							<RoundIndicator key={index} state={round} />
+						))}
+					</div>
+
+					<PlaylistIndicator playlist={game.playlist} className="justify-self-end" />
 				</div>
 
-				<div className="grid grid-cols-10 gap-2 justify-self-center">
+				<div className="grid grid-cols-10 gap-2 justify-self-center sm:hidden">
 					{rounds.map((round, index) => (
 						<RoundIndicator key={index} state={round} />
 					))}
 				</div>
-
-				<PlaylistIndicator playlist={game.playlist} className="justify-self-end" />
-			</div>
+			</Col>
 
 			{game.currentSample && (
 				<AudioPlayer url={game.currentSample} onPlay={() => setPlaying(true)} />
@@ -86,7 +97,7 @@ function RouteComponent() {
 			{!game.currentTrack && (
 				<>
 					{playing && (
-						<WaveformAnimation barCount={30} className="h-20" />
+						<WaveformAnimation barCount={breakpoint === "base" ? 16 : 30} className="h-20" />
 					)}
 					{!playing && (
 						<Loader />

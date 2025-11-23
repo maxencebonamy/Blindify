@@ -28,8 +28,8 @@ export const LoginScreen = () => {
 
 	return (
 		<div className={tailwind}>
-			<Col className="items-center justify-end pb-16 bg-secondary border-b-4 border-foreground flex-1">
-				<GameTitle className="w-1/3" />
+			<Col className="items-center justify-end pb-16 px-16 bg-secondary border-b-4 border-foreground flex-1">
+				<GameTitle className="w-full sm:w-1/3" />
 			</Col>
 			<Col className="items-center justify-start pt-24 bg-primary flex-1">
 				<Button onClick={login} style={{ backgroundColor: SiSpotifyHex }}>

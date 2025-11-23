@@ -2,6 +2,7 @@ import { GameTitle } from "#/components/atoms/game-title"
 import { Icon } from "#/components/atoms/icon"
 import { Row } from "#/components/atoms/row"
 import { Button } from "#/components/molecules/button"
+import { useBreakpoint } from "#/hooks/use-breakpoint"
 import { cn } from "#/utils/tailwind.util"
 import { Link } from "@tanstack/react-router"
 import { LogOutIcon } from "lucide-react"
@@ -21,6 +22,8 @@ export const TopBar = ({ left }: TopBarProps) => {
 		""
 	)
 
+	const breakpoint = useBreakpoint()
+
 	return (
 		<div className="flex-none h-16">
 			<Row className={tailwind}>
@@ -29,9 +32,11 @@ export const TopBar = ({ left }: TopBarProps) => {
 				<GameTitle className="h-12 mt-2" />
 
 				<Link to="/login" className="justify-self-end">
-					<Button variant="outline">
+					<Button variant="outline" size={breakpoint === "base" ? "icon" : "default"}>
 						<Icon icon={LogOutIcon} />
-						Logout
+						<span className="max-sm:hidden">
+							Logout
+						</span>
 					</Button>
 				</Link>
 			</Row>

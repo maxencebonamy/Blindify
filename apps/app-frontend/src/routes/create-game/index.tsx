@@ -16,6 +16,7 @@ import { PlaylistCard, PlaylistCardSkeleton } from "#/components/organisms/playl
 import { QueryHandler } from "#/components/organisms/query-handler"
 import { Row } from "#/components/atoms/row"
 import { Card } from "#/components/molecules/card"
+import { useBreakpoint } from "#/hooks/use-breakpoint"
 
 export const Route = createFileRoute("/create-game/")({
 	component: RouteComponent,
@@ -27,13 +28,14 @@ export const Route = createFileRoute("/create-game/")({
 function RouteComponent() {
 	const tailwind = cn(
 		// Layout
-		"min-h-screen items-stretch p-16 gap-8",
+		"min-h-screen items-stretch p-8 sm:p-16 gap-4 sm:gap-8",
 		// Appearance
 		"bg-background",
 		// Interaction
 		""
 	)
 
+	const breakpoint = useBreakpoint()
 	const router = useRouter()
 	const { playlistId } = Route.useSearch()
 
@@ -69,9 +71,16 @@ function RouteComponent() {
 		<>
 			<TopBar
 				left={(
-					<Button variant="outline" className="justify-self-start" onClick={() => router.history.back()}>
+					<Button
+						variant="outline"
+						size={breakpoint === "base" ? "icon" : "default"}
+						className="justify-self-start"
+						onClick={() => router.history.back()}
+					>
 						<Icon icon={ChevronLeftIcon} />
-						Back
+						<span className="max-sm:hidden">
+							Back
+						</span>
 					</Button>
 				)}
 			/>
@@ -79,11 +88,11 @@ function RouteComponent() {
 			<Col className={tailwind}>
 				<Text level="heading-1">Create a game.</Text>
 
-				<Row className="w-full gap-4 items-stretch">
+				<Row className="w-full gap-4 items-stretch max-sm:flex-col">
 					<QueryHandler
 						result={playlistQuery}
-						handler={playlist => (<PlaylistCard playlist={playlist} className="w-64" />)}
-						loader={<PlaylistCardSkeleton className="w-64" />}
+						handler={playlist => (<PlaylistCard playlist={playlist} className="sm:w-64" />)}
+						loader={<PlaylistCardSkeleton className="sm:w-64" />}
 					/>
 
 					<Col className="flex-1 gap-6">
