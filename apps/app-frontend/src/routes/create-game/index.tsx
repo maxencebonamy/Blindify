@@ -17,6 +17,7 @@ import { QueryHandler } from "#/components/organisms/query-handler"
 import { Row } from "#/components/atoms/row"
 import { Card } from "#/components/molecules/card"
 import { useBreakpoint } from "#/hooks/use-breakpoint"
+import { useNavigateBack } from "#/hooks/use-navigate-back"
 
 export const Route = createFileRoute("/create-game/")({
 	component: RouteComponent,
@@ -37,6 +38,7 @@ function RouteComponent() {
 
 	const breakpoint = useBreakpoint()
 	const router = useRouter()
+	const navigateBack = useNavigateBack()
 	const { playlistId } = Route.useSearch()
 
 	const [ settings, setSettings ] = useState<GameSettings>({
@@ -75,7 +77,7 @@ function RouteComponent() {
 						variant="outline"
 						size={breakpoint === "base" ? "icon" : "default"}
 						className="justify-self-start"
-						onClick={() => router.history.back()}
+						onClick={() => navigateBack()}
 					>
 						<Icon icon={ChevronLeftIcon} />
 						<span className="max-sm:hidden">
