@@ -19,7 +19,7 @@ export const PlaylistCard = ({ playlist, link, className }: PlaylistCardProps) =
 				className="w-full aspect-square object-cover rounded-sm border border-foreground"
 			/>
 			<Col className="items-center mt-1">
-				<Text level="heading-3" className="text-center line-clamp-2">
+				<Text level="heading-3" className="text-center line-clamp-2 max-w-full">
 					{playlist.name}
 				</Text>
 				<Text level="paragraph">

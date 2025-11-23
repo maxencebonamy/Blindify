@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 function RouteComponent() {
 	const tailwind = cn(
 		// Layout
-		"min-h-screen items-stretch p-16 gap-8",
+		"min-h-screen items-stretch p-8 sm:p-16 gap-4 sm:gap-8",
 		// Appearance
 		"bg-background",
 		// Interaction
@@ -70,7 +70,7 @@ function RouteComponent() {
 					<Text level="paragraph">Start typing keywords to search playlists...</Text>
 				) }
 
-				<div className="w-full grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+				<div className="w-full grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
 					{ search !== "" && (
 						<QueryHandler
 							result={result}
