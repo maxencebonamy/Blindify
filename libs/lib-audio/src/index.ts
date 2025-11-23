@@ -1,10 +1,9 @@
-import { fromUrl } from "#/download"
-import { fadeOut } from "#/fade-out"
+import { fromUrl } from "#/from-url/from-url"
+import { transform } from "#/transform/transform"
 
 export const audio = {
 	fromUrl,
-	fadeOut
+	transform
 }
 
-export type { Audio } from "#/types"
-export type { FadeOutParams } from "#/fade-out"
+export type { Audio, TransformParams } from "#/types"
