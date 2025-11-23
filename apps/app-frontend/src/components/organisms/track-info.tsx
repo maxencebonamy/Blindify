@@ -1,4 +1,5 @@
 import { Icon } from "#/components/atoms/icon"
+import { Image } from "#/components/molecules/image"
 import type { Track } from "#/generated"
 import { cn } from "#/utils/tailwind.util"
 import { Disc3Icon, Mic2Icon } from "lucide-react"
@@ -21,9 +22,10 @@ export const TrackInfo = ({ track, className }: TrackInfoProps) => {
 
 	return (
 		<div className={tailwind}>
-			{track.album.cover && (
-				<img src={track.album.cover} className="size-72 rounded-xl border-2 border-foreground shadow-neo-md" />
-			)}
+			<Image
+				src={track.album.cover ?? ""}
+				className="size-72 rounded-xl border-2 border-foreground shadow-neo-md"
+			/>
 			<div className="flex flex-col items-center gap-1">
 				<p className="text-2xl font-bold text-center">{track.title}</p>
 				<div className="flex gap-6">
