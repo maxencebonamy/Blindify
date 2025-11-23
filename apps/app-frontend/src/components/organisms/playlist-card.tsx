@@ -2,6 +2,7 @@ import { Col } from "#/components/atoms/col"
 import { Skeleton } from "#/components/atoms/skeleton"
 import { Text } from "#/components/atoms/text"
 import { Card, type CardProps } from "#/components/molecules/card"
+import { Image } from "#/components/molecules/image"
 import type { Playlist } from "#/generated"
 
 export type PlaylistCardProps = {
@@ -13,7 +14,7 @@ export type PlaylistCardProps = {
 export const PlaylistCard = ({ playlist, link, className }: PlaylistCardProps) => {
 	return (
 		<Card link={link} className={className}>
-			<img
+			<Image
 				src={playlist.cover ?? ""}
 				alt={playlist.name}
 				className="w-full aspect-square object-cover rounded-sm border border-foreground"
