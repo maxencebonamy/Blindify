@@ -7,7 +7,7 @@ import { logger } from "lib-logger"
 vi.mock("lib-logger", () => ({
 	logger: {
 		level: vi.fn(),
-		debug: vi.fn()
+		trace: vi.fn()
 	}
 }))
 
@@ -19,7 +19,7 @@ describe("loadJobs", () => {
 	beforeEach(() => {
 		readdirSyncMock = vi.spyOn(fs, "readdirSync")
 		vi.spyOn(logger, "level").mockReturnValue("INFO")
-		vi.spyOn(logger, "debug").mockImplementation(() => {})
+		vi.spyOn(logger, "trace").mockImplementation(() => {})
 	})
 
 	afterEach(() => {
@@ -65,9 +65,9 @@ describe("loadJobs", () => {
 		expect(taskMock).toHaveBeenCalledWith("param1", "param2")
 	})
 
-	it("wraps task with debug logs when logger level is DEBUG", async () => {
-		vi.spyOn(logger, "level").mockReturnValue("DEBUG")
-		const debugMock = vi.spyOn(logger, "debug")
+	it("wraps task with trace logs when logger level is TRACE", async () => {
+		vi.spyOn(logger, "level").mockReturnValue("TRACE")
+		const traceMock = vi.spyOn(logger, "trace")
 		const taskMock = vi.fn()
 
 		readdirSyncMock.mockReturnValue([ { name: "job.ts", isFile: () => true } ] as unknown as Dirent<NonSharedBuffer>[])
@@ -78,9 +78,9 @@ describe("loadJobs", () => {
 		// @ts-ignore
 		await job.task("param1")
 
-		expect(debugMock).toHaveBeenCalledWith(expect.stringContaining("Executing job job"))
+		expect(traceMock).toHaveBeenCalledWith(expect.stringContaining("Executing job job"))
 		expect(taskMock).toHaveBeenCalledWith("param1")
-		expect(debugMock).toHaveBeenCalledWith(expect.stringMatching(/Finished job job \(\d+ms\)/))
+		expect(traceMock).toHaveBeenCalledWith(expect.stringMatching(/Finished job job \(\d+ms\)/))
 	})
 
 	it("uses the filename without extension as job name", async () => {
@@ -88,14 +88,14 @@ describe("loadJobs", () => {
 		const taskMock = vi.fn()
 		const dynamicImport = vi.fn(async () => ({ cron: "* * * * *", task: taskMock }))
 
-		vi.spyOn(logger, "level").mockReturnValue("DEBUG")
-		const debugMock = vi.spyOn(logger, "debug")
+		vi.spyOn(logger, "level").mockReturnValue("TRACE")
+		const traceMock = vi.spyOn(logger, "trace")
 
 		const [ job ] = await loadJobs("mockDir", dynamicImport)
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		await job.task()
 
-		expect(debugMock.mock.calls?.[0]?.[0]).toContain("hello-world")
+		expect(traceMock.mock.calls?.[0]?.[0]).toContain("hello-world")
 	})
 })

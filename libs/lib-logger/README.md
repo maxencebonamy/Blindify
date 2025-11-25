@@ -19,6 +19,7 @@ Import the `logger` object from the lib and use it to log messages:
 ```ts
 import { logger } from "lib-logger"
 
+logger.trace("Trace message") // will not be written in log files
 logger.debug("Debug message") // will not be written in log files
 logger.info("Info message")
 logger.warn("Warning message")
@@ -32,6 +33,7 @@ The log files will be rotated every day and will be named `logs/YYYY-MM-DD.log`.
 Debug messages will not be written to the log files.
 An env variable `LOG_LEVEL` can be set to change the minimum level of logs that will be written in the console.
 The order of the log levels is as follows:
+- TRACE
 - DEBUG
 - INFO
 - WARN
@@ -41,6 +43,6 @@ The order of the log levels is as follows:
 
 ## Env variables
 
-| Name      | Description                                               | Values                                           |
-| --------- | --------------------------------------------------------- | ------------------------------------------------ |
-| LOG_LEVEL | Minimum level of logs that will be written in the console | DEBUG, INFO *(default)*, WARN, ERROR, FATAL, OFF |
+| Name      | Description                                               | Values                                                  |
+| --------- | --------------------------------------------------------- | ------------------------------------------------------- |
+| LOG_LEVEL | Minimum level of logs that will be written in the console | TRACE, DEBUG, INFO *(default)*, WARN, ERROR, FATAL, OFF |
