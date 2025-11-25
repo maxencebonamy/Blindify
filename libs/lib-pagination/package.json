@@ -15,5 +15,8 @@
 	},
 	"imports": {
 		"#/": "./src/"
+	},
+	"dependencies": {
+		"lib-logger": "workspace:^"
 	}
 }
