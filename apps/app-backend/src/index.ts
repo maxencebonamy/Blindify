@@ -11,6 +11,7 @@ import { writeFile } from "fs/promises"
 import { autoLoader } from "lib-auto-loader"
 import cors from "@fastify/cors"
 import cookie from "@fastify/cookie"
+import { errors } from "lib-utils"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -54,6 +55,11 @@ void app.register(scalar, {
 void app.register(autoLoader, {
 	routesDir: path.join(__dirname, "routes"),
 	jobsDir: path.join(__dirname, "jobs")
+})
+
+app.setErrorHandler((error, request, reply) => {
+	logger.error(`Error in ${request.method} ${request.url}: ${errors.from(error).message}`)
+	return reply.code(500).send({ message: "Internal server error" })
 })
 
 export const start = async (): Promise<void> => {
