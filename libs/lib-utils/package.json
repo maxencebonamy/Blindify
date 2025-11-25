@@ -5,8 +5,8 @@
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"dev": "tsup --watch",
-		"build": "tsup",
+		"dev": "tsup --watch --config ../../tsup.config.json",
+		"build": "tsup --config ../../tsup.config.json",
 		"lint": "eslint .",
 		"test": "vitest run"
 	},

@@ -1,6 +1,6 @@
 import path from "path"
 import fs from "fs"
-import { currentTimestamp, stringify } from "#/utils"
+import { currentTimestamp, getCaller, stringify } from "#/utils"
 import type { Level } from "#/level"
 
 export const logFile = (level: Level, ...messages: unknown[]): void => {
@@ -17,5 +17,5 @@ export const logFile = (level: Level, ...messages: unknown[]): void => {
 	const logFile = path.join(logDirectory, `${fileName}.log`)
 
 	// Write log to file
-	fs.appendFileSync(logFile, `${timestamp} [${level}] ${messages.map(stringify).join(" ")}\n`)
+	fs.appendFileSync(logFile, `${timestamp} [${level}] ${messages.map(stringify).join(" ")} (${getCaller()})\n`)
 }
