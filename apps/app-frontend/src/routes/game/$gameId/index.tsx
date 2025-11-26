@@ -17,6 +17,7 @@ import { Loader } from "#/components/atoms/loader"
 import { useBreakpoint } from "#/hooks/use-breakpoint"
 import { Col } from "#/components/atoms/col"
 import { useNavigateBack } from "#/hooks/use-navigate-back"
+import { Row } from "#/components/atoms/row"
 
 export const Route = createFileRoute("/game/$gameId/")({
 	component: RouteComponent
@@ -71,20 +72,20 @@ function RouteComponent() {
 						</Button>
 					</div>
 
-					<div className="grid grid-cols-10 gap-2 justify-self-center max-sm:hidden">
+					<Row className="flex-wrap justify-center gap-2 w-80 justify-self-center max-sm:hidden">
 						{rounds.map((round, index) => (
 							<RoundIndicator key={index} state={round} />
 						))}
-					</div>
+					</Row>
 
 					<PlaylistIndicator playlist={game.playlist} className="justify-self-end" />
 				</div>
 
-				<div className="grid grid-cols-10 gap-2 justify-self-center sm:hidden">
+				<Row className="flex-wrap justify-center gap-2 w-80 justify-self-center sm:hidden">
 					{rounds.map((round, index) => (
 						<RoundIndicator key={index} state={round} />
 					))}
-				</div>
+				</Row>
 			</Col>
 
 			{game.currentSample && (
