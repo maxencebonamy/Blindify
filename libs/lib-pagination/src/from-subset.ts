@@ -45,7 +45,7 @@ export const fromSubset = <T>(items: T[], params: PaginateFromSubsetParams<T>): 
 		}
 	} else {
 		const totalItemsLastPage = totalItems - pageSize * (totalPages - 1)
-		if (params.fillWith) items = fillItemsIfNeeded(items, params.fillWith, totalItemsLastPage)
+		if (params.fillWith !== undefined) items = fillItemsIfNeeded(items, params.fillWith, totalItemsLastPage)
 		if (items.length !== totalItemsLastPage) {
 			throw new PaginationError(
 				`Although current page is the last one, items length (${items.length}) is not equal to the remaining items (${totalItemsLastPage})`

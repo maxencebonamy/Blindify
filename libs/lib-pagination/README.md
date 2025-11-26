@@ -27,7 +27,7 @@ When you already have the page subset of data.
 ```ts
 import { paginate } from "lib-pagination"
 
-const page = paginate.fromSubset(array, { currentPage: 1, pageSize: 20, totalItems: 150 })
+const page = paginate.fromSubset(array, { currentPage: 1, pageSize: 20, totalItems: 150, fillWith: null })
 ```
 
 ## Page
