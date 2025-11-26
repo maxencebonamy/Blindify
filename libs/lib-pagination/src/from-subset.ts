@@ -7,9 +7,18 @@ export const zPaginateFromSubsetParams = z.object({
 	pageSize: z.int().min(1),
 	totalItems: z.int().min(0)
 })
-export type PaginateFromSubsetParams = z.infer<typeof zPaginateFromSubsetParams>
+export type PaginateFromSubsetParams<T> = z.infer<typeof zPaginateFromSubsetParams> & {
+	fillWith?: T
+}
 
-export const fromSubset = <T>(items: T[], params: PaginateFromSubsetParams): Page<T> => {
+const fillItemsIfNeeded = <T>(items: T[], element: T, expectedLength: number): T[] => {
+	return [
+		...items,
+		...Array(Math.max(0, expectedLength - items.length)).fill(element)
+	]
+}
+
+export const fromSubset = <T>(items: T[], params: PaginateFromSubsetParams<T>): Page<T> => {
 	// Validate params
 	const validateInput = zPaginateFromSubsetParams.safeParse(params)
 	if (!validateInput.success) {
@@ -28,6 +37,7 @@ export const fromSubset = <T>(items: T[], params: PaginateFromSubsetParams): Pag
 	// Check items length
 	const isLastPage = currentPage !== totalPages
 	if (isLastPage) {
+		if (params.fillWith !== undefined) items = fillItemsIfNeeded(items, params.fillWith, pageSize)
 		if (items.length !== pageSize) {
 			throw new PaginationError(
 				`Although current page is not the last one, items length (${items.length}) is not equal to page size (${pageSize})`
@@ -35,6 +45,7 @@ export const fromSubset = <T>(items: T[], params: PaginateFromSubsetParams): Pag
 		}
 	} else {
 		const totalItemsLastPage = totalItems - pageSize * (totalPages - 1)
+		if (params.fillWith !== undefined) items = fillItemsIfNeeded(items, params.fillWith, totalItemsLastPage)
 		if (items.length !== totalItemsLastPage) {
 			throw new PaginationError(
 				`Although current page is the last one, items length (${items.length}) is not equal to the remaining items (${totalItemsLastPage})`

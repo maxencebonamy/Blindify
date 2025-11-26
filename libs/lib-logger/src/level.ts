@@ -1,4 +1,4 @@
-export const levels = [ "DEBUG", "INFO", "WARN", "ERROR", "FATAL", "OFF" ] as const
+export const levels = [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL", "OFF" ] as const
 
 export type Level = typeof levels[number]
 

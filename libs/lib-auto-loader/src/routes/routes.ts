@@ -73,15 +73,15 @@ export const loadRoutes = async (dir: string, basePath = "", dynamicImport: Dyna
 
 					try {
 						(request as (Parameters<AutoLoaderHandler>["0"] & { session: Session | null })).session = session
-						if (logger.level() !== "DEBUG") return mod.handler(request, reply)
+						if (logger.level() !== "TRACE") return mod.handler(request, reply)
 
-						logger.debug(`Entering ${method} ${url}`)
+						logger.trace(`Entering ${method} ${url}`)
 						const start = performance.now()
 						const result = await mod.handler(request, reply)
 
 						const end = performance.now()
 						const durationMs = end - start
-						logger.debug(`Leaving ${method} ${url} (${durationMs.toFixed(0)}ms)`)
+						logger.trace(`Leaving ${method} ${url} (${durationMs.toFixed(0)}ms)`)
 						return result
 					} catch (error) {
 						logger.error(`Error in ${method} ${url}: ${(error as Error).message}`)

@@ -30,11 +30,12 @@ export const searchPublicPlaylists: PlatformConnector["searchPublicPlaylists"] =
 	})
 
 	return paginate.fromSubset(playlists.items?.map(item => {
+		if (!item) return null
 		try {
 			return convertPlaylist(item)
 		} catch (error) {
 			logger.warn(`Failed to convert playlist: ${errors.from(error).message}`)
 			return null
 		}
-	}) ?? [], { currentPage: page, pageSize: limit, totalItems: playlists.total })
+	}) ?? [], { currentPage: page, pageSize: limit, totalItems: playlists.total, fillWith: null })
 }

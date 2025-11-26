@@ -28,15 +28,15 @@ export const loadJobs = async (dir: string, dynamicImport: DynamicImport = p => 
 			jobs.push({
 				cron: mod.cron,
 				task: async (...params) => {
-					if (logger.level() !== "DEBUG") return mod.task(...params)
+					if (logger.level() !== "TRACE") return mod.task(...params)
 
-					logger.debug(`Executing job ${name}`)
+					logger.trace(`Executing job ${name}`)
 					const start = performance.now()
 					const result = await mod.task(...params)
 
 					const end = performance.now()
 					const durationMs = end - start
-					logger.debug(`Finished job ${name} (${durationMs.toFixed(0)}ms)`)
+					logger.trace(`Finished job ${name} (${durationMs.toFixed(0)}ms)`)
 					return result
 				}
 			})

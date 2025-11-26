@@ -8,7 +8,7 @@ import { sessions } from "lib-session"
 vi.mock("lib-logger", () => ({
 	logger: {
 		level: vi.fn(),
-		debug: vi.fn(),
+		trace: vi.fn(),
 		error: vi.fn()
 	}
 }))
@@ -27,7 +27,7 @@ describe("loadRoutes", () => {
 	beforeEach(() => {
 		readdirSyncMock = vi.spyOn(fs, "readdirSync")
 		vi.spyOn(logger, "level").mockReturnValue("INFO")
-		vi.spyOn(logger, "debug").mockImplementation(() => {})
+		vi.spyOn(logger, "trace").mockImplementation(() => {})
 		vi.spyOn(logger, "error").mockImplementation(() => {})
 	})
 
@@ -67,9 +67,9 @@ describe("loadRoutes", () => {
 		await expect(loadRoutes("mockDir", "", dynamicImport)).rejects.toThrow(/Missing schema or handler/)
 	})
 
-	it("wraps handler with debug logs when logger level is DEBUG", async () => {
-		vi.spyOn(logger, "level").mockReturnValue("DEBUG")
-		const debugMock = vi.spyOn(logger, "debug")
+	it("wraps handler with trace logs when logger level is TRACE", async () => {
+		vi.spyOn(logger, "level").mockReturnValue("TRACE")
+		const traceMock = vi.spyOn(logger, "trace")
 
 		readdirSyncMock.mockReturnValue([
 			{ name: "get.ts", isFile: () => true, isDirectory: () => false }
@@ -84,9 +84,9 @@ describe("loadRoutes", () => {
 		// @ts-ignore
 		await route.handler({ cookies: {} }, replyMock)
 
-		expect(debugMock).toHaveBeenCalledWith(expect.stringContaining("Entering GET /"))
+		expect(traceMock).toHaveBeenCalledWith(expect.stringContaining("Entering GET /"))
 		expect(handlerMock).toHaveBeenCalled()
-		expect(debugMock).toHaveBeenCalledWith(expect.stringMatching(/Leaving GET \/ \(\d+ms\)/))
+		expect(traceMock).toHaveBeenCalledWith(expect.stringMatching(/Leaving GET \/ \(\d+ms\)/))
 	})
 
 	it("handles auth schema with missing or invalid session", async () => {

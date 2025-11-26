@@ -13,3 +13,16 @@ export const stringify = (value: unknown): string => {
 	}
 	return value !== undefined ? value.toString() : "undefined"
 }
+
+export const getCaller = (): string | null => {
+	const err = new Error("lib-logger")
+	const stack = (err.stack || "").split("\n")
+
+	const line = stack.find(e => !e.includes("lib-logger"))
+	if (!line) return null
+
+	const elements = line.split("/")
+	const project = elements.find(e => e.startsWith("app-") || e.startsWith("lib-")) ?? ""
+	const file = elements.find(e => e.includes(".js") || e.includes(".ts"))?.replace(")", "") ?? ""
+	return `${project}:${file}`
+}

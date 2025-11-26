@@ -48,8 +48,27 @@ describe("fromSubset", () => {
 		expect(() => fromSubset([ 1, 2, 3, 4 ], { currentPage: 1, pageSize: 3, totalItems: 10 })).toThrow(PaginationError)
 	})
 
+	it("should fill items if items length is less than pageSize on non-last page", () => {
+		const items = [ 4, 5 ]
+		const page = fromSubset(items, { currentPage: 2, pageSize: 3, totalItems: 10, fillWith: 0 })
+		expect(page.currentPage).toBe(2)
+		expect(page.previousPage).toBe(1)
+		expect(page.nextPage).toBe(3)
+		expect(page.items).toEqual([ 4, 5, 0 ])
+	})
+
 	it("should throw if items length is less than pageSize on non-last page", () => {
 		expect(() => fromSubset([ 1, 2 ], { currentPage: 2, pageSize: 3, totalItems: 10 })).toThrow(PaginationError)
+	})
+
+	it("should fill items if last page items length is incorrect", () => {
+		// Last page should have 1 item (10th)
+		const items: number[] = [ ]
+		const page = fromSubset(items, { currentPage: 4, pageSize: 3, totalItems: 10, fillWith: 0 })
+		expect(page.currentPage).toBe(4)
+		expect(page.previousPage).toBe(3)
+		expect(page.nextPage).toBeNull()
+		expect(page.items).toEqual([ 0 ])
 	})
 
 	it("should throw if last page items length is incorrect", () => {

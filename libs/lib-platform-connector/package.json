@@ -5,9 +5,9 @@
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"dev": "tsup --watch",
+		"dev": "tsup --watch --config ../../tsup.config.json",
 		"gen": "openapi-ts --silent",
-		"build": "tsup",
+		"build": "tsup --config ../../tsup.config.json",
 		"lint": "eslint .",
 		"test": "vitest run"
 	},
