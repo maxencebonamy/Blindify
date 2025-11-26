@@ -1,7 +1,5 @@
-import type { Page } from "lib-pagination"
 import { zPage } from "lib-pagination"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
-import type { Playlist } from "lib-platform-connector"
 import { connector, zPlaylist } from "lib-platform-connector"
 import z from "zod"
 
@@ -22,13 +20,7 @@ export const schema = {
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
 	const { page, limit, search } = request.query
-
-	let playlists: Page<Playlist | null>
-	if (!search) {
-		playlists = await connector("spotify").getUserPlaylists(request.session.accessToken, page, limit)
-	} else {
-		playlists = await connector("spotify").searchPublicPlaylists(request.session.accessToken, search, page, limit)
-	}
+	const playlists = await connector("spotify").searchPlaylists(request.session.accessToken, page, limit, search ?? null)
 
 	return reply.send(playlists)
 }

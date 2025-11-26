@@ -1,22 +1,23 @@
 import { getAllTracksFromPlaylist } from "#/spotify/get-all-tracks-from-playlist"
-import { getAllUserPlaylists } from "#/spotify/get-all-user-playlists"
 import { getCurrentUser } from "#/spotify/get-current-user"
 import { getPlaylist } from "#/spotify/get-playlist"
-import { getUserPlaylists } from "#/spotify/get-user-playlists"
 import { oAuthAuthorizeUrl } from "#/spotify/oauth-authorize-url"
 import { oAuthTokenExchange } from "#/spotify/oauth-token-exchange"
 import { oAuthTokenRefresh } from "#/spotify/oauth-token-refresh"
-import { searchPublicPlaylists } from "#/spotify/search-public-playlists"
+import { searchPlaylists } from "#/spotify/search-playlists"
 import type { PlatformConnector } from "#/types"
 
 export const spotifyConnector = {
+	// Auth
 	oAuthAuthorizeUrl,
 	oAuthTokenExchange,
 	oAuthTokenRefresh,
+
+	// Users
 	getCurrentUser,
-	getAllUserPlaylists,
-	getUserPlaylists,
-	searchPublicPlaylists,
-	getPlaylist: getPlaylist,
+
+	// Playlists
+	searchPlaylists,
+	getPlaylist,
 	getAllTracksFromPlaylist
 } satisfies PlatformConnector

@@ -4,8 +4,8 @@ import { zPlaylist } from "lib-platform-connector"
 import z from "zod"
 
 export const schema = {
-	operationId: "showUserPlaylist",
-	description: "Get current user's playlist",
+	operationId: "showPlaylist",
+	description: "Get playlist",
 	auth: true,
 	tags: [ "playlists" ],
 	params: z.object({
