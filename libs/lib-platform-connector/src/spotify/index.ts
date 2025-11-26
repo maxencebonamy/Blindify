@@ -2,6 +2,7 @@ import { getAllTracksFromPlaylist } from "#/spotify/get-all-tracks-from-playlist
 import { getAllUserPlaylists } from "#/spotify/get-all-user-playlists"
 import { getCurrentUser } from "#/spotify/get-current-user"
 import { getPlaylist } from "#/spotify/get-playlist"
+import { getUserPlaylists } from "#/spotify/get-user-playlists"
 import { oAuthAuthorizeUrl } from "#/spotify/oauth-authorize-url"
 import { oAuthTokenExchange } from "#/spotify/oauth-token-exchange"
 import { oAuthTokenRefresh } from "#/spotify/oauth-token-refresh"
@@ -14,6 +15,7 @@ export const spotifyConnector = {
 	oAuthTokenRefresh,
 	getCurrentUser,
 	getAllUserPlaylists,
+	getUserPlaylists,
 	searchPublicPlaylists,
 	getPlaylist: getPlaylist,
 	getAllTracksFromPlaylist

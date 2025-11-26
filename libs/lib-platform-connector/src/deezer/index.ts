@@ -13,6 +13,7 @@ export const deezerConnector = {
 	oAuthTokenRefresh: notImplemented,
 	getCurrentUser,
 	getAllUserPlaylists,
+	getUserPlaylists: notImplemented,
 	searchPublicPlaylists: notImplemented,
 	getPlaylist,
 	getAllTracksFromPlaylist: notImplemented

@@ -40,8 +40,7 @@ function RouteComponent() {
 	const { hasNextPage, fetchNextPage, isFetchingNextPage, ...result } = useInfiniteQuery({
 		...indexPlaylistsInfiniteOptions({ query: { search: debouncedSearch } }),
 		initialPageParam: 1,
-		getNextPageParam: lastPage => lastPage?.nextPage,
-		enabled: search !== ""
+		getNextPageParam: lastPage => lastPage?.nextPage
 	})
 
 	const { loadMoreRef } = useInfiniteLoader({ hasNextPage, fetchNextPage })
@@ -66,31 +65,25 @@ function RouteComponent() {
 					onChange={e => setSearch(e.target.value)}
 				/>
 
-				{ search === "" && (
-					<Text level="paragraph">Start typing keywords to search playlists...</Text>
-				) }
-
 				<div className="w-full grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-					{ search !== "" && (
-						<QueryHandler
-							result={result}
-							handler={playlists => {
-								const allPlaylists = playlists.pages.flatMap(e => e.items).filter(e => e !== null)
-								if (allPlaylists.length === 0) {
-									return <Text level="paragraph">No playlist found...</Text>
-								}
+					<QueryHandler
+						result={result}
+						handler={playlists => {
+							const allPlaylists = playlists.pages.flatMap(e => e.items).filter(e => e !== null)
+							if (allPlaylists.length === 0) {
+								return <Text level="paragraph">No playlist found...</Text>
+							}
 
-								return allPlaylists.map(playlist => (
-									<PlaylistCard
-										key={playlist.id}
-										playlist={playlist}
-										link={{ to: "/create-game", search: { playlistId: playlist.id } }}
-									/>
-								))
-							}}
-							loader={playlistsLoader}
-						/>
-					) }
+							return allPlaylists.map(playlist => (
+								<PlaylistCard
+									key={playlist.id}
+									playlist={playlist}
+									link={{ to: "/create-game", search: { playlistId: playlist.id } }}
+								/>
+							))
+						}}
+						loader={playlistsLoader}
+					/>
 
 					{isFetchingNextPage && playlistsLoader}
 					<span ref={loadMoreRef} />

@@ -58,6 +58,7 @@ export type PlatformConnector = {
 	getCurrentUser: (accessToken: string) => Promise<User>
 	getAllUserPlaylists: (accessToken: string) => Promise<Playlist[]>
 
+	getUserPlaylists: (accessToken: string, page: number, limit: number) => Promise<Page<Playlist | null>>
 	searchPublicPlaylists: (accessToken: string, query: string, page: number, limit: number) => Promise<Page<Playlist | null>>
 
 	getPlaylist: (accessToken: string, playlistId: string) => Promise<Playlist>
