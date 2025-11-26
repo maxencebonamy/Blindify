@@ -32,11 +32,6 @@ export type GameStatus = z.infer<typeof zGameStatus>
 export type Game = z.infer<typeof zGame>
 export type GameMinimal = z.infer<typeof zGameMinimal>
 
-z.globalRegistry.add(zGameSettings, { id: "GameSettings" })
-z.globalRegistry.add(zGameStatus, { id: "GameStatus" })
-z.globalRegistry.add(zGame, { id: "Game" })
-z.globalRegistry.add(zGameMinimal, { id: "GameMinimal" })
-
 export const minimizeGame = (game: Game): GameMinimal => ({
 	id: game.id
 })

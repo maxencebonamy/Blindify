@@ -69,7 +69,6 @@ services:
       - REDIS_URL=redis://default:${REDIS_PASSWORD}@redis:6379
       - POSTGRES_URL=postgresql://default:${POSTGRES_PASSWORD}@postgres:5432/blindify
       - CLIP_PROVIDERS=${CLIP_PROVIDERS}
-      - CLIP_CACHING=${CLIP_CACHING}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.blindify-backend.rule=Host(`${BACKEND_DOMAIN}`)"
@@ -100,7 +99,6 @@ services:
       - REDIS_URL=redis://default:${REDIS_TEST_PASSWORD}@redis-test:6379
       - POSTGRES_URL=postgresql://default:${POSTGRES_TEST_PASSWORD}@postgres-test:5432/blindify
       - CLIP_PROVIDERS=${CLIP_PROVIDERS}
-      - CLIP_CACHING=${CLIP_CACHING}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.blindify-backend-test.rule=Host(`${BACKEND_TEST_DOMAIN}`)"

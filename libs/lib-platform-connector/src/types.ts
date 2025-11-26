@@ -51,15 +51,16 @@ export const zPlatform = z.enum([ "spotify", "deezer" ])
 export type Platform = z.infer<typeof zPlatform>
 
 export type PlatformConnector = {
+	// Auth
 	oAuthAuthorizeUrl: (redirectUri: string, state: string) => string
 	oAuthTokenExchange: (redirectUri: string, code: string) => Promise<Token>
 	oAuthTokenRefresh: (refreshToken: string) => Promise<Token>
 
+	// Users
 	getCurrentUser: (accessToken: string) => Promise<User>
-	getAllUserPlaylists: (accessToken: string) => Promise<Playlist[]>
 
-	searchPublicPlaylists: (accessToken: string, query: string, page: number, limit: number) => Promise<Page<Playlist | null>>
-
+	// Playlists
+	searchPlaylists: (accessToken: string, page: number, limit: number, query: string | null) => Promise<Page<Playlist | null>>
 	getPlaylist: (accessToken: string, playlistId: string) => Promise<Playlist>
 	getAllTracksFromPlaylist: (accessToken: string, playlistId: string) => Promise<Track[]>
 }

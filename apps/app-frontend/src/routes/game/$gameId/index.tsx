@@ -4,7 +4,7 @@ import { Button } from "#/components/molecules/button"
 import { showGameOptions } from "#/generated/@tanstack/react-query.gen"
 import { useGameEvents } from "#/hooks/use-game-events"
 import { useQuery } from "@tanstack/react-query"
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
+import { createFileRoute, Link } from "@tanstack/react-router"
 import { HomeIcon, SettingsIcon } from "lucide-react"
 import { RoundIndicator, type RoundIndicatorProps } from "#/components/organisms/round-indicator"
 import { PlaylistIndicator } from "#/components/organisms/playlist-indicator"
@@ -16,6 +16,8 @@ import { LoadingScreen } from "#/components/templates/loading-screen"
 import { Loader } from "#/components/atoms/loader"
 import { useBreakpoint } from "#/hooks/use-breakpoint"
 import { Col } from "#/components/atoms/col"
+import { useNavigateBack } from "#/hooks/use-navigate-back"
+import { Row } from "#/components/atoms/row"
 
 export const Route = createFileRoute("/game/$gameId/")({
 	component: RouteComponent
@@ -23,7 +25,7 @@ export const Route = createFileRoute("/game/$gameId/")({
 
 function RouteComponent() {
 	const breakpoint = useBreakpoint()
-	const router = useRouter()
+	const navigateBack = useNavigateBack()
 	const { gameId } = Route.useParams()
 
 	const { data: game } = useQuery(showGameOptions({ path: { gameId } }))
@@ -34,7 +36,7 @@ function RouteComponent() {
 	useEffect(() => {
 		if (!game) return
 		if (game.status === "finished") {
-			router.navigate({ to: "/create-game", search: { playlistId: game.playlist.id } })
+			navigateBack()
 		}
 		if (game.status === "revealing") {
 			setPlaying(false)
@@ -70,20 +72,20 @@ function RouteComponent() {
 						</Button>
 					</div>
 
-					<div className="grid grid-cols-10 gap-2 justify-self-center max-sm:hidden">
+					<Row className="flex-wrap justify-center gap-2 w-80 justify-self-center max-sm:hidden">
 						{rounds.map((round, index) => (
 							<RoundIndicator key={index} state={round} />
 						))}
-					</div>
+					</Row>
 
 					<PlaylistIndicator playlist={game.playlist} className="justify-self-end" />
 				</div>
 
-				<div className="grid grid-cols-10 gap-2 justify-self-center sm:hidden">
+				<Row className="flex-wrap justify-center gap-2 w-80 justify-self-center sm:hidden">
 					{rounds.map((round, index) => (
 						<RoundIndicator key={index} state={round} />
 					))}
-				</div>
+				</Row>
 			</Col>
 
 			{game.currentSample && (

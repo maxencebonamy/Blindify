@@ -20,7 +20,7 @@ export const schema = {
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
 	const { page, limit, search } = request.query
-	const playlists = await connector("spotify").searchPublicPlaylists(request.session.accessToken, search ?? "", page, limit)
+	const playlists = await connector("spotify").searchPlaylists(request.session.accessToken, page, limit, search ?? null)
 
 	return reply.send(playlists)
 }

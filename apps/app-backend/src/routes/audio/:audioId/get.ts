@@ -8,9 +8,6 @@ export const schema = {
 	description: "Get audio",
 	auth: true,
 	tags: [ "audio" ],
-	// headers: {
-	// 	"Content-Type": "audio/mpeg"
-	// },
 	params: z.object({
 		audioId: z.string()
 	}),
