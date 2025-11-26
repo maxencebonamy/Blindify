@@ -5,5 +5,3 @@ export const zApiError = z.object({
 })
 
 export type ApiError = z.infer<typeof zApiError>
-
-z.globalRegistry.add(zApiError, { id: "ApiError" })

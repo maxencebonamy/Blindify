@@ -4,7 +4,7 @@ import { ChevronLeftIcon, PlayIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import z from "zod"
 import { zodValidator } from "@tanstack/zod-adapter"
-import { showUserPlaylistOptions, storeGameMutation } from "#/generated/@tanstack/react-query.gen"
+import { showPlaylistOptions, storeGameMutation } from "#/generated/@tanstack/react-query.gen"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import type { GameSettings } from "#/generated"
 import { Icon } from "#/components/atoms/icon"
@@ -46,7 +46,7 @@ function RouteComponent() {
 		sampleDurationMs: 10000
 	})
 
-	const playlistQuery = useQuery(showUserPlaylistOptions({
+	const playlistQuery = useQuery(showPlaylistOptions({
 		path: { playlistId }
 	}))
 

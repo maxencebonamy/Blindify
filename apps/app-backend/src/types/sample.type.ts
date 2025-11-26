@@ -13,6 +13,3 @@ export const zSampleMinimal = zSample.pick({
 
 export type Sample = z.infer<typeof zSample>
 export type SampleMinimal = z.infer<typeof zSampleMinimal>
-
-z.globalRegistry.add(zSample, { id: "Sample" })
-z.globalRegistry.add(zSampleMinimal, { id: "SampleMinimal" })
