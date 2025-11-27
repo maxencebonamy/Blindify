@@ -1,16 +1,12 @@
-import spotifyTracks from "./spotify.json"
-import matches from "./matches.json"
-import wrongs from "./wrongs.json"
-import notFounds from "./not-founds.json"
+import spotifyTracks from "$/data/spotify.json"
+import matches from "$/data/matches.json"
+import wrongs from "$/data/wrongs.json"
+import notFounds from "$/data/not-founds.json"
 import { logger } from "lib-logger"
-import readline from "readline/promises"
 import { writeFile } from "fs/promises"
 import { findTrack } from "#/find/find"
-
-const rl = readline.createInterface({
-	input: process.stdin,
-	output: process.stdout
-})
+import { input, playAudio, stopAudio } from "$/utils"
+import type { ChildProcess } from "child_process"
 
 const provisionning = async (): Promise<void> => {
 	let quit = false
@@ -36,37 +32,48 @@ const provisionning = async (): Promise<void> => {
 
 		const foundTrack = await findTrack(params)
 		if (!foundTrack) {
-			logger.warn("No match found");
-			(notFounds as string[]).push(spotifyTrack.id)
+			logger.warn("No match found")
+			notFounds.push(spotifyTrack.id)
 			continue
 		}
 
 		logger.info("Match found:", foundTrack.clip)
+		let audio: ChildProcess | null = await playAudio(foundTrack.clip)
 		while (true) {
-			const input = await rl.question("Correct or not? (y|n|q)")
-			if (input === "y") {
+			const response = await input("Correct or not? (y=yes, n=no, s=stop audio, q=quit): ")
+			if (response === "y") {
 				logger.info("Correct")
 				matches.push({ deezerId: foundTrack.id, spotifyId: spotifyTrack.id })
 				break
-			} else if (input === "n") {
-				logger.info("Wrong");
-				(wrongs as string[]).push(spotifyTrack.id)
+			}
+			if (response === "n") {
+				logger.info("Wrong")
+				wrongs.push(spotifyTrack.id)
 				break
-			} else if (input === "q") {
+			}
+			if (response === "s") {
+				logger.info("Stop audio")
+				if (audio) stopAudio(audio)
+				audio = null
+			}
+			if (response === "q") {
 				logger.info("Quit")
 				quit = true
 				break
 			}
 		}
+		if (audio) stopAudio(audio)
 
 		if (quit) {
 			break
 		}
 	}
 
-	await writeFile("tests/matches.json", JSON.stringify(matches))
-	await writeFile("tests/not-founds.json", JSON.stringify(notFounds))
-	await writeFile("tests/wrongs.json", JSON.stringify(wrongs))
+	await writeFile("tests/data/matches.json", JSON.stringify(matches))
+	await writeFile("tests/data/not-founds.json", JSON.stringify(notFounds))
+	await writeFile("tests/data/wrongs.json", JSON.stringify(wrongs))
+
+	process.exit(0)
 }
 
 provisionning()

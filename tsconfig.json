@@ -17,6 +17,6 @@
 			"*": [ "node_modules/*" ]
 		}
 	},
-	"include": [ "**/*.ts", "**/*.tsx", "libs/lib-clip/tests/clip.test.ts" ],
+	"include": [ "**/*.ts", "**/*.tsx", "libs/lib-clip/tests/find-clip.test.ts" ],
 	"exclude": [ "node_modules", "dist" ]
 }

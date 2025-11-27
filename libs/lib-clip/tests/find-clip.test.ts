@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll } from "vitest"
-import spotifyTracks from "./spotify.json"
-import matches from "./matches.json"
 import { findTrack } from "#/find/find"
+import spotifyTracks from "$/data/spotify.json"
+import matches from "$/data/matches.json"
 
 const batchSize = 50
 

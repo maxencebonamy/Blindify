@@ -5,6 +5,7 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			"#": path.resolve(__dirname, "src"),
+			"$": path.resolve(__dirname, "tests"),
 			"lib-cache": path.resolve(__dirname, "../lib-cache/src")
 		}
 	},
