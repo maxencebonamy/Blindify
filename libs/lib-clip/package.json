@@ -13,6 +13,7 @@
 		"test:provisionning": "tsx ./tests/provisionning.ts"
 	},
 	"devDependencies": {
+		"play-sound": "^1.1.6",
 		"@types/jaro-winkler": "^0.2.4",
 		"@types/play-sound": "^1.1.2",
 		"tsup": "^8.3.6",
@@ -23,10 +24,7 @@
 	},
 	"dependencies": {
 		"jaro-winkler": "^0.2.8",
-		"lib-cache": "workspace:^",
-		"lib-env": "workspace:^",
 		"lib-logger": "workspace:^",
-		"lib-utils": "workspace:^",
-		"play-sound": "^1.1.6"
+		"lib-utils": "workspace:^"
 	}
 }

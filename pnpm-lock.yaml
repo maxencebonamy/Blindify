@@ -278,21 +278,12 @@ importers:
       jaro-winkler:
         specifier: ^0.2.8
         version: 0.2.8
-      lib-cache:
-        specifier: workspace:^
-        version: link:../lib-cache
-      lib-env:
-        specifier: workspace:^
-        version: link:../lib-env
       lib-logger:
         specifier: workspace:^
         version: link:../lib-logger
       lib-utils:
         specifier: workspace:^
         version: link:../lib-utils
-      play-sound:
-        specifier: ^1.1.6
-        version: 1.1.6
     devDependencies:
       '@types/jaro-winkler':
         specifier: ^0.2.4
@@ -300,6 +291,9 @@ importers:
       '@types/play-sound':
         specifier: ^1.1.2
         version: 1.1.2
+      play-sound:
+        specifier: ^1.1.6
+        version: 1.1.6
       tsup:
         specifier: ^8.3.6
         version: 8.5.0(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
