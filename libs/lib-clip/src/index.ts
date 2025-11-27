@@ -1,1 +1,2 @@
-export { findClip } from "#/find"
+export { findClip } from "#/find/find"
+export type { FindClipParams } from "#/types"

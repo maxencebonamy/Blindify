@@ -1,5 +1,12 @@
-import type { SearchTrack } from "#/search/common"
 import z from "zod"
+
+export type SearchTrack = {
+	id: string
+	title: string
+	artist: string
+	album: string
+	clip: string
+}
 
 export const zDeezerArtist = z.object({
 	name: z.string()

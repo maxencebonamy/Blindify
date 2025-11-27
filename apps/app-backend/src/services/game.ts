@@ -56,7 +56,7 @@ export const loadGame = async (accessToken: string, game: Game): Promise<Game> =
 	const samples: SampleMinimal[] = []
 
 	for (const track of tracks) {
-		const clip = await findClip({ ...track, artist: track.artists.join(", "), album: track.album.name })
+		const clip = await findClip({ ...track, artist: track.artists.map(e => e.name).join(", "), album: track.album.name })
 		if (clip === null) continue
 
 		const clipId = random.uuid()

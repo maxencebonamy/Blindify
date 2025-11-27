@@ -1,13 +1,19 @@
-import { searchFromApple } from "#/search/apple/search"
-import type { SearchTrack } from "#/search/common"
-import { searchFromDeezer } from "#/search/deezer/search"
-import type { Provider } from "#/types"
+import type { DeezerSearchResponse } from "#/search/search.type"
+import { zDeezerSearchResponse } from "#/search/search.type"
 
-export const searchFromProvider = (provider: Provider, searchQuery: string): Promise<SearchTrack[]> => {
-	switch (provider) {
-		case "apple":
-			return searchFromApple(searchQuery)
-		case "deezer":
-			return searchFromDeezer(searchQuery)
-	}
+const getSearchUrl = (searchQuery: string): string => {
+	return `https://api.deezer.com/search/track?q=${encodeURIComponent(searchQuery)}`
+}
+
+export const searchFromDeezer = async (searchQuery: string): Promise<DeezerSearchResponse> => {
+	const searchUrl = getSearchUrl(searchQuery)
+
+	const tracks = await fetch(searchUrl).then(result => {
+		if (!result.ok) {
+			throw new Error(`Failed to fetch tracks: ${result.statusText}`)
+		}
+		return result.json()
+	})
+
+	return zDeezerSearchResponse.parse(tracks)
 }

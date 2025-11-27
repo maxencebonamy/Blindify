@@ -8,10 +8,15 @@
 		"dev": "tsup --watch --config ../../tsup.config.json",
 		"build": "tsup --config ../../tsup.config.json",
 		"lint": "eslint .",
-		"test": "vitest run"
+		"test": "vitest run",
+		"test-clip": "vitest run --config vitest.config.clip.ts",
+		"test-clip:debug": "tsx ./tests/debug.ts",
+		"test-clip:provisionning": "tsx ./tests/provisionning.ts"
 	},
 	"devDependencies": {
 		"@types/jaro-winkler": "^0.2.4",
+		"@types/play-sound": "^1.1.2",
+		"play-sound": "^1.1.6",
 		"tsup": "^8.3.6",
 		"tsx": "^4.19.3"
 	},
@@ -20,8 +25,7 @@
 	},
 	"dependencies": {
 		"jaro-winkler": "^0.2.8",
-		"lib-cache": "workspace:^",
-		"lib-env": "workspace:^",
-		"lib-logger": "workspace:^"
+		"lib-logger": "workspace:^",
+		"lib-utils": "workspace:^"
 	}
 }
