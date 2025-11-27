@@ -11,15 +11,16 @@ export const findTrack = async (params: FindClipParams): Promise<SearchTrack | n
 
 	let foundTrack: SearchTrack | null = null
 	const tracks = await searchFromDeezer(searchQuery)
+	const threshold = 0.5
 	for (const track of tracks) {
-		if (computeSimilarityScore(track, params, false) > 0.5) {
+		if (computeSimilarityScore(track, params, false) > threshold) {
 			foundTrack = track
 			break
 		}
 	}
 	if (!foundTrack) {
 		for (const track of tracks) {
-			if (computeSimilarityScore(track, params, true) > 0.5) {
+			if (computeSimilarityScore(track, params, true) > threshold) {
 				foundTrack = track
 				break
 			}

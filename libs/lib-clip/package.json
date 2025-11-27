@@ -9,13 +9,14 @@
 		"build": "tsup --config ../../tsup.config.json",
 		"lint": "eslint .",
 		"test": "vitest run",
-		"test:debug": "tsx ./tests/debug.ts",
-		"test:provisionning": "tsx ./tests/provisionning.ts"
+		"test-clip": "vitest run --config vitest.config.clip.ts",
+		"test-clip:debug": "tsx ./tests/debug.ts",
+		"test-clip:provisionning": "tsx ./tests/provisionning.ts"
 	},
 	"devDependencies": {
-		"play-sound": "^1.1.6",
 		"@types/jaro-winkler": "^0.2.4",
 		"@types/play-sound": "^1.1.2",
+		"play-sound": "^1.1.6",
 		"tsup": "^8.3.6",
 		"tsx": "^4.19.3"
 	},

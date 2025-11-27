@@ -1,7 +1,6 @@
 import { searchFromDeezer } from "#/search/search"
 import { computeSearchQuery } from "#/utils/utils"
 import { logger } from "lib-logger"
-import notFounds from "$/data/not-founds.json"
 import wrongs from "$/data/wrongs.json"
 import spotifyTracks from "$/data/spotify.json"
 import { computeSimilarityScore } from "#/similarity/similarity"
@@ -32,11 +31,11 @@ const processArray = async (array: string[]): Promise<void> => {
 }
 
 const debug = async (): Promise<void> => {
-	logger.info("Not founds")
-	await processArray(notFounds)
+	// logger.info("Not founds")
+	// await processArray(notFounds)
 
 	logger.info("Wrongs")
-	await processArray(wrongs)
+	await processArray(wrongs.slice(0, 1))
 }
 
 debug()
