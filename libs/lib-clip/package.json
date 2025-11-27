@@ -22,6 +22,7 @@
 		"jaro-winkler": "^0.2.8",
 		"lib-cache": "workspace:^",
 		"lib-env": "workspace:^",
-		"lib-logger": "workspace:^"
+		"lib-logger": "workspace:^",
+		"lib-utils": "workspace:^"
 	}
 }
