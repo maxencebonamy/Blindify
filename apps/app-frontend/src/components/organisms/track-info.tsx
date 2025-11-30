@@ -1,11 +1,11 @@
 import { Icon } from "#/components/atoms/icon"
 import { Image } from "#/components/molecules/image"
-import type { Track } from "#/generated"
+import type { CatalogTrack } from "#/generated"
 import { cn } from "#/utils/tailwind.util"
 import { Disc3Icon, Mic2Icon } from "lucide-react"
 
 export type TrackInfoProps = {
-	track: Track
+	track: CatalogTrack
 	className?: string
 }
 
@@ -31,7 +31,7 @@ export const TrackInfo = ({ track, className }: TrackInfoProps) => {
 				<div className="flex gap-6">
 					<span className="flex items-center gap-1">
 						<Icon icon={Mic2Icon} className="animate-[bounce_2s_ease-in-out_infinite]" />
-						{track.artists.map(e => e.name).join(", ")}
+						{track.artist.name}
 					</span>
 					<span className="flex items-center gap-1">
 						<Icon icon={Disc3Icon} className="animate-[spin_3s_linear_infinite] duration-700" />

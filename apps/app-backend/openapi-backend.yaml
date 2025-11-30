@@ -50,8 +50,8 @@ components:
       properties:
         id:
           type: string
-        playlist:
-          $ref: "#/components/schemas/PlaylistInput"
+        artist:
+          $ref: "#/components/schemas/CatalogArtistInput"
         settings:
           $ref: "#/components/schemas/GameSettingsInput"
         samples:
@@ -90,13 +90,13 @@ components:
                 - null
         currentTrack:
           anyOf:
-            - $ref: "#/components/schemas/TrackInput"
+            - $ref: "#/components/schemas/CatalogTrackInput"
             - nullable: true
               enum:
                 - null
       required:
         - id
-        - playlist
+        - artist
         - settings
         - samples
         - currentSampleIndex
@@ -248,6 +248,72 @@ components:
       required:
         - id
         - order
+    CatalogAlbumInput:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+        name:
+          type: string
+        cover:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - name
+        - cover
+    CatalogArtistInput:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+        name:
+          type: string
+        avatar:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - name
+        - avatar
+    CatalogTrackInput:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+        title:
+          type: string
+        artist:
+          $ref: "#/components/schemas/CatalogArtistInput"
+        album:
+          $ref: "#/components/schemas/CatalogAlbumInput"
+        preview:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - title
+        - artist
+        - album
+        - preview
     ApiError:
       type: object
       properties:
@@ -295,8 +361,8 @@ components:
       properties:
         id:
           type: string
-        playlist:
-          $ref: "#/components/schemas/Playlist"
+        artist:
+          $ref: "#/components/schemas/CatalogArtist"
         settings:
           $ref: "#/components/schemas/GameSettings"
         samples:
@@ -338,13 +404,13 @@ components:
                 - null
         currentTrack:
           anyOf:
-            - $ref: "#/components/schemas/Track"
+            - $ref: "#/components/schemas/CatalogTrack"
             - nullable: true
               enum:
                 - null
       required:
         - id
-        - playlist
+        - artist
         - settings
         - samples
         - currentSampleIndex
@@ -505,7 +571,200 @@ components:
         - id
         - order
       additionalProperties: false
+    CatalogAlbum:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+        name:
+          type: string
+        cover:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - name
+        - cover
+      additionalProperties: false
+    CatalogArtist:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+        name:
+          type: string
+        avatar:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - name
+        - avatar
+      additionalProperties: false
+    CatalogTrack:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+        title:
+          type: string
+        artist:
+          $ref: "#/components/schemas/CatalogArtist"
+        album:
+          $ref: "#/components/schemas/CatalogAlbum"
+        preview:
+          anyOf:
+            - type: string
+              format: uri
+            - nullable: true
+              enum:
+                - null
+      required:
+        - id
+        - title
+        - artist
+        - album
+        - preview
+      additionalProperties: false
 paths:
+  /artists/{artistId}:
+    get:
+      operationId: showArtist
+      tags:
+        - artists
+      description: Get artist
+      parameters:
+        - schema:
+            type: number
+          in: path
+          name: artistId
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CatalogArtist"
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
+  /artists:
+    get:
+      operationId: indexArtists
+      tags:
+        - artists
+      description: Get all artists
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: search
+          required: false
+        - schema:
+            default: 1
+            type: integer
+            minimum: 1
+            maximum: 9007199254740991
+          in: query
+          name: page
+          required: false
+        - schema:
+            default: 20
+            type: integer
+            minimum: 1
+            maximum: 50
+          in: query
+          name: limit
+          required: false
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  currentPage:
+                    type: integer
+                    minimum: 1
+                    maximum: 9007199254740991
+                  previousPage:
+                    anyOf:
+                      - type: integer
+                        minimum: 1
+                        maximum: 9007199254740991
+                      - nullable: true
+                        enum:
+                          - null
+                  nextPage:
+                    anyOf:
+                      - type: integer
+                        minimum: 2
+                        maximum: 9007199254740991
+                      - nullable: true
+                        enum:
+                          - null
+                  totalPages:
+                    type: integer
+                    minimum: 1
+                    maximum: 9007199254740991
+                  totalItems:
+                    type: integer
+                    minimum: 0
+                    maximum: 9007199254740991
+                  pageSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 9007199254740991
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CatalogArtist"
+                required:
+                  - currentPage
+                  - previousPage
+                  - nextPage
+                  - totalPages
+                  - totalItems
+                  - pageSize
+                  - items
+                additionalProperties: false
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                additionalProperties: false
   /audio/{audioId}:
     get:
       operationId: getAudio
@@ -905,12 +1164,12 @@ paths:
             schema:
               type: object
               properties:
-                playlistId:
-                  type: string
+                artistId:
+                  type: number
                 settings:
                   $ref: "#/components/schemas/GameSettingsInput"
               required:
-                - playlistId
+                - artistId
                 - settings
         required: true
       responses:

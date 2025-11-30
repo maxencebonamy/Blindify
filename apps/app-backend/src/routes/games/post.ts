@@ -1,5 +1,5 @@
+import { getArtistById } from "#/services/artist"
 import { createGame, loadGame } from "#/services/game"
-import { getPlaylistById } from "#/services/playlist"
 import { zGame, zGameSettings } from "#/types/game.type"
 import type { AutoLoaderHandler, AutoLoaderSchema } from "lib-auto-loader"
 import z from "zod"
@@ -10,7 +10,7 @@ export const schema = {
 	auth: true,
 	tags: [ "games" ],
 	body: z.object({
-		playlistId: z.string(),
+		artistId: z.coerce.number(),
 		settings: zGameSettings
 	}),
 	response: {
@@ -19,10 +19,10 @@ export const schema = {
 } satisfies AutoLoaderSchema
 
 export const handler: AutoLoaderHandler<typeof schema> = async (request, reply) => {
-	const playlist = await getPlaylistById(request.session.accessToken, request.body.playlistId)
+	const artist = await getArtistById(request.body.artistId)
 
-	const game = await createGame(playlist, request.body.settings)
-	void loadGame(request.session.accessToken, game)
+	const game = await createGame(artist, request.body.settings)
+	void loadGame(game)
 
 	return reply.send(game)
 }

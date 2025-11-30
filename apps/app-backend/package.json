@@ -23,6 +23,7 @@
 		"lib-audio": "workspace:^",
 		"lib-auto-loader": "workspace:^",
 		"lib-cache": "workspace:^",
+		"lib-catalog": "workspace:^",
 		"lib-clip": "workspace:^",
 		"lib-env": "workspace:^",
 		"lib-logger": "workspace:^",

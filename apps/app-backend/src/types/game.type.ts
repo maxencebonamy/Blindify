@@ -1,5 +1,5 @@
 import { zSampleMinimal } from "#/types/sample.type"
-import { zPlaylist, zTrack } from "lib-platform-connector"
+import { zCatalogArtist, zCatalogTrack } from "lib-catalog"
 import z from "zod"
 
 export const zGameSettings = z.object({
@@ -11,7 +11,7 @@ export const zGameStatus = z.enum([ "loading", "ready", "listening", "revealing"
 
 export const zGame = z.object({
 	id: z.string(),
-	playlist: zPlaylist,
+	artist: zCatalogArtist,
 	settings: zGameSettings,
 	samples: z.array(zSampleMinimal),
 	currentSampleIndex: z.number().int().min(0),
@@ -20,7 +20,7 @@ export const zGame = z.object({
 	endTime: z.date().nullable(),
 	nextActionAt: z.date().nullable(),
 	currentSample: z.string().nullable(),
-	currentTrack: zTrack.nullable()
+	currentTrack: zCatalogTrack.nullable()
 })
 
 export const zGameMinimal = zGame.pick({

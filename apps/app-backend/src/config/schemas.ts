@@ -1,6 +1,7 @@
 import { zApiError } from "#/types/error.type"
 import { zGameSettings, zGameStatus, zGame, zGameMinimal } from "#/types/game.type"
 import { zSample, zSampleMinimal } from "#/types/sample.type"
+import { zCatalogAlbum, zCatalogArtist, zCatalogTrack } from "lib-catalog"
 import { zUser, zArtist, zAlbum, zTrack, zPlaylist, zPlatform } from "lib-platform-connector"
 import z from "zod"
 
@@ -18,4 +19,7 @@ export const registerSchemas = (): void => {
 	z.globalRegistry.add(zPlatform, { id: "Platform" })
 	z.globalRegistry.add(zSample, { id: "Sample" })
 	z.globalRegistry.add(zSampleMinimal, { id: "SampleMinimal" })
+	z.globalRegistry.add(zCatalogAlbum, { id: "CatalogAlbum" })
+	z.globalRegistry.add(zCatalogArtist, { id: "CatalogArtist" })
+	z.globalRegistry.add(zCatalogTrack, { id: "CatalogTrack" })
 }

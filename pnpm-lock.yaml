@@ -75,6 +75,9 @@ importers:
       lib-cache:
         specifier: workspace:^
         version: link:../../libs/lib-cache
+      lib-catalog:
+        specifier: workspace:^
+        version: link:../../libs/lib-catalog
       lib-clip:
         specifier: workspace:^
         version: link:../../libs/lib-clip
@@ -268,6 +271,22 @@ importers:
       lib-logger:
         specifier: workspace:^
         version: link:../lib-logger
+    devDependencies:
+      tsup:
+        specifier: ^8.3.6
+        version: 8.5.0(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+
+  libs/lib-catalog:
+    dependencies:
+      lib-env:
+        specifier: workspace:^
+        version: link:../lib-env
+      lib-pagination:
+        specifier: workspace:^
+        version: link:../lib-pagination
+      lib-utils:
+        specifier: workspace:^
+        version: link:../lib-utils
     devDependencies:
       tsup:
         specifier: ^8.3.6

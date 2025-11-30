@@ -1,0 +1,24 @@
+{
+	"name": "lib-catalog",
+	"version": "1.0.0",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"dev": "tsup --watch --config ../../tsup.config.json",
+		"build": "tsup --config ../../tsup.config.json",
+		"lint": "eslint .",
+		"test": "vitest run"
+	},
+	"devDependencies": {
+		"tsup": "^8.3.6"
+	},
+	"imports": {
+		"#/": "./src/"
+	},
+	"dependencies": {
+		"lib-env": "workspace:^",
+		"lib-pagination": "workspace:^",
+		"lib-utils": "workspace:^"
+	}
+}

@@ -4,7 +4,7 @@ import { ChevronLeftIcon, PlayIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import z from "zod"
 import { zodValidator } from "@tanstack/zod-adapter"
-import { showPlaylistOptions, storeGameMutation } from "#/generated/@tanstack/react-query.gen"
+import { showArtistOptions, storeGameMutation } from "#/generated/@tanstack/react-query.gen"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import type { GameSettings } from "#/generated"
 import { Icon } from "#/components/atoms/icon"
@@ -12,17 +12,17 @@ import { cn } from "#/utils/tailwind.util"
 import { Col } from "#/components/atoms/col"
 import { TopBar } from "#/components/organisms/top-bar"
 import { Text } from "#/components/atoms/text"
-import { PlaylistCard, PlaylistCardSkeleton } from "#/components/organisms/playlist-card"
 import { QueryHandler } from "#/components/organisms/query-handler"
 import { Row } from "#/components/atoms/row"
 import { Card } from "#/components/molecules/card"
 import { useBreakpoint } from "#/hooks/use-breakpoint"
 import { useNavigateBack } from "#/hooks/use-navigate-back"
+import { ArtistCard, ArtistCardSkeleton } from "#/components/organisms/artist-card"
 
 export const Route = createFileRoute("/create-game/")({
 	component: RouteComponent,
 	validateSearch: zodValidator(z.object({
-		playlistId: z.string()
+		artistId: z.coerce.number()
 	}))
 })
 
@@ -39,22 +39,22 @@ function RouteComponent() {
 	const breakpoint = useBreakpoint()
 	const router = useRouter()
 	const navigateBack = useNavigateBack()
-	const { playlistId } = Route.useSearch()
+	const { artistId } = Route.useSearch()
 
 	const [ settings, setSettings ] = useState<GameSettings>({
 		sampleCount: 10,
 		sampleDurationMs: 10000
 	})
 
-	const playlistQuery = useQuery(showPlaylistOptions({
-		path: { playlistId }
+	const artistQuery = useQuery(showArtistOptions({
+		path: { artistId }
 	}))
 
 	useEffect(() => {
-		if (playlistQuery.error) {
+		if (artistQuery.error) {
 			router.navigate({ to: "/" })
 		}
-	}, [ playlistQuery.error ])
+	}, [ artistQuery.error ])
 
 	const { mutate: createGame, isPending: isCreateGamePending } = useMutation({
 		...storeGameMutation(),
@@ -92,9 +92,9 @@ function RouteComponent() {
 
 				<Row className="w-full gap-4 items-stretch max-sm:flex-col">
 					<QueryHandler
-						result={playlistQuery}
-						handler={playlist => (<PlaylistCard playlist={playlist} className="sm:w-64" />)}
-						loader={<PlaylistCardSkeleton className="sm:w-64" />}
+						result={artistQuery}
+						handler={artist => (<ArtistCard artist={artist} className="sm:w-64" />)}
+						loader={<ArtistCardSkeleton className="sm:w-64" />}
 					/>
 
 					<Col className="flex-1 gap-6">
@@ -143,9 +143,9 @@ function RouteComponent() {
 				</Text>
 
 				<Button
-					onClick={() => createGame({ body: { playlistId, settings } })}
+					onClick={() => createGame({ body: { artistId, settings } })}
 					loading={isCreateGamePending}
-					disabled={!playlistQuery.isSuccess}
+					disabled={!artistQuery.isSuccess}
 				>
 					<Icon icon={PlayIcon} />
 					Start

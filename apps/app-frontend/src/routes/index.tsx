@@ -2,10 +2,10 @@ import { Col } from "#/components/atoms/col"
 import { Row } from "#/components/atoms/row"
 import { Text } from "#/components/atoms/text"
 import { Input } from "#/components/molecules/input"
-import { PlaylistCard, PlaylistCardSkeleton } from "#/components/organisms/playlist-card"
+import { ArtistCard, ArtistCardSkeleton } from "#/components/organisms/artist-card"
 import { QueryHandler } from "#/components/organisms/query-handler"
 import { TopBar } from "#/components/organisms/top-bar"
-import { indexPlaylistsInfiniteOptions } from "#/generated/@tanstack/react-query.gen"
+import { indexArtistsInfiniteOptions } from "#/generated/@tanstack/react-query.gen"
 import { useDebouncedState } from "#/hooks/use-debounced-state"
 import { useInfiniteLoader } from "#/hooks/use-infinite-loader"
 import { cn } from "#/utils/tailwind.util"
@@ -38,15 +38,15 @@ function RouteComponent() {
 	const [ debouncedSearch ] = useDebouncedState(search)
 
 	const { hasNextPage, fetchNextPage, isFetchingNextPage, ...result } = useInfiniteQuery({
-		...indexPlaylistsInfiniteOptions({ query: { search: debouncedSearch } }),
+		...indexArtistsInfiniteOptions({ query: { search: debouncedSearch } }),
 		initialPageParam: 1,
 		getNextPageParam: lastPage => lastPage?.nextPage
 	})
 
 	const { loadMoreRef } = useInfiniteLoader({ hasNextPage, fetchNextPage })
 
-	const playlistsLoader = Array.from({ length: 7 }).map((_, i) => (
-		<PlaylistCardSkeleton key={i} />
+	const artistsLoader = Array.from({ length: 7 }).map((_, i) => (
+		<ArtistCardSkeleton key={i} />
 	))
 
 	return (
@@ -54,11 +54,11 @@ function RouteComponent() {
 			<TopBar />
 			<Col className={tailwind}>
 				<Row className="max-sm:flex-col gap-4">
-					<Text level="heading-1" className="flex-1">Select a playlist.</Text>
+					<Text level="heading-1" className="flex-1">Select an artist.</Text>
 				</Row>
 
 				<Input
-					placeholder="Search for a playlist..."
+					placeholder="Search for an artist..."
 					autoFocus
 					className=""
 					value={search}
@@ -68,24 +68,24 @@ function RouteComponent() {
 				<div className="w-full grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
 					<QueryHandler
 						result={result}
-						handler={playlists => {
-							const allPlaylists = playlists.pages.flatMap(e => e.items).filter(e => e !== null)
-							if (allPlaylists.length === 0) {
-								return <Text level="paragraph">No playlist found...</Text>
+						handler={artists => {
+							const allArtists = artists.pages.flatMap(e => e.items).filter(e => e !== null)
+							if (allArtists.length === 0) {
+								return <Text level="paragraph">No artist found...</Text>
 							}
 
-							return allPlaylists.map(playlist => (
-								<PlaylistCard
-									key={playlist.id}
-									playlist={playlist}
-									link={{ to: "/create-game", search: { playlistId: playlist.id } }}
+							return allArtists.map(artist => (
+								<ArtistCard
+									key={artist.id}
+									artist={artist}
+									link={{ to: "/create-game", search: { artistId: artist.id } }}
 								/>
 							))
 						}}
-						loader={playlistsLoader}
+						loader={artistsLoader}
 					/>
 
-					{isFetchingNextPage && playlistsLoader}
+					{isFetchingNextPage && artistsLoader}
 					<span ref={loadMoreRef} />
 				</div>
 			</Col>

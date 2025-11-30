@@ -7,7 +7,6 @@ import { useQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { HomeIcon, SettingsIcon } from "lucide-react"
 import { RoundIndicator, type RoundIndicatorProps } from "#/components/organisms/round-indicator"
-import { PlaylistIndicator } from "#/components/organisms/playlist-indicator"
 import { TrackInfo } from "#/components/organisms/track-info"
 import { TimedProgressBar } from "#/components/organisms/timed-progress-bar"
 import { WaveformAnimation } from "#/components/organisms/waveform-animation"
@@ -18,6 +17,7 @@ import { useBreakpoint } from "#/hooks/use-breakpoint"
 import { Col } from "#/components/atoms/col"
 import { useNavigateBack } from "#/hooks/use-navigate-back"
 import { Row } from "#/components/atoms/row"
+import { ArtistIndicator } from "#/components/organisms/artist-indicator"
 
 export const Route = createFileRoute("/game/$gameId/")({
 	component: RouteComponent
@@ -78,7 +78,7 @@ function RouteComponent() {
 						))}
 					</Row>
 
-					<PlaylistIndicator playlist={game.playlist} className="justify-self-end" />
+					<ArtistIndicator artist={game.artist} className="justify-self-end" />
 				</div>
 
 				<Row className="flex-wrap justify-center gap-2 w-80 justify-self-center sm:hidden">

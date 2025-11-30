@@ -1,12 +1,12 @@
 import { env } from "#/config/env"
-import { getAllTracksFromPlaylist } from "#/services/track"
 import type { GameMinimal } from "#/types/game.type"
 import { minimizeGame, zGame, zGameMinimal, type Game, type GameSettings } from "#/types/game.type"
 import type { Sample, SampleMinimal } from "#/types/sample.type"
 import { audio } from "lib-audio"
 import { cache } from "lib-cache"
-import { findClip } from "lib-clip"
-import type { Playlist, Track } from "lib-platform-connector"
+import type { CatalogArtist } from "lib-catalog"
+import { catalog } from "lib-catalog"
+import type { Track } from "lib-platform-connector"
 import { zTrack } from "lib-platform-connector"
 import { arrays, random } from "lib-utils"
 import z from "zod"
@@ -26,7 +26,7 @@ export const registerGame = async (game: GameMinimal): Promise<void> => {
 	await cache.set("games", games)
 }
 
-export const createGame = async (playlist: Playlist, settings: GameSettings): Promise<Game> => {
+export const createGame = async (artist: CatalogArtist, settings: GameSettings): Promise<Game> => {
 	const id = random.uuid()
 
 	const game: Game = {
@@ -36,7 +36,7 @@ export const createGame = async (playlist: Playlist, settings: GameSettings): Pr
 		endTime: null,
 		settings,
 		currentSampleIndex: 0,
-		playlist,
+		artist,
 		nextActionAt: null,
 		samples: [],
 		currentSample: null,
@@ -49,14 +49,15 @@ export const createGame = async (playlist: Playlist, settings: GameSettings): Pr
 	return game
 }
 
-export const loadGame = async (accessToken: string, game: Game): Promise<Game> => {
-	const tracks = await getAllTracksFromPlaylist(accessToken, game.playlist.id)
+export const loadGame = async (game: Game): Promise<Game> => {
+	const page = await catalog.getArtistTracks(game.artist.id, 1, 50)
+	const tracks = page.items
 	arrays.scramble(tracks)
 
 	const samples: SampleMinimal[] = []
 
 	for (const track of tracks) {
-		const clip = await findClip({ ...track, artist: track.artists.map(e => e.name).join(", "), album: track.album.name })
+		const clip = track.preview
 		if (clip === null) continue
 
 		const clipId = random.uuid()

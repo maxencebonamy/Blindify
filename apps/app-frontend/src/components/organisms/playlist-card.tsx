@@ -37,7 +37,7 @@ export const PlaylistCardSkeleton = ({ className }: { className?: string }) => {
 	return (
 		<Card className={className}>
 			<Skeleton className="w-full aspect-square rounded-sm border border-foreground" />
-			<Col className="items-center gap-2">
+			<Col className="items-center gap-2 mt-1">
 				<Skeleton className="w-32 h-6" />
 				<Skeleton className="w-16 h-4" />
 			</Col>

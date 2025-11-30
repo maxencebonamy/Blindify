@@ -2,7 +2,7 @@ import { getAllGames, getGameById } from "#/services/game"
 import { broadcastGameUpdate } from "#/services/sse"
 import type { AutoLoaderTask } from "lib-auto-loader"
 import { cache } from "lib-cache"
-import { zTrack } from "lib-platform-connector"
+import { zCatalogTrack } from "lib-catalog"
 import z from "zod"
 
 export const cron = "* * * * * *"
@@ -27,7 +27,7 @@ export const task: AutoLoaderTask = async () => {
 			game.status = "revealing"
 			game.nextActionAt = new Date(now + 10 * 1000) // 10 seconds
 			const sample = game.samples[game.currentSampleIndex]
-			if (sample) game.currentTrack = await cache.get(`track:${sample.id}`, zTrack)
+			if (sample) game.currentTrack = await cache.get(`track:${sample.id}`, zCatalogTrack)
 		} else if (game.status === "revealing") {
 			if (game.currentSampleIndex + 1 < game.samples.length) {
 				game.currentSampleIndex++
