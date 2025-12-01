@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest"
-import { scramble } from "#/arrays/arrays"
+import { dedupe, dedupeBy, scramble } from "#/arrays/arrays"
 
 describe("scramble", () => {
 	it("should not throw for empty array", () => {
@@ -54,5 +54,70 @@ describe("scramble", () => {
 		expect(arr).toEqual([ 4, 2, 1, 3 ])
 
 		mockRandom.mockRestore()
+	})
+})
+
+describe("dedupe", () => {
+	it("removes duplicate primitives", () => {
+		expect(dedupe([ 1, 2, 2, 3, 1 ])).toEqual([ 1, 2, 3 ])
+	})
+
+	it("keeps order of first occurrences", () => {
+		expect(dedupe([ "a", "b", "a", "c", "b" ])).toEqual([ "a", "b", "c" ])
+	})
+
+	it("handles empty array", () => {
+		expect(dedupe([])).toEqual([])
+	})
+
+	it("handles reference equality for objects", () => {
+		const a = { x: 1 }
+		const b = { x: 1 }
+		expect(dedupe([ a, b, a ])).toEqual([ a, b ])
+	})
+})
+
+describe("dedupeBy", () => {
+	it("dedupes by property key", () => {
+		const input = [
+			{ id: 1, name: "A" },
+			{ id: 2, name: "B" },
+			{ id: 1, name: "C" }
+		]
+
+		expect(dedupeBy(input, "id")).toEqual([
+			{ id: 1, name: "A" },
+			{ id: 2, name: "B" }
+		])
+	})
+
+	it("keeps order of first occurrences", () => {
+		const input = [
+			{ id: "x", v: 1 },
+			{ id: "y", v: 2 },
+			{ id: "x", v: 3 }
+		]
+
+		expect(dedupeBy(input, "id")).toEqual([
+			{ id: "x", v: 1 },
+			{ id: "y", v: 2 }
+		])
+	})
+
+	it("handles empty array", () => {
+		expect(dedupeBy([], "id")).toEqual([])
+	})
+
+	it("dedupes correctly when values are of different types", () => {
+		const input = [
+			{ k: 1 },
+			{ k: "1" },
+			{ k: 1 }
+		]
+
+		expect(dedupeBy(input, "k")).toEqual([
+			{ k: 1 },
+			{ k: "1" }
+		])
 	})
 })
