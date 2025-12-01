@@ -31,7 +31,7 @@ export const TrackInfo = ({ track, className }: TrackInfoProps) => {
 				<div className="flex gap-6">
 					<span className="flex items-center gap-1">
 						<Icon icon={Mic2Icon} className="animate-[bounce_2s_ease-in-out_infinite]" />
-						{track.artist.name}
+						{track.artists.map(e => e.name).join(", ")}
 					</span>
 					<span className="flex items-center gap-1">
 						<Icon icon={Disc3Icon} className="animate-[spin_3s_linear_infinite] duration-700" />

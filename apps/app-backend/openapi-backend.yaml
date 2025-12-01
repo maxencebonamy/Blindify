@@ -297,8 +297,11 @@ components:
           maximum: 9007199254740991
         title:
           type: string
-        artist:
-          $ref: "#/components/schemas/CatalogArtistInput"
+        artists:
+          minItems: 0
+          type: array
+          items:
+            $ref: "#/components/schemas/CatalogArtistInput"
         album:
           $ref: "#/components/schemas/CatalogAlbumInput"
         preview:
@@ -311,7 +314,7 @@ components:
       required:
         - id
         - title
-        - artist
+        - artists
         - album
         - preview
     ApiError:
@@ -622,8 +625,11 @@ components:
           maximum: 9007199254740991
         title:
           type: string
-        artist:
-          $ref: "#/components/schemas/CatalogArtist"
+        artists:
+          minItems: 0
+          type: array
+          items:
+            $ref: "#/components/schemas/CatalogArtist"
         album:
           $ref: "#/components/schemas/CatalogAlbum"
         preview:
@@ -636,7 +642,7 @@ components:
       required:
         - id
         - title
-        - artist
+        - artists
         - album
         - preview
       additionalProperties: false

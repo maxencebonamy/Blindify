@@ -15,6 +15,12 @@ pnpm add --workspace lib-utils
 ```ts
 import { arrays } from "lib-utils"
 
+// dedupe() copies an array and removes the duplicates
+arrays.dedupe(things)
+
+// dedupeBy() copies an array and removes the duplicates that are determined by a key in an object
+arrays.dedupeBy(things, "id")
+
 // scramble() shuffles all the elements of an array randomly, without copy it
 arrays.scramble(things)
 ```

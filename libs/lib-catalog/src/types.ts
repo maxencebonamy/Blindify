@@ -17,7 +17,7 @@ export type CatalogAlbum = z.infer<typeof zCatalogAlbum>
 export const zCatalogTrack = z.object({
 	id: z.int(),
 	title: z.string(),
-	artist: zCatalogArtist,
+	artists: z.array(zCatalogArtist).min(0),
 	album: zCatalogAlbum,
 	preview: z.url().nullable()
 })

@@ -1,4 +1,5 @@
 import type { CatalogAlbum, CatalogArtist, CatalogTrack } from "#/types"
+import { arrays } from "lib-utils"
 import z from "zod"
 
 export const zDeezerArtist = z.object({
@@ -30,12 +31,13 @@ export const zDeezerTrack = z.object({
 	id: z.int(),
 	title: z.string(),
 	artist: zDeezerArtist,
+	contributors: z.array(z.object({ type: z.string() }).loose()),
 	album: zDeezerAlbum,
 	preview: z.url().nullish()
 }).transform(e => ({
 	id: e.id,
 	title: e.title,
-	artist: e.artist,
+	artists: arrays.dedupeBy([ ...e.contributors.filter(c => c.type === "artist").map(c => zDeezerArtist.parse(c)), e.artist ], "id"),
 	album: e.album,
 	preview: e.preview ?? null
 } satisfies CatalogTrack))
