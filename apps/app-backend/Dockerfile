@@ -9,7 +9,6 @@ WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run -r --filter=lib-database db:generate
 RUN pnpm run -r --filter="./libs/*" gen
-RUN pnpm run -r --filter=app-backend gen
 RUN pnpm run -r --filter="./libs/*" build
 RUN pnpm run -r --filter=app-backend build
 RUN pnpm deploy --filter=app-backend --prod /prod/app-backend --legacy
