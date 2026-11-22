@@ -22,6 +22,7 @@ Sign in with Spotify, pick a playlist, choose how many samples you want and how 
 	- [Tests and quality](#tests-and-quality)
 	- [Deployment](#deployment)
 	- [Releases](#releases)
+	- [License](#license)
 
 ## How it works
 
@@ -230,3 +231,7 @@ The backend container applies Prisma migrations on startup. To update an existin
 ## Releases
 
 Changes for each version are listed in [`release-notes/v1.md`](release-notes/v1.md).
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
