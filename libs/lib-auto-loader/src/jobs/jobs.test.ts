@@ -24,6 +24,7 @@ describe("loadJobs", () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks()
+		vi.clearAllMocks()
 	})
 
 	it("loads only .ts/.js files not starting with _", async () => {
